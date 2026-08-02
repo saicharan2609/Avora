@@ -1,12 +1,14 @@
 # @avora/config
 
 Owner: @avora/architecture  
-Protected path: yes
+Package type: configuration  
+Publishable: no
 
 ## Purpose
 
-`@avora/config` is the single source of shared repository configuration:
-TypeScript, ESLint, Prettier, and typed environment schema.
+`@avora/config` is the shared configuration package for the Avora monorepo.
+
+It owns repository-level TypeScript, ESLint, Prettier, and typed environment configuration so application and library packages do not create separate local standards.
 
 ## Public surface
 
@@ -29,19 +31,16 @@ TypeScript, ESLint, Prettier, and typed environment schema.
 ## Requirement trace
 
 - REPO-001
-- REPO-009
-- REPO-011
-- REPO-012
-- REPO-013
-- REPO-016
+- REPO-003
+- REPO-004
 - ENG-001
+- ENG-011
 - ENG-013
 - ENG-017
-- ENG-050
-- ENG-267
-- SEC-230
-- SEC-231
+- ENG-322
 
-## Rules
+## Boundaries
 
-This package has no internal Avora dependencies. Any dependency added here is inherited by the repository configuration layer and requires explicit approval.
+This package is configuration infrastructure only.
+
+It must not contain application features, domain services, API handlers, UI components, database schema, Supabase configuration, AI logic, business logic, or tests.

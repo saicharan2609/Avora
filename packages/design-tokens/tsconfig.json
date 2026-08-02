@@ -1,0 +1,10 @@
+{
+  "extends": "@avora/config/typescript/library",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist"
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}

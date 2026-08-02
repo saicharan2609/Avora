@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@d63268305364d27d6d9c34b2079f598444040856
+        uses: actions/checkout@v4
 
       - name: Verify freeze calendar exists
         run: test -f .github/freeze-calendar.yml
