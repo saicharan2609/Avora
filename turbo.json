@@ -1,0 +1,137 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [
+    "pnpm-lock.yaml",
+    "packages/config/**",
+    ".nvmrc"
+  ],
+  "globalEnv": [
+    "NODE_ENV",
+    "CI"
+  ],
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**"
+      ]
+    },
+    "typecheck": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "*.tsbuildinfo"
+      ]
+    },
+    "lint": {
+      "outputs": []
+    },
+    "lint:arch": {
+      "outputs": []
+    },
+    "format:check": {
+      "outputs": []
+    },
+    "test:unit": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "coverage/**"
+      ]
+    },
+    "test:contract": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": []
+    },
+    "test:integration": {
+      "dependsOn": [
+        "^build",
+        "db:ready"
+      ],
+      "cache": false,
+      "outputs": []
+    },
+    "test:rls": {
+      "dependsOn": [
+        "db:ready"
+      ],
+      "cache": false,
+      "outputs": []
+    },
+    "test:adaptivity": {
+      "dependsOn": [
+        "^build",
+        "db:ready"
+      ],
+      "cache": false,
+      "outputs": []
+    },
+    "eval:ai": {
+      "dependsOn": [
+        "^build"
+      ],
+      "cache": false,
+      "outputs": [
+        "reports/**"
+      ]
+    },
+    "bundle:check": {
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [
+        "reports/bundle/**"
+      ]
+    },
+    "a11y": {
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": []
+    },
+    "e2e": {
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false,
+      "outputs": [
+        "test-results/**",
+        "playwright-report/**"
+      ]
+    },
+    "db:ready": {
+      "cache": false,
+      "outputs": []
+    },
+    "db:generate": {
+      "cache": false,
+      "outputs": []
+    },
+    "db:diff": {
+      "cache": false,
+      "outputs": []
+    },
+    "db:lint": {
+      "cache": false,
+      "outputs": []
+    },
+    "env:check": {
+      "outputs": []
+    },
+    "clean": {
+      "cache": false,
+      "outputs": []
+    }
+  }
+}

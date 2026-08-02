@@ -1,0 +1,35 @@
+name: pr-adaptivity
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions: {}
+
+concurrency:
+  group: pr-adaptivity-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  adaptivity:
+    name: Structural adaptivity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d63268305364d27d6d9c34b2079f598444040856
+
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Structural adaptivity suite
+        run: pnpm test:adaptivity

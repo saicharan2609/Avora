@@ -1,0 +1,18 @@
+name: freeze-check
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  freeze-check:
+    name: Examination window freeze check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d63268305364d27d6d9c34b2079f598444040856
+
+      - name: Verify freeze calendar exists
+        run: test -f .github/freeze-calendar.yml

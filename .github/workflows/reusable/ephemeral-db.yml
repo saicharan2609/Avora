@@ -1,0 +1,20 @@
+name: reusable-ephemeral-db
+
+on:
+  workflow_call:
+
+permissions: {}
+
+jobs:
+  ephemeral-db:
+    name: Ephemeral database contract
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d63268305364d27d6d9c34b2079f598444040856
+
+      - name: Verify synthetic-only database setup contract
+        run: |
+          test -d supabase/migrations
+          test -d supabase/policies
+          test -d supabase/seed

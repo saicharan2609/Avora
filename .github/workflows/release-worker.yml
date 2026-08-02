@@ -1,0 +1,28 @@
+name: release-worker
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  freeze:
+    uses: ./.github/workflows/freeze-check.yml
+
+  release-worker:
+    name: Worker release contract
+    needs: freeze
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d63268305364d27d6d9c34b2079f598444040856
+
+      - name: Verify worker Dockerfile exists
+        run: test -f apps/worker/Dockerfile
+
+      - name: Verify service role remains worker-scoped
+        run: |
+          git grep -n "SUPABASE_SERVICE_ROLE_KEY" -- . \
+            ':!apps/worker/**' \
+            ':!packages/adapters/**' \
+            ':!packages/config/env/**' && exit 1 || true

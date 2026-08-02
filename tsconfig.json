@@ -1,0 +1,53 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/config"
+    },
+    {
+      "path": "./packages/design-tokens"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/db"
+    },
+    {
+      "path": "./packages/retrieval"
+    },
+    {
+      "path": "./packages/jobs"
+    },
+    {
+      "path": "./packages/adapters"
+    },
+    {
+      "path": "./packages/ai"
+    },
+    {
+      "path": "./packages/domain"
+    },
+    {
+      "path": "./packages/ui-web"
+    },
+    {
+      "path": "./packages/ui-mobile"
+    },
+    {
+      "path": "./apps/web"
+    },
+    {
+      "path": "./apps/mobile"
+    },
+    {
+      "path": "./apps/worker"
+    },
+    {
+      "path": "./e2e"
+    },
+    {
+      "path": "./evals"
+    }
+  ]
+}

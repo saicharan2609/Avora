@@ -1,0 +1,35 @@
+{
+  "name": "@avora/config",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./typescript/base": "./typescript/base.json",
+    "./typescript/library": "./typescript/library.json",
+    "./typescript/next": "./typescript/next.json",
+    "./typescript/expo": "./typescript/expo.json",
+    "./typescript/node": "./typescript/node.json",
+    "./eslint/base": "./eslint/base.js",
+    "./eslint/react": "./eslint/react.js",
+    "./eslint/react-native": "./eslint/react-native.js",
+    "./eslint/node": "./eslint/node.js",
+    "./eslint/architecture": "./eslint/architecture.js",
+    "./prettier": "./prettier/index.js",
+    "./env/client": "./env/client.env.ts",
+    "./env/server": "./env/server.env.ts",
+    "./env/worker": "./env/worker.env.ts",
+    "./env/schema-contract": "./env/schema.contract.ts"
+  },
+  "dependencies": {
+    "@eslint/js": "10.0.1",
+    "@typescript-eslint/eslint-plugin": "8.65.0",
+    "@typescript-eslint/parser": "8.65.0",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-native": "5.0.0",
+    "globals": "17.6.0",
+    "prettier": "3.9.6",
+    "typescript": "6.0.3",
+    "zod": "4.4.3"
+  }
+}

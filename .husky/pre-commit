@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+set -eu
+
+pnpm exec lint-staged
+pnpm env:check
