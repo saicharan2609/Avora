@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "eslint": "10.8.0",
+    "@types/node": "24.10.4",
     "prettier": "3.9.6",
     "syncpack": "14.0.0",
     "turbo": "2.10.7",

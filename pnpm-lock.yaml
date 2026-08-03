@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@types/node':
+        specifier: 24.10.4
+        version: 24.10.4
       eslint:
         specifier: 10.8.0
         version: 10.8.0
@@ -24,14 +27,37 @@ importers:
         specifier: 6.0.3
         version: 6.0.3
 
+  packages/adapters:
+    dependencies:
+      '@avora/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@avora/config':
+        specifier: workspace:*
+        version: link:../config
+
+  packages/ai:
+    dependencies:
+      '@avora/core':
+        specifier: workspace:*
+        version: link:../core
+      '@avora/db':
+        specifier: workspace:*
+        version: link:../db
+      '@avora/retrieval':
+        specifier: workspace:*
+        version: link:../retrieval
+    devDependencies:
+      '@avora/config':
+        specifier: workspace:*
+        version: link:../config
+
   packages/config:
     dependencies:
       '@eslint/js':
         specifier: 10.0.1
         version: 10.0.1(eslint@10.8.0)
-      '@types/node':
-        specifier: 24.10.4
-        version: 24.10.4
       '@typescript-eslint/eslint-plugin':
         specifier: 8.65.0
         version: 8.65.0(@typescript-eslint/parser@8.65.0(eslint@10.8.0)(typescript@6.0.3))(eslint@10.8.0)(typescript@6.0.3)
@@ -69,7 +95,69 @@ importers:
         specifier: workspace:*
         version: link:../config
 
+  packages/db:
+    dependencies:
+      '@avora/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@avora/config':
+        specifier: workspace:*
+        version: link:../config
+
   packages/design-tokens:
+    devDependencies:
+      '@avora/config':
+        specifier: workspace:*
+        version: link:../config
+
+  packages/jobs:
+    dependencies:
+      '@avora/core':
+        specifier: workspace:*
+        version: link:../core
+      '@avora/db':
+        specifier: workspace:*
+        version: link:../db
+    devDependencies:
+      '@avora/config':
+        specifier: workspace:*
+        version: link:../config
+
+  packages/retrieval:
+    dependencies:
+      '@avora/core':
+        specifier: workspace:*
+        version: link:../core
+      '@avora/db':
+        specifier: workspace:*
+        version: link:../db
+    devDependencies:
+      '@avora/config':
+        specifier: workspace:*
+        version: link:../config
+
+  packages/ui-mobile:
+    dependencies:
+      '@avora/core':
+        specifier: workspace:*
+        version: link:../core
+      '@avora/design-tokens':
+        specifier: workspace:*
+        version: link:../design-tokens
+    devDependencies:
+      '@avora/config':
+        specifier: workspace:*
+        version: link:../config
+
+  packages/ui-web:
+    dependencies:
+      '@avora/core':
+        specifier: workspace:*
+        version: link:../core
+      '@avora/design-tokens':
+        specifier: workspace:*
+        version: link:../design-tokens
     devDependencies:
       '@avora/config':
         specifier: workspace:*
