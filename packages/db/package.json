@@ -3,7 +3,12 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./client": "./client/index.ts",
+    "./repositories": "./repositories/index.ts",
+    "./ports": "./ports/index.ts",
+    "./rls": "./rls/index.ts",
+    "./rls/harness": "./rls/harness/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
