@@ -3,14 +3,15 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./suites": "./suites/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:arch": "eslint .",
-    "eval:ai": "echo \"AI evaluation suites are implemented in a later stage\""
+    "eval:ai": "pnpm run build && node dist/suites/run-ai-eval-gates.js"
   },
   "dependencies": {},
   "devDependencies": {

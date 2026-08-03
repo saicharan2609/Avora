@@ -1,6 +1,7 @@
 # @avora/e2e
 
 Owner: @avora/qa  
+Structural adaptivity owner: @avora/architecture  
 Package type: test harness  
 Publishable: no
 
@@ -8,11 +9,14 @@ Publishable: no
 
 `@avora/e2e` is the cross-cutting harness package for Avora.
 
-It owns the top-level end-to-end harness directories that do not belong beside a single package. Stage 3 creates only the workspace package shell, TypeScript wiring, README, empty public TypeScript surface, and tracked canonical directories.
+It owns the top-level end-to-end harness directories that do not belong beside a single package.
+
+Stage 4 Group 6 wires the first always-on structural adaptivity gate. It does not implement product flows, browser automation, mobile automation, load simulation, API tests, database tests, Supabase tests, authentication tests, AI behaviour, React components, React Native components, pages, or screens.
 
 ## Public surface
 
 - `@avora/e2e`
+- `@avora/e2e/adaptivity`
 
 ## Requirement trace
 
@@ -22,6 +26,8 @@ It owns the top-level end-to-end harness directories that do not belong beside a
 - REPO-020
 - ENG-011
 - ENG-019
+- ENG-341
+- ENG-342
 - NN-01
 - NN-12
 
@@ -36,8 +42,14 @@ It owns the top-level end-to-end harness directories that do not belong beside a
 - `load/`
 - `fixtures/`
 
+## Gates
+
+- `test:adaptivity` runs the structural adaptivity suite.
+- The suite must not be skipped, marked pending, or weakened.
+- The suite uses synthetic fixtures only.
+
 ## Boundaries
 
 This package must not contain application features, business logic, API handlers, database schema, Supabase configuration, authentication implementation, AI implementation, React components, React Native components, pages, or screens.
 
-Stage 3 does not implement test cases or fixtures.
+End-to-end critical flows and load simulation remain later-stage work.

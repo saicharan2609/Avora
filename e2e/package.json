@@ -3,15 +3,16 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./adaptivity": "./adaptivity/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:arch": "eslint .",
-    "e2e": "echo \"end-to-end suites are implemented in a later stage\"",
-    "test:adaptivity": "echo \"structural adaptivity suite is implemented in a later stage\""
+    "e2e": "echo \"end-to-end critical flows are implemented in a later stage\"",
+    "test:adaptivity": "pnpm run build && node dist/adaptivity/run-adaptivity-suite.js"
   },
   "dependencies": {},
   "devDependencies": {
