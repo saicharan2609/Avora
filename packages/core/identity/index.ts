@@ -1,0 +1,21 @@
+declare const studentIdBrand: unique symbol;
+declare const subjectIdBrand: unique symbol;
+declare const structureUnitIdBrand: unique symbol;
+declare const resourceIdBrand: unique symbol;
+declare const chunkIdBrand: unique symbol;
+declare const conceptIdBrand: unique symbol;
+declare const jobIdBrand: unique symbol;
+declare const conversationIdBrand: unique symbol;
+declare const messageIdBrand: unique symbol;
+declare const citationIdBrand: unique symbol;
+
+export type StudentId = string & { readonly [studentIdBrand]: "StudentId" };
+export type SubjectId = string & { readonly [subjectIdBrand]: "SubjectId" };
+export type StructureUnitId = string & { readonly [structureUnitIdBrand]: "StructureUnitId" };
+export type ResourceId = string & { readonly [resourceIdBrand]: "ResourceId" };
+export type ChunkId = string & { readonly [chunkIdBrand]: "ChunkId" };
+export type ConceptId = string & { readonly [conceptIdBrand]: "ConceptId" };
+export type JobId = string & { readonly [jobIdBrand]: "JobId" };
+export type ConversationId = string & { readonly [conversationIdBrand]: "ConversationId" };
+export type MessageId = string & { readonly [messageIdBrand]: "MessageId" };
+export type CitationId = string & { readonly [citationIdBrand]: "CitationId" };
