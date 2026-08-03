@@ -1,0 +1,21 @@
+{
+  "name": "@avora/ui-mobile",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "lint:arch": "eslint ."
+  },
+  "dependencies": {
+    "@avora/core": "workspace:*",
+    "@avora/design-tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@avora/config": "workspace:*"
+  }
+}
