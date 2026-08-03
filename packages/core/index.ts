@@ -7,3 +7,4 @@ export type * from "./query-keys/index.js";
 export type * from "./observability/index.js";
 export type * from "./text/index.js";
 export type * from "./time/index.js";
+export type * from "./validation/index.js";

@@ -12,7 +12,8 @@
     "./query-keys": "./query-keys/index.ts",
     "./observability": "./observability/index.ts",
     "./text": "./text/index.ts",
-    "./time": "./time/index.ts"
+    "./time": "./time/index.ts",
+    "./validation": "./validation/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -20,7 +21,9 @@
     "lint": "eslint .",
     "lint:arch": "eslint ."
   },
-  "dependencies": {},
+  "dependencies": {
+    "zod": "4.4.3"
+  },
   "devDependencies": {
     "@avora/config": "workspace:*"
   }

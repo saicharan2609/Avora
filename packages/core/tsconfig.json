@@ -14,7 +14,8 @@
     "query-keys/**/*.ts",
     "observability/**/*.ts",
     "text/**/*.ts",
-    "time/**/*.ts"
+    "time/**/*.ts",
+    "validation/**/*.ts"
   ],
   "references": [
     {
