@@ -2,7 +2,8 @@
   "extends": "../config/typescript/expo.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "noEmit": false
   },
   "include": [
     "src/**/*.ts",

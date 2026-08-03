@@ -1,0 +1,29 @@
+{
+  "name": "@avora/web",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "lint:arch": "eslint .",
+    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
+    "bundle:check": "echo \"bundle check is configured in a later stage\"",
+    "a11y": "echo \"accessibility check is configured in a later stage\""
+  },
+  "dependencies": {
+    "@avora/adapters": "workspace:*",
+    "@avora/ai": "workspace:*",
+    "@avora/core": "workspace:*",
+    "@avora/db": "workspace:*",
+    "@avora/domain": "workspace:*",
+    "@avora/jobs": "workspace:*",
+    "@avora/ui-web": "workspace:*"
+  },
+  "devDependencies": {
+    "@avora/config": "workspace:*"
+  }
+}

@@ -27,6 +27,78 @@ importers:
         specifier: 6.0.3
         version: 6.0.3
 
+  apps/mobile:
+    dependencies:
+      '@avora/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@avora/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
+      '@avora/ui-mobile':
+        specifier: workspace:*
+        version: link:../../packages/ui-mobile
+    devDependencies:
+      '@avora/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+
+  apps/web:
+    dependencies:
+      '@avora/adapters':
+        specifier: workspace:*
+        version: link:../../packages/adapters
+      '@avora/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
+      '@avora/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@avora/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@avora/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
+      '@avora/jobs':
+        specifier: workspace:*
+        version: link:../../packages/jobs
+      '@avora/ui-web':
+        specifier: workspace:*
+        version: link:../../packages/ui-web
+    devDependencies:
+      '@avora/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+
+  apps/worker:
+    dependencies:
+      '@avora/adapters':
+        specifier: workspace:*
+        version: link:../../packages/adapters
+      '@avora/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
+      '@avora/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@avora/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@avora/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
+      '@avora/jobs':
+        specifier: workspace:*
+        version: link:../../packages/jobs
+      '@avora/retrieval':
+        specifier: workspace:*
+        version: link:../../packages/retrieval
+    devDependencies:
+      '@avora/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+
   packages/adapters:
     dependencies:
       '@avora/core':

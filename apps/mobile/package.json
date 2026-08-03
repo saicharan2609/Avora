@@ -1,0 +1,25 @@
+{
+  "name": "@avora/mobile",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "lint:arch": "eslint .",
+    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
+    "bundle:check": "echo \"mobile bundle check is configured in a later stage\"",
+    "a11y": "echo \"mobile accessibility check is configured in a later stage\""
+  },
+  "dependencies": {
+    "@avora/core": "workspace:*",
+    "@avora/domain": "workspace:*",
+    "@avora/ui-mobile": "workspace:*"
+  },
+  "devDependencies": {
+    "@avora/config": "workspace:*"
+  }
+}
