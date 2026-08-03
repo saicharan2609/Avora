@@ -1,18 +1,35 @@
 # @avora/ai
 
 Owner: @avora/ai  
+Protected paths: `prompts/`, `gateway/routing/`  
 Package type: library  
 Publishable: no
 
 ## Purpose
 
-`@avora/ai` is the AI Gateway package shell for Avora.
+`@avora/ai` is the AI Gateway package for Avora.
 
-It is the future home for AI Gateway boundaries, AI-owned ports, provider adapters, prompt assets, routing configuration, and evaluation integration points.
+It is the single enforcement point for budget gating, context assembly, sealed evidence envelopes, routing, invocation, output validation, citation resolution, provenance stamping, and AI telemetry.
+
+Stage 4 Group 5 establishes only the directory structure, empty public seams, TypeScript wiring, and export wiring.
 
 ## Public surface
 
 - `@avora/ai`
+- `@avora/ai/gateway`
+- `@avora/ai/gateway/budget-gate`
+- `@avora/ai/gateway/context`
+- `@avora/ai/gateway/envelope`
+- `@avora/ai/gateway/invocation`
+- `@avora/ai/gateway/validation`
+- `@avora/ai/gateway/citations`
+- `@avora/ai/gateway/telemetry`
+- `@avora/ai/ports`
+- `@avora/ai/adapters`
+- `@avora/ai/adapters/antigravity`
+- `@avora/ai/adapters/anthropic`
+- `@avora/ai/adapters/openai`
+- `@avora/ai/adapters/google`
 
 ## Requirement trace
 
@@ -22,11 +39,20 @@ It is the future home for AI Gateway boundaries, AI-owned ports, provider adapte
 - REPO-012
 - ENG-011
 - ENG-013
-- ENG-016
 - ENG-018
-- ENG-026
+- ENG-019
+- ENG-212
+- ENG-216
+- ENG-217
+- ENG-221
+- ENG-224
+- ENG-229
+- ENG-231
+- ENG-322
 - NN-02
 - NN-03
+- NN-08
+- NN-09
 - NN-11
 
 ## Workspace dependencies
@@ -36,8 +62,30 @@ It is the future home for AI Gateway boundaries, AI-owned ports, provider adapte
 - `@avora/retrieval`
 - `@avora/config`
 
+## Directory responsibilities
+
+- `gateway/budget-gate/` is reserved for AI budget gating.
+- `gateway/context/` is reserved for context assembly.
+- `gateway/envelope/` is reserved for the sealed untrusted-evidence envelope.
+- `gateway/routing/` is reserved for protected declarative routing policy.
+- `gateway/invocation/` is reserved for invocation timeout, retry, and fallback mechanics.
+- `gateway/validation/` is reserved for output contract validation.
+- `gateway/citations/` is reserved for machine citation resolution.
+- `gateway/telemetry/` is reserved for cost and quality signals.
+- `ports/` owns vendor-free AI package ports.
+- `adapters/` is the only AI package location where model, embedding, or orchestration provider names may appear in paths.
+- `prompts/` is reserved for protected prompt assets.
+- `scripts/` is reserved for package-owned AI scripts.
+- `__tests__/` is reserved for colocated package tests.
+
 ## Boundaries
 
-This package must not contain feature logic, domain services, application pages, API handlers, database schema, Supabase configuration, authentication logic, React components, React Native components, or tests.
+This package must not import `@avora/ui-web` or `@avora/ui-mobile`.
 
-No provider SDK, model name, prompt implementation, routing implementation, or AI business logic is introduced in Stage 3.
+This package must not import feature modules.
+
+Provider SDKs are permitted only under `adapters/`.
+
+The `gateway/envelope/` path is the only AI package location that may construct model input.
+
+Stage 4 Group 5 does not implement routing policy, prompts, provider SDKs, model calls, gateway behavior, budget logic, context assembly, envelopes, invocation, validation, citation resolution, telemetry, business logic, database schema, Supabase logic, APIs, authentication, UI code, or tests.

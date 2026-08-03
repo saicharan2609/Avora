@@ -3,7 +3,14 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./supabase": "./supabase/index.ts",
+    "./stripe": "./stripe/index.ts",
+    "./psp": "./psp/index.ts",
+    "./resend": "./resend/index.ts",
+    "./sentry": "./sentry/index.ts",
+    "./posthog": "./posthog/index.ts",
+    "./otel": "./otel/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

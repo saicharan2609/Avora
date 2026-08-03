@@ -1,11 +1,17 @@
 {
   "extends": "../config/typescript/node.json",
   "compilerOptions": {
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "dist"
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "ports/**/*.ts",
+    "chunking/**/*.ts",
+    "strategies/**/*.ts",
+    "scope/**/*.ts",
+    "search/**/*.ts",
+    "insufficiency/**/*.ts"
   ],
   "references": [
     {

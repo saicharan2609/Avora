@@ -1,11 +1,18 @@
 {
   "extends": "../config/typescript/node.json",
   "compilerOptions": {
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "dist"
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "supabase/**/*.ts",
+    "stripe/**/*.ts",
+    "psp/**/*.ts",
+    "resend/**/*.ts",
+    "sentry/**/*.ts",
+    "posthog/**/*.ts",
+    "otel/**/*.ts"
   ],
   "references": [
     {

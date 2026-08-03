@@ -3,7 +3,15 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./ports": "./ports/index.ts",
+    "./queue": "./queue/index.ts",
+    "./state-machines": "./state-machines/index.ts",
+    "./claim": "./claim/index.ts",
+    "./checkpoint": "./checkpoint/index.ts",
+    "./heartbeat": "./heartbeat/index.ts",
+    "./priorities": "./priorities/index.ts",
+    "./dead-letter": "./dead-letter/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

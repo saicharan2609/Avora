@@ -1,11 +1,19 @@
 {
   "extends": "../config/typescript/node.json",
   "compilerOptions": {
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "dist"
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "ports/**/*.ts",
+    "queue/**/*.ts",
+    "state-machines/**/*.ts",
+    "claim/**/*.ts",
+    "checkpoint/**/*.ts",
+    "heartbeat/**/*.ts",
+    "priorities/**/*.ts",
+    "dead-letter/**/*.ts"
   ],
   "references": [
     {
