@@ -99,6 +99,18 @@ importers:
         specifier: workspace:*
         version: link:../../packages/config
 
+  e2e:
+    devDependencies:
+      '@avora/config':
+        specifier: workspace:*
+        version: link:../packages/config
+
+  evals:
+    devDependencies:
+      '@avora/config':
+        specifier: workspace:*
+        version: link:../packages/config
+
   packages/adapters:
     dependencies:
       '@avora/core':

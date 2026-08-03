@@ -1,0 +1,20 @@
+{
+  "name": "@avora/e2e",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "lint:arch": "eslint .",
+    "e2e": "echo \"end-to-end suites are implemented in a later stage\"",
+    "test:adaptivity": "echo \"structural adaptivity suite is implemented in a later stage\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@avora/config": "workspace:*"
+  }
+}

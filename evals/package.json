@@ -1,0 +1,19 @@
+{
+  "name": "@avora/evals",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "lint:arch": "eslint .",
+    "eval:ai": "echo \"AI evaluation suites are implemented in a later stage\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@avora/config": "workspace:*"
+  }
+}
