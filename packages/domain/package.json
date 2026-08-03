@@ -1,0 +1,38 @@
+{
+  "name": "@avora/domain",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./identity": "./identity/index.ts",
+    "./academic": "./academic/index.ts",
+    "./resources": "./resources/index.ts",
+    "./knowledge": "./knowledge/index.ts",
+    "./tutor": "./tutor/index.ts",
+    "./notes": "./notes/index.ts",
+    "./recall": "./recall/index.ts",
+    "./assessment": "./assessment/index.ts",
+    "./mastery": "./mastery/index.ts",
+    "./planning": "./planning/index.ts",
+    "./insights": "./insights/index.ts",
+    "./sharing": "./sharing/index.ts",
+    "./billing": "./billing/index.ts",
+    "./ai": "./ai/index.ts",
+    "./jobs": "./jobs/index.ts",
+    "./platform": "./platform/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "lint:arch": "eslint ."
+  },
+  "dependencies": {
+    "@avora/core": "workspace:*",
+    "@avora/db": "workspace:*",
+    "@avora/jobs": "workspace:*"
+  },
+  "devDependencies": {
+    "@avora/config": "workspace:*"
+  }
+}

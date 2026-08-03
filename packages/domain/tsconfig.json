@@ -1,0 +1,40 @@
+{
+  "extends": "../config/typescript/node.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist"
+  },
+  "include": [
+    "src/**/*.ts",
+    "identity/**/*.ts",
+    "academic/**/*.ts",
+    "resources/**/*.ts",
+    "knowledge/**/*.ts",
+    "tutor/**/*.ts",
+    "notes/**/*.ts",
+    "recall/**/*.ts",
+    "assessment/**/*.ts",
+    "mastery/**/*.ts",
+    "planning/**/*.ts",
+    "insights/**/*.ts",
+    "sharing/**/*.ts",
+    "billing/**/*.ts",
+    "ai/**/*.ts",
+    "jobs/**/*.ts",
+    "platform/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "../config"
+    },
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../db"
+    },
+    {
+      "path": "../jobs"
+    }
+  ]
+}

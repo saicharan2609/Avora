@@ -1,0 +1,59 @@
+# @avora/domain
+
+Owner: per module  
+Package type: library  
+Publishable: no
+
+## Purpose
+
+`@avora/domain` is the domain package for Avora.
+
+It contains the sixteen domain module boundaries named in the repository architecture. Stage 3 creates only the package shell, module entry points, and module README files. Domain services, repositories, policies, jobs, contracts, ports, and events are implemented later.
+
+## Public surface
+
+- `@avora/domain`
+- `@avora/domain/identity`
+- `@avora/domain/academic`
+- `@avora/domain/resources`
+- `@avora/domain/knowledge`
+- `@avora/domain/tutor`
+- `@avora/domain/notes`
+- `@avora/domain/recall`
+- `@avora/domain/assessment`
+- `@avora/domain/mastery`
+- `@avora/domain/planning`
+- `@avora/domain/insights`
+- `@avora/domain/sharing`
+- `@avora/domain/billing`
+- `@avora/domain/ai`
+- `@avora/domain/jobs`
+- `@avora/domain/platform`
+
+## Requirement trace
+
+- REPO-001
+- REPO-003
+- REPO-004
+- REPO-007
+- ENG-011
+- ENG-013
+- ENG-015
+- ENG-016
+- ENG-018
+- NN-10
+
+## Workspace dependencies
+
+- `@avora/core`
+- `@avora/db`
+- `@avora/jobs`
+- `@avora/config`
+
+## Boundaries
+
+This package must not import `@avora/ui-web` or `@avora/ui-mobile`.
+
+This package must not contain HTTP framework code, API handlers, React components, React Native components, pages, screens, database schema, Supabase configuration, authentication implementation, AI provider implementation, vendor SDK usage, or tests.
+
+Cross-module imports must resolve through a module public entry point.

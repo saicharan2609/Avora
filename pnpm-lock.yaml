@@ -111,6 +111,22 @@ importers:
         specifier: workspace:*
         version: link:../config
 
+  packages/domain:
+    dependencies:
+      '@avora/core':
+        specifier: workspace:*
+        version: link:../core
+      '@avora/db':
+        specifier: workspace:*
+        version: link:../db
+      '@avora/jobs':
+        specifier: workspace:*
+        version: link:../jobs
+    devDependencies:
+      '@avora/config':
+        specifier: workspace:*
+        version: link:../config
+
   packages/jobs:
     dependencies:
       '@avora/core':
