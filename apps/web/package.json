@@ -7,7 +7,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:arch": "eslint .",
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "start": "next start",
     "bundle:check": "echo \"web bundle check is configured in a later stage\"",
     "a11y": "echo \"web accessibility check is configured in a later stage\""
