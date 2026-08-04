@@ -1,0 +1,26 @@
+{
+  "name": "structural-adaptivity-synthetic-seed",
+  "owner": "@avora/architecture",
+  "data_classification": "synthetic",
+  "production_derived": false,
+  "requirements": [
+    "AD-41",
+    "NN-01",
+    "NN-07",
+    "ENG-342"
+  ],
+  "cases": [
+    {
+      "case_id": "subject-with-no-structure",
+      "purpose": "A subject may have no structure."
+    },
+    {
+      "case_id": "student-authored-heterogeneous-labels",
+      "purpose": "Student-authored labels are not validated against a fixed academic hierarchy."
+    },
+    {
+      "case_id": "resource-preserved-across-restructure",
+      "purpose": "Resources retain stable identity across structural change."
+    }
+  ]
+}

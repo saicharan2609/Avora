@@ -10,6 +10,8 @@ Publishable: no
 
 It owns the package-level data-access seams for role-scoped clients, generated schema types, repository primitives, database ports, and the RLS negative-authorisation harness.
 
+Stage 6 Group 1 wires the database repository foundation before the first application table. It keeps generated schema types as an explicit checked artifact and makes database lint, type-generation, diff, and RLS harness commands available to the existing Turbo graph.
+
 ## Public surface
 
 - `@avora/db`
@@ -25,15 +27,24 @@ It owns the package-level data-access seams for role-scoped clients, generated s
 - REPO-003
 - REPO-004
 - REPO-018
+- REPO-019
 - ENG-011
 - ENG-013
 - ENG-016
 - ENG-018
 - ENG-019
+- ENG-053
+- ENG-165
+- ENG-173
+- ENG-174
 - ENG-175
+- ENG-179
+- ENG-180
 - NN-04
 - NN-10
 - NN-12
+- SEC-081
+- SEC-082
 
 ## Workspace dependencies
 
@@ -42,14 +53,21 @@ It owns the package-level data-access seams for role-scoped clients, generated s
 
 ## Directory responsibilities
 
-- `client/` owns the future role-scoped client seams.
-- `generated/` is reserved for generated schema types from `supabase/`.
+- `client/` owns future role-scoped client seams.
+- `generated/` owns generated schema type artifacts from `supabase/`.
 - `repositories/` owns future base repository primitives.
 - `ports/` owns package-level database ports consumed across modules.
-- `rls/harness/` owns the future negative-authorisation harness.
+- `rls/harness/` owns the negative-authorisation harness contract.
 - `rls/__tests__/` is reserved for RLS negative-authorisation tests.
-- `scripts/` is reserved for package-owned data scripts.
+- `scripts/` owns package-owned database scripts.
 - `__tests__/` is reserved for colocated package tests.
+
+## Database commands
+
+- `db:generate` guards generated schema type workflow wiring.
+- `db:diff` guards migration-diff workflow wiring.
+- `db:lint` checks Supabase artifact placement and policy-file shape.
+- `test:rls` runs the RLS harness wiring check.
 
 ## Boundaries
 
@@ -59,4 +77,4 @@ This package must not import `@avora/ui-web`, `@avora/ui-mobile`, `@avora/ai`, a
 
 This package must not contain domain services, feature business logic, API handlers, React components, React Native components, pages, screens, authentication implementation, AI implementation, or vendor adapter logic.
 
-Stage 4 Group 4 creates structure and empty seams only. It does not create database schema, migrations, generated schema types, Supabase configuration, Supabase client implementation, repository implementation, RLS tests, or package scripts.
+Stage 6 Group 1 does not create application tables, migrations, generated production schema types, Supabase client implementation, repository implementation, authentication implementation, or feature data access.

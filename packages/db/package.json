@@ -14,7 +14,11 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "lint:arch": "eslint ."
+    "lint:arch": "eslint .",
+    "db:generate": "node scripts/generate-types.mjs",
+    "db:diff": "node scripts/diff-placeholder.mjs",
+    "db:lint": "node scripts/lint-supabase-artifacts.mjs",
+    "test:rls": "node scripts/run-rls-harness.mjs"
   },
   "dependencies": {
     "@avora/core": "workspace:*"
