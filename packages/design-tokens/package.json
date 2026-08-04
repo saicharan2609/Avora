@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./tier-1": "./tier-1/index.ts",
+    "./tier-2": "./tier-2/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
