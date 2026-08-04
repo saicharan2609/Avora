@@ -2,15 +2,14 @@
   "name": "@avora/worker",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
+  "main": "dist/src/main.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:arch": "eslint .",
-    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput"
+    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
+    "start": "node dist/src/main.js"
   },
   "dependencies": {
     "@avora/adapters": "workspace:*",
