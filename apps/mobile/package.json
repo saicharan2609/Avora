@@ -2,24 +2,30 @@
   "name": "@avora/mobile",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
+  "main": "expo-router/entry",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:arch": "eslint .",
-    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
-    "bundle:check": "echo \"mobile bundle check is configured in a later stage\"",
-    "a11y": "echo \"mobile accessibility check is configured in a later stage\""
+    "dev": "expo start",
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios"
   },
   "dependencies": {
     "@avora/core": "workspace:*",
     "@avora/domain": "workspace:*",
-    "@avora/ui-mobile": "workspace:*"
+    "@avora/ui-mobile": "workspace:*",
+    "expo": "57.0.8",
+    "expo-router": "57.0.8",
+    "react": "19.2.3",
+    "react-native": "0.86.0"
   },
   "devDependencies": {
-    "@avora/config": "workspace:*"
+    "@avora/config": "workspace:*",
+    "@types/node": "24.10.4",
+    "@types/react": "19.2.17",
+    "@types/xcode": "^3.0.0"
   }
 }
