@@ -3,7 +3,10 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./tokens": "./tokens/index.ts",
+    "./primitives": "./primitives/index.ts",
+    "./domain-components": "./domain-components/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

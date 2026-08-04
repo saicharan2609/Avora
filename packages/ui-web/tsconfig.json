@@ -1,13 +1,18 @@
 {
   "extends": "../config/typescript/next.json",
   "compilerOptions": {
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "dist",
     "noEmit": false
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/**/*.tsx",
+    "tokens/**/*.ts",
+    "primitives/**/*.ts",
+    "primitives/**/*.tsx",
+    "domain-components/**/*.ts",
+    "domain-components/**/*.tsx"
   ],
   "references": [
     {
