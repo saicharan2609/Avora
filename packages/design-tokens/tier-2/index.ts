@@ -1,4 +1,4 @@
-import { tier1Tokens } from "../tier-1/index.js";
+import { tier1Tokens } from "../tier-1";
 
 export const tier2Tokens = {
   surface: {

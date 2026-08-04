@@ -2,17 +2,15 @@
   "name": "@avora/web",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "next build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:arch": "eslint .",
-    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
-    "bundle:check": "echo \"bundle check is configured in a later stage\"",
-    "a11y": "echo \"accessibility check is configured in a later stage\""
+    "dev": "next dev",
+    "start": "next start",
+    "bundle:check": "echo \"web bundle check is configured in a later stage\"",
+    "a11y": "echo \"web accessibility check is configured in a later stage\""
   },
   "dependencies": {
     "@avora/adapters": "workspace:*",
@@ -21,9 +19,14 @@
     "@avora/db": "workspace:*",
     "@avora/domain": "workspace:*",
     "@avora/jobs": "workspace:*",
-    "@avora/ui-web": "workspace:*"
+    "@avora/ui-web": "workspace:*",
+    "next": "16.2.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@avora/config": "workspace:*"
+    "@avora/config": "workspace:*",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3"
   }
 }

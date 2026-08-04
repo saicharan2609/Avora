@@ -1,12 +1,23 @@
 {
   "extends": "../../packages/config/typescript/next.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist"
+    "rootDir": ".",
+    "outDir": "dist",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2024"
+    ]
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "env.ts",
+    "instrumentation.ts",
+    "middleware.ts",
+    "tailwind.config.ts"
   ],
   "references": [
     {
