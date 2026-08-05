@@ -1,0 +1,1 @@
+export type AuthMethod = "google_oauth" | "apple_sign_in" | "email_magic_link";

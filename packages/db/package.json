@@ -22,7 +22,8 @@
     "test:rls": "node scripts/run-rls-harness.mjs"
   },
   "dependencies": {
-    "@avora/core": "workspace:*"
+    "@avora/core": "workspace:*",
+    "@supabase/supabase-js": "2.110.8"
   },
   "devDependencies": {
     "@avora/config": "workspace:*"

@@ -12,7 +12,9 @@ It owns the package-level data-access seams for role-scoped clients, generated s
 
 Stage 6 Group 2 introduced the first student-scoped database table, `public.students`, with deny-by-default RLS posture, reviewed policy artifact, generated database type update, and negative-authorisation harness coverage.
 
-Stage 6 Group 3 adds the Supabase Auth database trigger that creates the durable `public.students` row when an auth user is created. This keeps continuous identity creation in the data plane and avoids application-owned credential or session handling.
+Stage 6 Group 3 added the Supabase Auth database trigger that creates the durable `public.students` row when an auth user is created. This keeps continuous identity creation in the data plane and avoids application-owned credential or session handling.
+
+Stage 6 Group 4 adds the role-scoped database client seam used by web server code and worker code. It introduces the Supabase JavaScript SDK only inside `@avora/db`, where role-scoped database clients are owned.
 
 ## Public surface
 
@@ -56,15 +58,21 @@ Stage 6 Group 3 adds the Supabase Auth database trigger that creates the durable
 - SEC-040
 - SEC-081
 - SEC-082
+- SEC-230
+- SEC-231
 
 ## Workspace dependencies
 
 - `@avora/core`
 - `@avora/config`
 
+## Runtime dependencies
+
+- `@supabase/supabase-js`
+
 ## Directory responsibilities
 
-- `client/` owns future role-scoped client seams.
+- `client/` owns role-scoped database client seams.
 - `generated/` owns generated schema type artifacts from `supabase/`.
 - `repositories/` owns future base repository primitives.
 - `ports/` owns package-level database ports consumed across modules.
@@ -86,12 +94,18 @@ Stage 6 Group 3 adds the Supabase Auth database trigger that creates the durable
 - `app_private.create_student_for_auth_user()`
 - `on_auth_user_created_create_student` trigger on `auth.users`
 
+## Client roles
+
+- `student` clients are scoped by the student's verified access token.
+- `service` clients are reserved for the worker runtime only.
+- anonymous client-input runtimes must not receive service-role credentials.
+
 ## Boundaries
 
 This package must not import `@avora/domain`.
 
 This package must not import `@avora/ui-web`, `@avora/ui-mobile`, `@avora/ai`, application packages, or harness packages.
 
-This package must not contain domain services, feature business logic, API handlers, React components, React Native components, pages, screens, authentication implementation, AI implementation, or vendor adapter logic.
+This package must not contain domain services, feature business logic, API handlers, React components, React Native components, pages, screens, authentication implementation, AI implementation, or vendor adapter logic outside its database-client responsibility.
 
-Stage 6 Group 3 does not implement web login UI, mobile login UI, OAuth button flows, email OTP flows, application APIs, Supabase client implementation, repository methods, session storage, step-up authentication, consent seeding, entitlement seeding, or feature data access.
+Stage 6 Group 4 does not implement web login UI, mobile login UI, OAuth button flows, email OTP flows, application APIs, repository methods, session storage, step-up authentication, consent seeding, entitlement seeding, or feature data access.
