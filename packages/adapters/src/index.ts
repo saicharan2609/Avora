@@ -5,3 +5,5 @@ export type * from "../resend/index.js";
 export type * from "../sentry/index.js";
 export type * from "../posthog/index.js";
 export type * from "../otel/index.js";
+
+export { createSupabaseAuthAdapter } from "../supabase/index.js";

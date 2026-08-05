@@ -5,6 +5,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./supabase": "./supabase/index.ts",
+    "./supabase/auth": "./supabase/auth/index.ts",
     "./stripe": "./stripe/index.ts",
     "./psp": "./psp/index.ts",
     "./resend": "./resend/index.ts",
@@ -19,7 +20,8 @@
     "lint:arch": "eslint ."
   },
   "dependencies": {
-    "@avora/core": "workspace:*"
+    "@avora/core": "workspace:*",
+    "@supabase/supabase-js": "2.110.8"
   },
   "devDependencies": {
     "@avora/config": "workspace:*"
