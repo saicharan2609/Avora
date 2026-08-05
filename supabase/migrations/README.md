@@ -7,13 +7,16 @@ Protected path: yes
 
 This directory owns versioned Supabase SQL migrations.
 
-Stage 6 Group 1 does not introduce application tables. The first migration in this directory establishes only baseline database posture.
+Stage 6 Group 2 introduces the first student-scoped table, `public.students`.
 
 ## Requirement trace
 
 - REPO-018
+- ENG-163
+- ENG-164
+- ENG-169
+- ENG-172
 - ENG-173
-- ENG-174
 - ENG-175
 - ENG-179
 - ENG-180
@@ -33,3 +36,8 @@ Every migration that creates a student-scoped table must include:
 - Generated schema type refresh in `packages/db/generated/`.
 
 Production data must never be committed here.
+
+## Current migrations
+
+- `20260804174000_foundation.sql`
+- `20260804234500_identity_students.sql`

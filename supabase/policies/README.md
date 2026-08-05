@@ -12,8 +12,8 @@ Policies are reviewed as first-class security artifacts rather than being hidden
 ## Requirement trace
 
 - REPO-019
+- ENG-172
 - ENG-173
-- ENG-174
 - ENG-175
 - NN-04
 - SEC-081
@@ -32,4 +32,6 @@ Policy artifacts must document:
 
 Permissive `ALL` policies are prohibited on student-scoped tables.
 
-Stage 6 Group 1 introduces no student-scoped application tables, so it introduces no table policy files.
+## Current policy artifacts
+
+- `students.policy.sql`

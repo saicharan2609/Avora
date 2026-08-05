@@ -17,8 +17,12 @@ Generated files in this directory are derived from the reviewed Supabase schema 
 - ENG-165
 - NN-04
 
-## Current Stage 6 Group 1 state
+## Current Stage 6 Group 2 state
 
-Stage 6 Group 1 does not introduce application tables. The checked-in generated type artifact therefore represents the empty application schema baseline.
+Stage 6 Group 2 introduces the first student-scoped table:
 
-When the first application table is introduced, the generated type artifact must be regenerated in the same change.
+- `public.students`
+
+The checked-in generated type artifact reflects this schema baseline.
+
+When future application tables are introduced, the generated type artifact must be regenerated in the same change.

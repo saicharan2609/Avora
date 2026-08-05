@@ -32,6 +32,22 @@ for (const policyFile of policyFiles) {
   if (policyContents.includes("create policy") && policyContents.includes(" for all ")) {
     throw new Error(`Permissive ALL policy is prohibited: supabase/policies/${policyFile}`);
   }
+
+  if (!policyContents.includes("student_id = auth.uid()")) {
+    throw new Error(
+      `Student-scoped policy artifact must include the ownership predicate: supabase/policies/${policyFile}`,
+    );
+  }
+}
+
+const requiredPolicyArtifacts = ["students.policy.sql"];
+
+for (const requiredPolicyArtifact of requiredPolicyArtifacts) {
+  const policyPath = join(policiesDirectory, requiredPolicyArtifact);
+
+  if (!existsSync(policyPath)) {
+    throw new Error(`Missing required policy artifact: supabase/policies/${requiredPolicyArtifact}`);
+  }
 }
 
 console.log("Supabase artifact lint passed");

@@ -10,7 +10,7 @@ Workspace member: no
 
 It owns local Supabase project configuration, versioned migrations, reviewed RLS policies, synthetic seed data, and short data-adjacent Edge Function locations.
 
-Stage 6 Group 1 establishes the database repository foundation before the first application table.
+Stage 6 Group 2 introduces the first student-scoped application table, `public.students`.
 
 ## Requirement trace
 
@@ -18,12 +18,14 @@ Stage 6 Group 1 establishes the database repository foundation before the first 
 - REPO-004
 - REPO-018
 - REPO-019
+- ENG-163
+- ENG-164
+- ENG-169
+- ENG-172
 - ENG-173
-- ENG-174
 - ENG-175
 - ENG-179
 - ENG-180
-- ENG-342
 - NN-04
 - NN-12
 - SEC-081
@@ -37,6 +39,10 @@ Stage 6 Group 1 establishes the database repository foundation before the first 
 - `policies/` owns reviewed RLS policy artifacts.
 - `seed/` owns synthetic seed data only.
 - `functions/` is reserved for short, data-adjacent Edge Functions.
+
+## Current application tables
+
+- `public.students`
 
 ## Boundaries
 

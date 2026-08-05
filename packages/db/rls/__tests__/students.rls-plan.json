@@ -1,0 +1,40 @@
+{
+  "tables": [
+    {
+      "tableName": "students",
+      "studentScoped": true,
+      "operations": [
+        "select",
+        "insert",
+        "update",
+        "delete"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "caseName": "students.select.cross_student_denied",
+      "tableName": "students",
+      "operation": "select",
+      "expectedOutcome": "deny"
+    },
+    {
+      "caseName": "students.insert.cross_student_denied",
+      "tableName": "students",
+      "operation": "insert",
+      "expectedOutcome": "deny"
+    },
+    {
+      "caseName": "students.update.cross_student_denied",
+      "tableName": "students",
+      "operation": "update",
+      "expectedOutcome": "deny"
+    },
+    {
+      "caseName": "students.delete.own_student_denied",
+      "tableName": "students",
+      "operation": "delete",
+      "expectedOutcome": "deny"
+    }
+  ]
+}
