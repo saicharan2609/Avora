@@ -6,4 +6,7 @@ export type * from "../sentry/index.js";
 export type * from "../posthog/index.js";
 export type * from "../otel/index.js";
 
-export { createSupabaseAuthAdapter } from "../supabase/index.js";
+export {
+  createSupabaseAuthAdapter,
+  createSupabaseStorageAdapter,
+} from "../supabase/index.js";
