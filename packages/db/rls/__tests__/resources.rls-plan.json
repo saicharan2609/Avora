@@ -1,0 +1,40 @@
+{
+  "tables": [
+    {
+      "tableName": "resources",
+      "studentScoped": true,
+      "operations": [
+        "select",
+        "insert",
+        "update",
+        "delete"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "caseName": "resources.select.cross_student_denied",
+      "tableName": "resources",
+      "operation": "select",
+      "expectedOutcome": "deny"
+    },
+    {
+      "caseName": "resources.insert.cross_student_denied",
+      "tableName": "resources",
+      "operation": "insert",
+      "expectedOutcome": "deny"
+    },
+    {
+      "caseName": "resources.update.cross_student_denied",
+      "tableName": "resources",
+      "operation": "update",
+      "expectedOutcome": "deny"
+    },
+    {
+      "caseName": "resources.delete.own_resource_denied",
+      "tableName": "resources",
+      "operation": "delete",
+      "expectedOutcome": "deny"
+    }
+  ]
+}

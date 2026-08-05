@@ -17,7 +17,7 @@ Generated files in this directory are derived from the reviewed Supabase schema 
 - ENG-165
 - NN-04
 
-## Current Stage 6 Group 3 state
+## Current Stage 7 Group 1 state
 
 Stage 6 Group 2 introduced the first student-scoped table:
 
@@ -27,6 +27,10 @@ Stage 6 Group 3 introduced the auth-user creation trigger:
 
 - `app_private.create_student_for_auth_user()`
 - `on_auth_user_created_create_student` on `auth.users`
+
+Stage 7 Group 1 introduces the first resource upload-intent table:
+
+- `public.resources`
 
 The checked-in generated type artifact reflects the application schema baseline visible to typed Avora code. Trigger functions and triggers remain database-owned migration artifacts and are not application call surfaces.
 

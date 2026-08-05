@@ -29,6 +29,7 @@ const requiredMigrations = [
   "20260804174000_foundation.sql",
   "20260804234500_identity_students.sql",
   "20260805191000_identity_auth_user_trigger.sql",
+  "20260805223000_resources_upload_intent.sql",
 ];
 
 for (const requiredMigration of requiredMigrations) {
@@ -50,6 +51,24 @@ for (const migrationFile of migrationFiles) {
 
     if (!migrationContents.includes("alter table public.students force row level security")) {
       throw new Error("public.students migration must force RLS");
+    }
+  }
+
+  if (migrationContents.includes("create table public.resources")) {
+    if (!migrationContents.includes("student_id uuid not null")) {
+      throw new Error("public.resources must include a non-null student_id");
+    }
+
+    if (!migrationContents.includes("alter table public.resources enable row level security")) {
+      throw new Error("public.resources migration must enable RLS before exposure");
+    }
+
+    if (!migrationContents.includes("alter table public.resources force row level security")) {
+      throw new Error("public.resources migration must force RLS");
+    }
+
+    if (!migrationContents.includes("starts_with(storage_object_path, student_id::text || '/')")) {
+      throw new Error("public.resources storage paths must begin with student_id");
     }
   }
 
@@ -90,7 +109,7 @@ for (const policyFile of policyFiles) {
   }
 }
 
-const requiredPolicyArtifacts = ["students.policy.sql"];
+const requiredPolicyArtifacts = ["students.policy.sql", "resources.policy.sql"];
 
 for (const requiredPolicyArtifact of requiredPolicyArtifacts) {
   const policyPath = join(policiesDirectory, requiredPolicyArtifact);

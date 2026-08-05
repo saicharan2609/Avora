@@ -15,6 +15,7 @@ Policies are reviewed as first-class security artifacts rather than being hidden
 - ENG-172
 - ENG-173
 - ENG-175
+- ENG-176
 - NN-04
 - SEC-081
 - SEC-082
@@ -32,6 +33,9 @@ Policy artifacts must document:
 
 Permissive `ALL` policies are prohibited on student-scoped tables.
 
+Storage policy artifacts must preserve the rule that storage paths begin with `student_id`.
+
 ## Current policy artifacts
 
 - `students.policy.sql`
+- `resources.policy.sql`

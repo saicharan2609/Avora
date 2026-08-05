@@ -12,7 +12,9 @@ It owns local Supabase project configuration, versioned migrations, reviewed RLS
 
 Stage 6 Group 2 introduced the first student-scoped application table, `public.students`.
 
-Stage 6 Group 3 wires the Supabase Auth database trigger that creates a `public.students` row on first auth-user creation.
+Stage 6 Group 3 wired the Supabase Auth database trigger that creates a `public.students` row on first auth-user creation.
+
+Stage 7 Group 1 introduces the resource upload-intent persistence surface and storage bucket baseline.
 
 ## Requirement trace
 
@@ -26,12 +28,17 @@ Stage 6 Group 3 wires the Supabase Auth database trigger that creates a `public.
 - ENG-172
 - ENG-173
 - ENG-175
+- ENG-176
 - ENG-179
 - ENG-180
-- ENG-183
-- ENG-184
-- ENG-186
+- FR-032
+- FR-035
+- FR-036
+- FR-037
+- FR-042
+- NFR-034
 - NN-04
+- NN-05
 - NN-12
 - SEC-040
 - SEC-081
@@ -49,6 +56,15 @@ Stage 6 Group 3 wires the Supabase Auth database trigger that creates a `public.
 ## Current application tables
 
 - `public.students`
+- `public.resources`
+
+## Current storage buckets
+
+- `quarantine`
+- `originals`
+- `derivatives`
+- `exports`
+- `shared`
 
 ## Current private database functions
 
@@ -71,3 +87,5 @@ Every student-scoped table must have deny-by-default RLS and negative-authorisat
 Permissive `ALL` policies are prohibited on student-scoped tables.
 
 Authentication is owned by Supabase Auth. Avora application packages must not implement credential handling, session issuance, or token verification.
+
+Resource storage paths must begin with `student_id`.
