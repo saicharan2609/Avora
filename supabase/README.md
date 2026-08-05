@@ -10,7 +10,9 @@ Workspace member: no
 
 It owns local Supabase project configuration, versioned migrations, reviewed RLS policies, synthetic seed data, and short data-adjacent Edge Function locations.
 
-Stage 6 Group 2 introduces the first student-scoped application table, `public.students`.
+Stage 6 Group 2 introduced the first student-scoped application table, `public.students`.
+
+Stage 6 Group 3 wires the Supabase Auth database trigger that creates a `public.students` row on first auth-user creation.
 
 ## Requirement trace
 
@@ -26,8 +28,12 @@ Stage 6 Group 2 introduces the first student-scoped application table, `public.s
 - ENG-175
 - ENG-179
 - ENG-180
+- ENG-183
+- ENG-184
+- ENG-186
 - NN-04
 - NN-12
+- SEC-040
 - SEC-081
 - SEC-082
 - SEC-230
@@ -44,6 +50,14 @@ Stage 6 Group 2 introduces the first student-scoped application table, `public.s
 
 - `public.students`
 
+## Current private database functions
+
+- `app_private.create_student_for_auth_user()`
+
+## Current auth triggers
+
+- `on_auth_user_created_create_student` on `auth.users`
+
 ## Boundaries
 
 This directory is not a pnpm workspace member.
@@ -55,3 +69,5 @@ This directory must not contain secret values.
 Every student-scoped table must have deny-by-default RLS and negative-authorisation harness coverage in the same change that introduces the table.
 
 Permissive `ALL` policies are prohibited on student-scoped tables.
+
+Authentication is owned by Supabase Auth. Avora application packages must not implement credential handling, session issuance, or token verification.

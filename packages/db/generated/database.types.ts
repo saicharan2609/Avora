@@ -2,10 +2,11 @@
  * GENERATED FILE — DO NOT EDIT BY HAND.
  *
  * Source: supabase/
- * Stage: Stage 6 Group 2 identity persistence baseline.
+ * Stage: Stage 6 Group 3 auth identity trigger baseline.
  *
  * This file represents the generated database type baseline after introducing
- * public.students as Avora's first student-scoped table.
+ * public.students as Avora's first student-scoped table and wiring the
+ * database-owned auth-user creation trigger.
  */
 
 export type Json =
@@ -60,7 +61,12 @@ export type Database = Readonly<{
   app_private: Readonly<{
     Tables: Readonly<Record<string, never>>;
     Views: Readonly<Record<string, never>>;
-    Functions: Readonly<Record<string, never>>;
+    Functions: Readonly<{
+      create_student_for_auth_user: Readonly<{
+        Args: Readonly<Record<string, never>>;
+        Returns: unknown;
+      }>;
+    }>;
     Enums: Readonly<Record<string, never>>;
     CompositeTypes: Readonly<Record<string, never>>;
   }>;

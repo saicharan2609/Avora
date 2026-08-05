@@ -7,7 +7,9 @@ Protected path: yes
 
 This directory owns versioned Supabase SQL migrations.
 
-Stage 6 Group 2 introduces the first student-scoped table, `public.students`.
+Stage 6 Group 2 introduced the first student-scoped table, `public.students`.
+
+Stage 6 Group 3 wires the Supabase Auth database trigger that creates a `public.students` row on first auth-user creation.
 
 ## Requirement trace
 
@@ -20,7 +22,11 @@ Stage 6 Group 2 introduces the first student-scoped table, `public.students`.
 - ENG-175
 - ENG-179
 - ENG-180
+- ENG-183
+- ENG-184
+- ENG-186
 - NN-04
+- SEC-040
 - SEC-081
 - SEC-082
 
@@ -37,7 +43,10 @@ Every migration that creates a student-scoped table must include:
 
 Production data must never be committed here.
 
+Authentication migrations must not introduce password credential storage or application-owned token handling.
+
 ## Current migrations
 
 - `20260804174000_foundation.sql`
 - `20260804234500_identity_students.sql`
+- `20260805191000_identity_auth_user_trigger.sql`
