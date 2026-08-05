@@ -8,6 +8,7 @@ export type {
 export type { ResourceRecord } from "./ResourceRecord.contract.js";
 export type {
   CompleteResourceUploadInput,
+  CompleteResourceUploadResult,
   DeclareResourceUploadInput,
   DeclareResourceUploadResult,
   ResourceUploadTicket,

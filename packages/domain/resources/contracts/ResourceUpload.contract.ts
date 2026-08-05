@@ -1,6 +1,8 @@
 import type { ResourceId, StudentId } from "@avora/core/identity";
+import type { IsoDateTimeString } from "@avora/core/time";
 
 import type { ResourceKind } from "./ResourceKind.contract.js";
+import type { ResourceRecord } from "./ResourceRecord.contract.js";
 import type { ResourceStorageLocation } from "./ResourceStorage.contract.js";
 
 export type DeclareResourceUploadInput = Readonly<{
@@ -15,10 +17,11 @@ export type ResourceUploadTicket = Readonly<{
   resourceId: ResourceId;
   storage: ResourceStorageLocation;
   uploadUrl: string;
-  expiresAt: string;
+  expiresAt: IsoDateTimeString;
 }>;
 
 export type DeclareResourceUploadResult = Readonly<{
+  resource: ResourceRecord;
   ticket: ResourceUploadTicket;
 }>;
 
@@ -26,4 +29,8 @@ export type CompleteResourceUploadInput = Readonly<{
   studentId: StudentId;
   resourceId: ResourceId;
   contentHash: string;
+}>;
+
+export type CompleteResourceUploadResult = Readonly<{
+  resource: ResourceRecord;
 }>;

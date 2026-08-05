@@ -1,5 +1,5 @@
 import type { ResourceId, StudentId } from "@avora/core/identity";
-
+import type { IsoDateTimeString } from "@avora/core/time";
 import type {
   ResourceStorageBucket,
   ResourceStorageLocation,
@@ -17,7 +17,7 @@ export type CreateUploadTicketInput = Readonly<{
 export type CreateUploadTicketResult = Readonly<{
   storage: ResourceStorageLocation;
   uploadUrl: string;
-  expiresAt: string;
+  expiresAt: IsoDateTimeString;
 }>;
 
 export type CreateSignedReadUrlInput = Readonly<{
@@ -29,7 +29,7 @@ export type CreateSignedReadUrlInput = Readonly<{
 
 export type CreateSignedReadUrlResult = Readonly<{
   readUrl: string;
-  expiresAt: string;
+  expiresAt: IsoDateTimeString;
 }>;
 
 export type PromoteObjectInput = Readonly<{
