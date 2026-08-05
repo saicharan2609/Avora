@@ -11,7 +11,11 @@ Publishable: no
 
 It owns the web routing surface, runtime configuration seam, instrumentation seam, static public asset location, and web rendering entry point.
 
-Stage 5 Group 3 establishes the first runnable web application shell. It does not implement product features, authentication, API route handlers, database access, Supabase integration, AI behaviour, retrieval, jobs, provider SDK access, business logic, or tests.
+Stage 5 Group 3 established the first runnable web application shell.
+
+Stage 6 Group 6 adds the first server-side web authentication route handlers for Supabase-backed OAuth start, magic-link start, auth callback exchange, and sign-out. These route handlers remain transport-only composition seams.
+
+This package does not implement product features, database business logic, Supabase database integration, AI behaviour, retrieval, jobs, provider SDK access, domain logic, or tests.
 
 ## Public surface
 
@@ -20,6 +24,7 @@ This application has no package export surface.
 Its runtime surfaces are:
 
 - `app/`
+- `app/api/auth/`
 - `middleware.ts`
 - `instrumentation.ts`
 - `env.ts`
@@ -40,10 +45,14 @@ Its runtime surfaces are:
 - ENG-123
 - ENG-124
 - ENG-150
+- ENG-183
+- ENG-184
+- ENG-186
 - ENG-297
 - ENG-298
 - NN-02
 - NN-10
+- SEC-040
 - Rule T-01
 - Rule T-02
 - Rule HO-02
@@ -72,13 +81,14 @@ Its runtime surfaces are:
 - `app/(auth)/` is reserved for authentication surfaces.
 - `app/(app)/` is reserved for authenticated application surfaces.
 - `app/(admin)/` is reserved for admin surfaces.
-- `app/api/` is reserved for API route handlers.
+- `app/api/` owns API route handlers.
+- `app/api/auth/` owns transport-only authentication route handlers.
 - `public/` owns web-only static assets.
 - `middleware.ts` owns the future edge routing/session seam.
 - `instrumentation.ts` owns the future OpenTelemetry registration seam.
-- `env.ts` re-exports the approved web environment seam from `@avora/config`.
+- `env.ts` re-exports the approved web client environment seam from `@avora/config`.
 - `next.config.mjs` owns Next.js runtime configuration.
-- `tailwind.config.ts` extends the shared Tailwind configuration.
+- `tailwind.config.ts` is a local empty Tailwind config because the current repository has no shared Tailwind config export.
 
 ## Boundaries
 
@@ -88,6 +98,6 @@ This application must not import `@avora/retrieval` directly. Retrieval is reach
 
 This application must not import provider SDKs, Expo packages, or React Native packages.
 
-This application must not contain domain logic, business logic, database schema, Supabase implementation, authentication implementation, AI implementation, retrieval implementation, jobs implementation, provider implementation, or tests in Stage 5 Group 3.
+This application must not contain domain logic, business logic, database schema, Supabase database implementation, AI implementation, retrieval implementation, jobs implementation, provider implementation, React Native components, or tests in Stage 6 Group 6.
 
-API route handlers are not implemented in Stage 5 Group 3.
+Authentication route handlers are transport-only: validate request shape, call the auth adapter, set or clear web session cookies, and redirect.

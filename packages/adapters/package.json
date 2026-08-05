@@ -3,15 +3,15 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./supabase": "./supabase/index.ts",
-    "./supabase/auth": "./supabase/auth/index.ts",
-    "./stripe": "./stripe/index.ts",
-    "./psp": "./psp/index.ts",
-    "./resend": "./resend/index.ts",
-    "./sentry": "./sentry/index.ts",
-    "./posthog": "./posthog/index.ts",
-    "./otel": "./otel/index.ts"
+    ".": "./dist/src/index.js",
+"./supabase": "./dist/supabase/index.js",
+"./supabase/auth": "./dist/supabase/auth/index.js",
+"./stripe": "./dist/stripe/index.js",
+"./psp": "./dist/psp/index.js",
+"./resend": "./dist/resend/index.js",
+"./sentry": "./dist/sentry/index.js",
+"./posthog": "./dist/posthog/index.js",
+"./otel": "./dist/otel/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

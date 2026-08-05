@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import type {
   SupabaseAuthAdapter,
   SupabaseAuthConnection,
+  SupabaseExchangeCodeForSessionInput,
   SupabaseRefreshSessionInput,
   SupabaseStartEmailMagicLinkInput,
   SupabaseStartOAuthInput,
@@ -24,8 +25,8 @@ export function createSupabaseAuthAdapter(connection: SupabaseAuthConnection): S
   });
 
   return {
-    startEmailMagicLink: async (input: SupabaseStartEmailMagicLinkInput): Promise<void> => {
-      const { error } = await client.auth.signInWithOtp({
+    startEmailMagicLink: async (input: SupabaseStartEmailMagicLinkInput) => {
+      const { data, error } = await client.auth.signInWithOtp({
         email: input.email,
         options: {
           emailRedirectTo: input.redirectTo,
@@ -38,10 +39,16 @@ export function createSupabaseAuthAdapter(connection: SupabaseAuthConnection): S
           error.message,
         );
       }
+
+      if (data.user === null && data.session === null) {
+        return null;
+      }
+
+      return null;
     },
 
-    startOAuth: async (input: SupabaseStartOAuthInput): Promise<void> => {
-      const { error } = await client.auth.signInWithOAuth({
+    startOAuth: async (input: SupabaseStartOAuthInput) => {
+      const { data, error } = await client.auth.signInWithOAuth({
         provider: mapSupabaseAuthMethodToProvider(input.method),
         options: {
           redirectTo: input.redirectTo,
@@ -51,6 +58,27 @@ export function createSupabaseAuthAdapter(connection: SupabaseAuthConnection): S
       if (error !== null) {
         throw new SupabaseAuthAdapterError("auth_start_oauth_failed", error.message);
       }
+
+      if (data.url === null) {
+        throw new SupabaseAuthAdapterError(
+          "auth_missing_redirect_url",
+          "Supabase Auth did not return an OAuth redirect URL",
+        );
+      }
+
+      return {
+        redirectUrl: data.url,
+      };
+    },
+
+    exchangeCodeForSession: async (input: SupabaseExchangeCodeForSessionInput) => {
+      const { data, error } = await client.auth.exchangeCodeForSession(input.code);
+
+      if (error !== null) {
+        throw new SupabaseAuthAdapterError("auth_exchange_code_failed", error.message);
+      }
+
+      return mapSupabaseSessionToAuthSession(data.session);
     },
 
     refreshSession: async (input: SupabaseRefreshSessionInput) => {

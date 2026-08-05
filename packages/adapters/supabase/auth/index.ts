@@ -5,6 +5,8 @@ export type {
   SupabaseAuthMethod,
   SupabaseAuthRedirectTarget,
   SupabaseAuthSession,
+  SupabaseAuthStartResult,
+  SupabaseExchangeCodeForSessionInput,
   SupabaseRefreshSessionInput,
   SupabaseStartEmailMagicLinkInput,
   SupabaseStartOAuthInput,

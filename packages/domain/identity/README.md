@@ -6,7 +6,9 @@ Owner: @avora/security
 
 The `identity` module owns identity-domain boundaries and invariants.
 
-Stage 6 Group 4 establishes the vendor-free authentication boundary through `AuthPort`. Supabase Auth remains the authentication authority; this module does not implement credential handling, session issuance, token verification, OAuth provider logic, OTP comparison, or password handling.
+Stage 6 Group 4 established the vendor-free authentication boundary through `AuthPort`.
+
+Stage 6 Group 6 extends the authentication contract with start-result and auth-code exchange shapes needed by the web composition root. Supabase Auth remains the authentication authority; this module does not implement credential handling, session issuance, token verification, OAuth provider logic, OTP comparison, or password handling.
 
 ## Public surface
 
@@ -38,7 +40,7 @@ Stage 6 Group 4 establishes the vendor-free authentication boundary through `Aut
 
 ## Boundaries
 
-This module must not contain authentication implementation, credential storage, token verification implementation, API handlers, business logic, database schema, Supabase configuration, vendor adapters, React components, React Native components, pages, screens, or tests in Stage 6 Group 4.
+This module must not contain authentication implementation, credential storage, token verification implementation, API handlers, business logic, database schema, Supabase configuration, vendor adapters, React components, React Native components, pages, screens, or tests in Stage 6 Group 6.
 
 This module may declare vendor-free identity contracts and ports.
 

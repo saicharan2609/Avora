@@ -1,6 +1,7 @@
 export type {
   AuthPort,
   AuthRedirectTarget,
+  ExchangeCodeForSessionInput,
   RefreshSessionInput,
   RequireStepUpInput,
   RevokeSessionInput,

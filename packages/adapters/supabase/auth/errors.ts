@@ -1,6 +1,8 @@
 export type SupabaseAuthAdapterErrorCode =
   | "auth_start_email_magic_link_failed"
   | "auth_start_oauth_failed"
+  | "auth_missing_redirect_url"
+  | "auth_exchange_code_failed"
   | "auth_refresh_session_failed"
   | "auth_get_identity_failed"
   | "auth_sign_out_failed"

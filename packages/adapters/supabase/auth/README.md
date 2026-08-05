@@ -9,6 +9,8 @@ The `auth` directory owns the Supabase Auth vendor adapter.
 
 The domain identity module declares the vendor-free authentication port. This adapter provides Supabase Auth behavior without importing `@avora/domain`, preserving the repository dependency matrix.
 
+Stage 6 Group 6 adds OAuth redirect start and auth-code exchange behavior required by the web composition root.
+
 ## Public surface
 
 - `@avora/adapters/supabase/auth`
@@ -36,4 +38,4 @@ This directory must not implement credential handling, password storage, session
 
 This directory must not import `@avora/domain`.
 
-This directory must not contain web login UI, mobile login UI, route handlers, API handlers, Supabase SSR helpers, database repository methods, session persistence policy, business logic, React components, React Native components, pages, screens, AI behavior, retrieval behavior, jobs behavior, or tests in Stage 6 Group 5.
+This directory must not contain web login UI, mobile login UI, route handlers, API handlers, Supabase SSR helpers, database repository methods, session persistence policy, business logic, React components, React Native components, pages, screens, AI behavior, retrieval behavior, jobs behavior, or tests in Stage 6 Group 6.

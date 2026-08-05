@@ -12,6 +12,10 @@ export type SupabaseAuthConnection = Readonly<{
   supabaseAnonKey: string;
 }>;
 
+export type SupabaseAuthStartResult = Readonly<{
+  redirectUrl: string;
+}>;
+
 export type SupabaseAuthSession = Readonly<{
   studentId: StudentId;
   accessToken: string;
@@ -33,13 +37,22 @@ export type SupabaseStartOAuthInput = SupabaseAuthRedirectTarget &
     method: Extract<SupabaseAuthMethod, "google_oauth" | "apple_sign_in">;
   }>;
 
+export type SupabaseExchangeCodeForSessionInput = Readonly<{
+  code: string;
+}>;
+
 export type SupabaseRefreshSessionInput = Readonly<{
   refreshToken: string;
 }>;
 
 export type SupabaseAuthAdapter = Readonly<{
-  startEmailMagicLink: (input: SupabaseStartEmailMagicLinkInput) => Promise<void>;
-  startOAuth: (input: SupabaseStartOAuthInput) => Promise<void>;
+  startEmailMagicLink: (
+    input: SupabaseStartEmailMagicLinkInput,
+  ) => Promise<SupabaseAuthStartResult | null>;
+  startOAuth: (input: SupabaseStartOAuthInput) => Promise<SupabaseAuthStartResult>;
+  exchangeCodeForSession: (
+    input: SupabaseExchangeCodeForSessionInput,
+  ) => Promise<SupabaseAuthSession>;
   refreshSession: (input: SupabaseRefreshSessionInput) => Promise<SupabaseAuthSession>;
   getCurrentIdentity: () => Promise<SupabaseAuthIdentity | null>;
   signOut: () => Promise<void>;
