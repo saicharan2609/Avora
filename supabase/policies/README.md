@@ -1,41 +1,20 @@
 # policies
 
 Owner: @avora/data  
-Protected path: yes
+Security co-owner: @avora/security
 
 ## Purpose
 
-This directory owns reviewed RLS policy artifacts.
-
-Policies are reviewed as first-class security artifacts rather than being hidden inside feature code.
-
-## Requirement trace
-
-- REPO-019
-- ENG-172
-- ENG-173
-- ENG-175
-- ENG-176
-- NN-04
-- SEC-081
-- SEC-082
-
-## Rules
-
-Every student-scoped table must have a policy artifact in this directory.
-
-Policy artifacts must document:
-
-- the table name;
-- the operation;
-- the threat being prevented;
-- the corresponding RLS harness coverage.
-
-Permissive `ALL` policies are prohibited on student-scoped tables.
-
-Storage policy artifacts must preserve the rule that storage paths begin with `student_id`.
+This directory contains reviewed Supabase RLS policy artifacts.
 
 ## Current policy artifacts
 
-- `students.policy.sql`
-- `resources.policy.sql`
+- resource ingestion jobs
+
+## Boundaries
+
+Policy artifacts document and mirror RLS posture for reviewed tables.
+
+Student-scoped tables must deny cross-student access.
+
+Worker and service-role mutation must rely on service-role bypass, not broad authenticated policies.

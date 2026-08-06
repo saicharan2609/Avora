@@ -14,7 +14,7 @@ import {
 } from "./mapper.js";
 
 const resourceSelectColumns =
-  "resource_id,student_id,resource_kind,original_filename,declared_mime_type,byte_size,content_hash,lifecycle_state,storage_bucket,storage_object_path,storage_version,created_at,updated_at" as const;
+  "resource_id,student_id,resource_kind,original_filename,declared_mime_type,byte_size,content_hash,lifecycle_state,storage_bucket,storage_object_path,upload_completed_at,storage_version,created_at,updated_at" as const;
 
 export type CreateResourcesRepositoryInput = Readonly<{
   client: DatabaseClient;

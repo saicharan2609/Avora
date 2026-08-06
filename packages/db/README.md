@@ -6,13 +6,13 @@ Publishable: no
 
 ## Purpose
 
-`@avora/db` owns typed database access, role-scoped Supabase clients, generated schema types, concrete repository mechanisms, and the RLS policy harness.
+`@avora/db` owns Supabase database access, generated database types, concrete repositories, RLS harnesses, and schema-adjacent validation scripts.
 
-Stage 6 established the Supabase repository foundation, student identity persistence, auth-user trigger, and role-scoped client seams.
+Stage 6 established student identity persistence and role-scoped database client creation.
 
-Stage 7 Group 1 introduced `public.resources` as the durable resource upload-intent row.
+Stage 7 Group 4 established the resources repository.
 
-Stage 7 Group 4 introduces the concrete resource repository implementation for `public.resources`. The implementation is structurally compatible with the resource-domain repository port but does not import `@avora/domain`, preserving the repository dependency matrix.
+Stage 7 Group 8 establishes durable resource ingestion job persistence. Resource ingestion jobs are inserted after upload completion and remain queued until a later worker-plane group implements claim and execution.
 
 ## Public surface
 
@@ -21,26 +21,16 @@ Stage 7 Group 4 introduces the concrete resource repository implementation for `
 - `@avora/db/generated`
 - `@avora/db/repositories`
 - `@avora/db/repositories/resources`
-- `@avora/db/ports`
-- `@avora/db/rls`
-- `@avora/db/rls/harness`
+- `@avora/db/repositories/jobs`
 
 ## Requirement trace
 
-- REPO-018
-- REPO-019
+- REPO-003
+- REPO-004
 - ENG-011
-- ENG-012
+- ENG-013
 - ENG-016
 - ENG-018
-- ENG-053
-- ENG-150
-- ENG-163
-- ENG-164
-- ENG-169
-- ENG-172
-- ENG-173
-- ENG-175
 - ENG-176
 - FR-032
 - FR-035
@@ -51,10 +41,13 @@ Stage 7 Group 4 introduces the concrete resource repository implementation for `
 - NFR-004
 - NFR-034
 - NN-04
+- NN-05
+- NN-10
 - SEC-040
 - SEC-081
 - SEC-082
 - SEC-230
+- SEC-231
 
 ## Workspace dependencies
 
@@ -65,25 +58,23 @@ Stage 7 Group 4 introduces the concrete resource repository implementation for `
 
 - `@supabase/supabase-js`
 
-## Directory responsibilities
+## Current repositories
 
-- `client/` owns role-scoped Supabase clients.
-- `generated/` owns generated database schema types.
-- `repositories/` owns concrete database repository mechanisms.
-- `repositories/resources/` owns concrete access to `public.resources`.
-- `ports/` owns database execution seams that are not module-specific.
-- `rls/` owns RLS policy metadata and the negative-authorisation harness.
-- `scripts/` owns package-local database artifact scripts.
-- `src/` owns package-level barrel exports.
+- `resources`
+- `jobs`
 
 ## Boundaries
 
 This package must not import `@avora/domain`.
 
-This package must not import `@avora/ui-web`, `@avora/ui-mobile`, `@avora/ai`, `@avora/jobs`, or `@avora/retrieval`.
+This package must not import `@avora/ai`.
 
-This package executes parameterised database queries as the role represented by the supplied role-scoped client.
+This package must not import `@avora/retrieval`.
 
-This package must not contain domain services, route handlers, storage SDK adapters outside approved database client use, authentication implementation, AI behavior, retrieval behavior, jobs behavior, React components, React Native components, pages, or screens.
+This package must not import UI packages.
 
-Concrete repositories in this package are database mechanisms. Domain services consume repository ports from their domain package and may receive structurally compatible implementations from composition roots.
+This package must not import apps.
+
+This package owns concrete Supabase database access only. It does not own domain invariants, route handlers, worker execution, storage SDK behavior, AI behavior, retrieval behavior, React components, React Native components, pages, or screens.
+
+Resource ingestion job persistence in Stage 7 Group 8 only inserts and reads durable queued job rows. Claiming, heartbeat, checkpointing, retry, dead-letter handling, and execution belong to later worker-plane groups.

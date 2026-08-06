@@ -1,0 +1,49 @@
+{
+  "table": "public.resource_ingestion_jobs",
+  "owner": "@avora/data",
+  "stage": "Stage 7 Group 8",
+  "cases": [
+    {
+      "name": "student can select own resource ingestion jobs",
+      "role": "authenticated",
+      "operation": "select",
+      "expectation": "allowed",
+      "scope": "own"
+    },
+    {
+      "name": "student cannot select another student's resource ingestion jobs",
+      "role": "authenticated",
+      "operation": "select",
+      "expectation": "denied",
+      "scope": "cross_student"
+    },
+    {
+      "name": "student can insert own queued resource ingestion job",
+      "role": "authenticated",
+      "operation": "insert",
+      "expectation": "allowed",
+      "scope": "own"
+    },
+    {
+      "name": "student cannot insert another student's resource ingestion job",
+      "role": "authenticated",
+      "operation": "insert",
+      "expectation": "denied",
+      "scope": "cross_student"
+    },
+    {
+      "name": "student cannot update own resource ingestion job",
+      "role": "authenticated",
+      "operation": "update",
+      "expectation": "denied",
+      "scope": "own"
+    },
+    {
+      "name": "student cannot delete own resource ingestion job",
+      "role": "authenticated",
+      "operation": "delete",
+      "expectation": "denied",
+      "scope": "own"
+    }
+  ]
+}

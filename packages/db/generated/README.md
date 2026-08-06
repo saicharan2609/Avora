@@ -1,37 +1,21 @@
 # generated
 
-Owner: @avora/data  
-Generated path: yes  
-Hand-editable: no
+Owner: @avora/data
 
 ## Purpose
 
-This directory owns generated database schema type artifacts.
+This directory contains generated Supabase database types.
 
-Generated files in this directory are derived from the reviewed Supabase schema and are never hand-edited. CI regenerates schema types and fails on drift once the Supabase CLI workflow is enabled.
+The file in this directory is treated as generated schema access code. It must match the reviewed Supabase migrations and policies.
 
-## Requirement trace
+Stage 7 Group 8 adds the generated shape for `public.resource_ingestion_jobs`.
 
-- REPO-018
-- ENG-053
-- ENG-165
-- NN-04
+## Public surface
 
-## Current Stage 7 Group 1 state
+- `@avora/db/generated`
 
-Stage 6 Group 2 introduced the first student-scoped table:
+## Boundaries
 
-- `public.students`
+Generated database types must not contain domain logic, repository logic, route handlers, workers, UI, AI behavior, retrieval behavior, or tests.
 
-Stage 6 Group 3 introduced the auth-user creation trigger:
-
-- `app_private.create_student_for_auth_user()`
-- `on_auth_user_created_create_student` on `auth.users`
-
-Stage 7 Group 1 introduces the first resource upload-intent table:
-
-- `public.resources`
-
-The checked-in generated type artifact reflects the application schema baseline visible to typed Avora code. Trigger functions and triggers remain database-owned migration artifacts and are not application call surfaces.
-
-When future application tables are introduced, the generated type artifact must be regenerated in the same change.
+The generated database type shape must remain compatible with `@supabase/supabase-js` typed PostgREST generics. Do not wrap the generated shape in deep readonly types.

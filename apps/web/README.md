@@ -17,7 +17,9 @@ Stage 6 Group 6 added the first server-side web authentication route handlers fo
 
 Stage 7 Group 6 added the first resource upload API route handlers. These route handlers validate shared API contracts, resolve the authenticated student from the web session, compose student-scoped database access, and return contract-shaped responses.
 
-Stage 7 Group 7 adds the resource ingestion job handoff after successful upload completion. The web layer creates and enqueues a typed ingestion request through a vendor-free queue seam. It does not execute ingestion work during the HTTP request.
+Stage 7 Group 7 added the resource ingestion job handoff after successful upload completion.
+
+Stage 7 Group 8 persists resource ingestion jobs durably after successful upload completion. The web layer enqueues a typed ingestion request through a student-scoped repository-backed queue seam. It does not execute ingestion work during the HTTP request.
 
 This package does not implement product features, database business logic, Supabase database integration internals, AI behaviour, retrieval, jobs infrastructure, provider SDK access, domain logic, or tests.
 
@@ -132,11 +134,11 @@ This application must not import `@avora/retrieval` directly. Retrieval is reach
 
 This application must not import provider SDKs, Expo packages, or React Native packages.
 
-This application must not contain domain logic, business logic, database schema, Supabase database implementation internals, AI implementation, retrieval implementation, jobs infrastructure, provider implementation, React Native components, or tests in Stage 7 Group 7.
+This application must not contain domain logic, business logic, database schema, Supabase database implementation internals, AI implementation, retrieval implementation, jobs infrastructure, provider implementation, React Native components, or tests in Stage 7 Group 8.
 
 Authentication route handlers are transport-only: validate request shape, call the auth adapter, set or clear web session cookies, and redirect.
 
-Resource route handlers are transport-only: validate request shape, resolve the authenticated student, compose existing student-scoped database access, enqueue typed ingestion handoff requests after successful upload completion, and return contract-shaped JSON responses.
+Resource route handlers are transport-only: validate request shape, resolve the authenticated student, compose existing student-scoped database access, persist typed ingestion handoff requests after successful upload completion, and return contract-shaped JSON responses.
 
 Student-scoped request bodies must not accept `studentId`. The authenticated composition root resolves identity from the web session and passes it inward.
 

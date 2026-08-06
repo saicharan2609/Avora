@@ -8,19 +8,14 @@
     "./generated": "./dist/generated/index.js",
     "./repositories": "./dist/repositories/index.js",
     "./repositories/resources": "./dist/repositories/resources/index.js",
-    "./ports": "./dist/ports/index.js",
-    "./rls": "./dist/rls/index.js",
-    "./rls/harness": "./dist/rls/harness/index.js"
+    "./repositories/jobs": "./dist/repositories/jobs/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:arch": "eslint .",
-    "db:generate": "node scripts/generate-types.mjs",
-    "db:diff": "node scripts/diff.mjs",
-    "db:lint": "node scripts/lint-supabase-artifacts.mjs",
-    "test:rls": "node scripts/run-rls-harness.mjs"
+    "test:rls": "node rls/harness/run-rls-plans.mjs"
   },
   "dependencies": {
     "@avora/core": "workspace:*",

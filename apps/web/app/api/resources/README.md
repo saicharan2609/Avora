@@ -13,7 +13,9 @@ Stage 7 Group 6 established the resource upload API boundary:
 - declare resource upload intent;
 - complete resource upload after bytes have reached private storage.
 
-Stage 7 Group 7 adds the resource ingestion job handoff after successful upload completion. The route creates and enqueues a typed ingestion request through a vendor-free queue seam after the resource row is marked uploaded.
+Stage 7 Group 7 added the typed resource ingestion job handoff after successful upload completion.
+
+Stage 7 Group 8 persists resource ingestion jobs durably after successful upload completion. The route creates and enqueues a typed ingestion request through a student-scoped repository-backed queue seam after the resource row is marked uploaded.
 
 ## Public routes
 
@@ -57,7 +59,7 @@ These route handlers must not import Supabase SDKs directly.
 
 These route handlers must not read or require service-role credentials.
 
-These route handlers must not implement storage SDK behavior, database query internals, queue infrastructure, queue persistence, worker execution, ingestion jobs, AI behavior, retrieval behavior, React components, React Native components, pages, screens, or tests.
+These route handlers must not implement storage SDK behavior, database query internals, queue infrastructure, worker execution, ingestion jobs, AI behavior, retrieval behavior, React components, React Native components, pages, screens, or tests.
 
 Request bodies must not accept `studentId`. The authenticated student is resolved from the web session.
 

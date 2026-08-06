@@ -1,5 +1,6 @@
 import { createSupabaseStorageAdapter } from "@avora/adapters/supabase/storage";
 import { createStudentDatabaseClient } from "@avora/db/client";
+import { createResourceIngestionJobsRepository } from "@avora/db/repositories/jobs";
 import { createResourcesRepository } from "@avora/db/repositories/resources";
 import { createResourceUploadService } from "@avora/domain/resources";
 
@@ -34,7 +35,11 @@ export function createWebResourceUploadComposition(input: Readonly<{
     accessToken: input.authenticatedStudent.accessToken,
   });
 
-  const repository = createResourcesRepository({
+  const resourcesRepository = createResourcesRepository({
+    client: studentDatabase.client,
+  });
+
+  const resourceIngestionJobsRepository = createResourceIngestionJobsRepository({
     client: studentDatabase.client,
   });
 
@@ -44,11 +49,13 @@ export function createWebResourceUploadComposition(input: Readonly<{
   });
 
   const uploadService = createResourceUploadService({
-    repository,
+    repository: resourcesRepository,
     blobStore,
   });
 
-  const ingestionQueue = createWebResourceIngestionQueue();
+  const ingestionQueue = createWebResourceIngestionQueue({
+    repository: resourceIngestionJobsRepository,
+  });
 
   return createWebResourceUploadOrchestrator({
     uploadService,

@@ -1,16 +1,9 @@
+/* eslint-disable */
 /**
- * GENERATED FILE — DO NOT EDIT BY HAND.
+ * Generated Supabase database types.
  *
- * Source: supabase/
- * Stage: Stage 7 Group 4 resource repository compatibility baseline.
- *
- * This file represents the generated database type baseline after introducing
- * public.students and public.resources as student-scoped tables.
- *
- * The shape intentionally follows the Supabase generated TypeScript structure
- * expected by @supabase/supabase-js. Do not wrap the schema in deep Readonly
- * types because the typed PostgREST client expects mutable Row, Insert, Update,
- * and Relationships shapes.
+ * This file mirrors the reviewed Stage 6, Stage 7 Groups 1–8 Supabase artifacts.
+ * Keep the shape compatible with @supabase/supabase-js typed PostgREST generics.
  */
 
 export type Json =
@@ -24,108 +17,83 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      students: {
+      resource_ingestion_jobs: {
         Row: {
-          student_id: string;
-          display_name: string | null;
-          lifecycle_status: "active" | "pending_deletion" | "deleted";
+          attempt_count: number;
+          available_at: string;
+          completed_at: string | null;
           created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          student_id: string;
-          display_name?: string | null;
-          lifecycle_status?: "active" | "pending_deletion" | "deleted";
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          student_id?: string;
-          display_name?: string | null;
-          lifecycle_status?: "active" | "pending_deletion" | "deleted";
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "students_student_id_fkey";
-            columns: ["student_id"];
-            isOneToOne: true;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
-      resources: {
-        Row: {
+          enqueued_at: string;
+          failed_at: string | null;
+          heartbeat_at: string | null;
+          job_id: string;
+          job_name: "resources.ingestion.requested";
+          last_error: string | null;
+          locked_at: string | null;
+          locked_by: string | null;
+          payload: Json;
+          priority: Database["public"]["Enums"]["resource_ingestion_job_priority"];
+          reason: Database["public"]["Enums"]["resource_ingestion_job_reason"];
           resource_id: string;
+          started_at: string | null;
+          status: Database["public"]["Enums"]["resource_ingestion_job_status"];
           student_id: string;
-          resource_kind: "document" | "image" | "scan" | "audio" | "video" | "archive" | "other";
-          original_filename: string;
-          declared_mime_type: string;
-          byte_size: number;
-          content_hash: string | null;
-          lifecycle_state:
-            | "pending_upload"
-            | "uploaded"
-            | "rejected"
-            | "processing"
-            | "ready"
-            | "failed"
-            | "deleted";
-          storage_bucket: "quarantine" | "originals" | "derivatives" | "exports" | "shared";
-          storage_object_path: string;
-          storage_version: number;
-          created_at: string;
           updated_at: string;
         };
         Insert: {
-          resource_id?: string;
-          student_id: string;
-          resource_kind: "document" | "image" | "scan" | "audio" | "video" | "archive" | "other";
-          original_filename: string;
-          declared_mime_type: string;
-          byte_size: number;
-          content_hash?: string | null;
-          lifecycle_state?:
-            | "pending_upload"
-            | "uploaded"
-            | "rejected"
-            | "processing"
-            | "ready"
-            | "failed"
-            | "deleted";
-          storage_bucket?: "quarantine" | "originals" | "derivatives" | "exports" | "shared";
-          storage_object_path: string;
-          storage_version?: number;
+          attempt_count?: number;
+          available_at?: string;
+          completed_at?: string | null;
           created_at?: string;
+          enqueued_at?: string;
+          failed_at?: string | null;
+          heartbeat_at?: string | null;
+          job_id?: string;
+          job_name: "resources.ingestion.requested";
+          last_error?: string | null;
+          locked_at?: string | null;
+          locked_by?: string | null;
+          payload: Json;
+          priority: Database["public"]["Enums"]["resource_ingestion_job_priority"];
+          reason: Database["public"]["Enums"]["resource_ingestion_job_reason"];
+          resource_id: string;
+          started_at?: string | null;
+          status?: Database["public"]["Enums"]["resource_ingestion_job_status"];
+          student_id: string;
           updated_at?: string;
         };
         Update: {
-          resource_id?: string;
-          student_id?: string;
-          resource_kind?: "document" | "image" | "scan" | "audio" | "video" | "archive" | "other";
-          original_filename?: string;
-          declared_mime_type?: string;
-          byte_size?: number;
-          content_hash?: string | null;
-          lifecycle_state?:
-            | "pending_upload"
-            | "uploaded"
-            | "rejected"
-            | "processing"
-            | "ready"
-            | "failed"
-            | "deleted";
-          storage_bucket?: "quarantine" | "originals" | "derivatives" | "exports" | "shared";
-          storage_object_path?: string;
-          storage_version?: number;
+          attempt_count?: number;
+          available_at?: string;
+          completed_at?: string | null;
           created_at?: string;
+          enqueued_at?: string;
+          failed_at?: string | null;
+          heartbeat_at?: string | null;
+          job_id?: string;
+          job_name?: "resources.ingestion.requested";
+          last_error?: string | null;
+          locked_at?: string | null;
+          locked_by?: string | null;
+          payload?: Json;
+          priority?: Database["public"]["Enums"]["resource_ingestion_job_priority"];
+          reason?: Database["public"]["Enums"]["resource_ingestion_job_reason"];
+          resource_id?: string;
+          started_at?: string | null;
+          status?: Database["public"]["Enums"]["resource_ingestion_job_status"];
+          student_id?: string;
           updated_at?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "resources_student_id_fkey";
+            foreignKeyName: "resource_ingestion_jobs_resource_id_fkey";
+            columns: ["resource_id"];
+            isOneToOne: false;
+            referencedRelation: "resources";
+            referencedColumns: ["resource_id"];
+          },
+          {
+            foreignKeyName: "resource_ingestion_jobs_student_id_fkey";
             columns: ["student_id"];
             isOneToOne: false;
             referencedRelation: "students";
@@ -133,22 +101,124 @@ export type Database = {
           },
         ];
       };
+
+      resources: {
+  Row: {
+    byte_size: number;
+    content_hash: string | null;
+    created_at: string;
+    declared_mime_type: string;
+    lifecycle_state: Database["public"]["Enums"]["resource_lifecycle_state"];
+    original_filename: string;
+    resource_id: string;
+    resource_kind: Database["public"]["Enums"]["resource_kind"];
+    storage_bucket: Database["public"]["Enums"]["resource_storage_bucket"];
+    storage_object_path: string;
+    storage_version: number;
+    student_id: string;
+    updated_at: string;
+    upload_completed_at: string | null;
+  };
+  Insert: {
+    byte_size: number;
+    content_hash?: string | null;
+    created_at?: string;
+    declared_mime_type: string;
+    lifecycle_state?: Database["public"]["Enums"]["resource_lifecycle_state"];
+    original_filename: string;
+    resource_id?: string;
+    resource_kind: Database["public"]["Enums"]["resource_kind"];
+    storage_bucket?: Database["public"]["Enums"]["resource_storage_bucket"];
+    storage_object_path: string;
+    storage_version?: number;
+    student_id: string;
+    updated_at?: string;
+    upload_completed_at?: string | null;
+  };
+  Update: {
+    byte_size?: number;
+    content_hash?: string | null;
+    created_at?: string;
+    declared_mime_type?: string;
+    lifecycle_state?: Database["public"]["Enums"]["resource_lifecycle_state"];
+    original_filename?: string;
+    resource_id?: string;
+    resource_kind?: Database["public"]["Enums"]["resource_kind"];
+    storage_bucket?: Database["public"]["Enums"]["resource_storage_bucket"];
+    storage_object_path?: string;
+    storage_version?: number;
+    student_id?: string;
+    updated_at?: string;
+    upload_completed_at?: string | null;
+  };
+  Relationships: [
+  {
+    foreignKeyName: "resources_student_id_fkey";
+    columns: ["student_id"];
+    isOneToOne: false;
+    referencedRelation: "students";
+    referencedColumns: ["student_id"];
+  },
+];
+},
+
+      students: {
+        Row: {
+          created_at: string;
+          student_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          student_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          student_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
-    Enums: Record<string, never>;
-    CompositeTypes: Record<string, never>;
-  };
-  app_private: {
-    Tables: Record<string, never>;
-    Views: Record<string, never>;
-    Functions: {
-      create_student_for_auth_user: {
-        Args: Record<string, never>;
-        Returns: unknown;
-      };
+    Enums: {
+      resource_ingestion_job_priority: "normal" | "high";
+      resource_ingestion_job_reason: "upload_completed";
+      resource_ingestion_job_status:
+        | "queued"
+        | "claimed"
+        | "running"
+        | "succeeded"
+        | "failed"
+        | "dead_lettered"
+        | "cancelled";
+
+      resource_kind:
+  | "document"
+  | "image"
+  | "scan"
+  | "audio"
+  | "video"
+  | "archive"
+  | "other";
+
+resource_lifecycle_state:
+  | "pending_upload"
+  | "uploaded"
+  | "processing"
+  | "ready"
+  | "rejected"
+  | "failed";
+
+resource_storage_bucket:
+  | "quarantine"
+  | "originals"
+  | "derivatives"
+  | "exports"
+  | "shared";
     };
-    Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
 };

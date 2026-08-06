@@ -12,5 +12,6 @@ export {
   resourceIngestionJobName,
   resourceIngestionJobPriorities,
   resourceIngestionJobReasons,
+  resourceIngestionJobStatuses,
   resourceIngestionJobStorageBuckets,
 } from "../queue/index.js";
