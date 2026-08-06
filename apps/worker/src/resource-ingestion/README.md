@@ -24,3 +24,13 @@ This directory may use service-role database composition because `apps/worker` i
 This directory must not import `apps/web`, UI packages, React, React Native, Expo, `@avora/ai`, or `@avora/retrieval`.
 
 Resource extraction belongs to a later stage.
+
+## Stage 7 Group 11 validation harness
+
+Stage 7 Group 11 adds a worker-level validation plan under:
+
+- `__tests__/resource-ingestion-validation.worker-plan.json`
+
+The plan records the expected worker claim, heartbeat, validation, completion, and failure behavior for the completed Stage 7 resource ingestion lifecycle.
+
+The plan is intentionally documentation-first in this group. It does not add ingestion execution beyond the Stage 7 Group 10 validation behavior.

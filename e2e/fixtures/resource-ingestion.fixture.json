@@ -1,0 +1,71 @@
+{
+  "id": "resource-ingestion-stage-7-synthetic-fixture",
+  "owner": "@avora/qa",
+  "classification": "synthetic",
+  "containsProductionData": false,
+  "containsAcademicContent": false,
+  "students": [
+    {
+      "alias": "student_a",
+      "studentId": "00000000-0000-4000-8000-0000000000a1"
+    },
+    {
+      "alias": "student_b",
+      "studentId": "00000000-0000-4000-8000-0000000000b1"
+    }
+  ],
+  "resources": [
+    {
+      "alias": "valid_document",
+      "resourceId": "00000000-0000-4000-8000-000000000101",
+      "studentAlias": "student_a",
+      "kind": "document",
+      "originalFilename": "stage-7-valid-document.pdf",
+      "declaredMimeType": "application/pdf",
+      "byteSize": 2048,
+      "contentHash": "sha256:stage7validdocument",
+      "storage": {
+        "bucket": "quarantine",
+        "objectPath": "00000000-0000-4000-8000-0000000000a1/resources/00000000-0000-4000-8000-000000000101/stage-7-valid-document.pdf",
+        "version": 1
+      },
+      "expectedValidationOutcome": "processing"
+    },
+    {
+      "alias": "invalid_mismatched_size_document",
+      "resourceId": "00000000-0000-4000-8000-000000000102",
+      "studentAlias": "student_a",
+      "kind": "document",
+      "originalFilename": "stage-7-invalid-document.pdf",
+      "declaredMimeType": "application/pdf",
+      "byteSize": 4096,
+      "contentHash": "sha256:stage7invaliddocument",
+      "storage": {
+        "bucket": "quarantine",
+        "objectPath": "00000000-0000-4000-8000-0000000000a1/resources/00000000-0000-4000-8000-000000000102/stage-7-invalid-document.pdf",
+        "version": 1
+      },
+      "expectedValidationOutcome": "rejected"
+    }
+  ],
+  "jobs": [
+    {
+      "alias": "valid_document_ingestion_job",
+      "resourceAlias": "valid_document",
+      "jobName": "resources.ingestion.requested",
+      "reason": "upload_completed",
+      "priority": "normal",
+      "expectedInitialStatus": "queued",
+      "expectedTerminalStatus": "succeeded"
+    },
+    {
+      "alias": "invalid_document_ingestion_job",
+      "resourceAlias": "invalid_mismatched_size_document",
+      "jobName": "resources.ingestion.requested",
+      "reason": "upload_completed",
+      "priority": "normal",
+      "expectedInitialStatus": "queued",
+      "expectedTerminalStatus": "failed"
+    }
+  ]
+}

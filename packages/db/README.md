@@ -82,3 +82,13 @@ This package must not import apps.
 This package owns concrete Supabase database access only. It does not own domain invariants, route handlers, worker execution, storage SDK behavior, AI behavior, retrieval behavior, React components, React Native components, pages, or screens.
 
 Resource ingestion validation repository operations only update persistence state. Validation decisions are owned by `@avora/domain`.
+
+## Stage 7 Group 11 RLS closure plan
+
+Stage 7 Group 11 adds a resource ingestion RLS closure plan under:
+
+- `rls/__tests__/resource-ingestion-stage7.rls-plan.json`
+
+The plan covers student-owned resource visibility, resource ingestion job visibility, own-job insertion, cross-student denial, and the absence of authenticated update/delete policies for job execution state.
+
+Worker mutation continues to rely on service-role bypass rather than permissive authenticated policies.

@@ -53,3 +53,16 @@ Stage 4 Group 6 wires the first always-on structural adaptivity gate. It does no
 This package must not contain application features, business logic, API handlers, database schema, Supabase configuration, authentication implementation, AI implementation, React components, React Native components, pages, or screens.
 
 End-to-end critical flows and load simulation remain later-stage work.
+
+## Stage 7 Group 11 — Resource ingestion validation flow
+
+Stage 7 Group 11 adds the resource ingestion validation flow plan under:
+
+- `flows/resource-ingestion/`
+- `fixtures/resource-ingestion.fixture.json`
+
+The flow covers upload intent, upload completion, durable job persistence, worker claim, validation, resource state transition, job terminal state, and cross-student denial.
+
+This flow uses synthetic fixtures only.
+
+This flow must not use production data, service-role credentials, direct database repository imports, OCR, parsing, AI, embeddings, retrieval, UI, or mobile behavior.

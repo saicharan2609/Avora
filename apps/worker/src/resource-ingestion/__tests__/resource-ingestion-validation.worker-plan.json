@@ -1,0 +1,83 @@
+{
+  "id": "stage-7-resource-ingestion-worker-validation-plan",
+  "owner": "@avora/platform",
+  "stage": "Stage 7 Group 11",
+  "title": "Resource ingestion worker validation plan",
+  "description": "Documents worker-level assertions for the completed Stage 7 resource ingestion claim and validation lifecycle.",
+  "subject": "apps/worker/src/resource-ingestion",
+  "preconditions": [
+    "a resource ingestion job exists with status queued",
+    "the job payload references an uploaded student-owned resource",
+    "the resource storage object exists for the success path",
+    "the worker runtime is configured with service-role database access",
+    "the worker runtime is configured with storage inspection access"
+  ],
+  "success_path": [
+    {
+      "action": "claimQueuedResourceIngestionJobs",
+      "expected": [
+        "one queued job is claimed",
+        "status becomes claimed",
+        "locked_by is set to worker id",
+        "locked_at is set",
+        "heartbeat_at is set",
+        "attempt_count increments"
+      ]
+    },
+    {
+      "action": "recordResourceIngestionJobHeartbeat",
+      "expected": [
+        "heartbeat_at updates for the claimed job",
+        "job remains claimed",
+        "locked_by remains unchanged"
+      ]
+    },
+    {
+      "action": "validateResourceIngestion",
+      "expected": [
+        "resource ownership matches payload",
+        "resource lifecycle_state is uploaded before validation",
+        "storage location matches payload",
+        "content hash matches payload when present",
+        "byte size matches payload and inspected object",
+        "declared MIME type matches inspected object"
+      ]
+    },
+    {
+      "action": "completeResourceIngestionJob",
+      "expected": [
+        "resource lifecycle_state becomes processing",
+        "job status becomes succeeded",
+        "completed_at is set",
+        "locked_at is cleared",
+        "locked_by is cleared",
+        "heartbeat_at is cleared"
+      ]
+    }
+  ],
+  "failure_path": [
+    {
+      "action": "validateResourceIngestion_with_missing_or_mismatched_object",
+      "expected": [
+        "resource lifecycle_state becomes rejected",
+        "job status becomes failed",
+        "failed_at is set",
+        "last_error is set",
+        "locked_at is cleared",
+        "locked_by is cleared",
+        "heartbeat_at is cleared"
+      ]
+    }
+  ],
+  "non_goals": [
+    "OCR",
+    "file parsing",
+    "text extraction",
+    "AI provider calls",
+    "embedding generation",
+    "retrieval indexing",
+    "resource ready transition",
+    "new API endpoints",
+    "UI assertions"
+  ]
+}

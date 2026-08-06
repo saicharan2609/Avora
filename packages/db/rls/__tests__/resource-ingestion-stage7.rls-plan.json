@@ -1,0 +1,82 @@
+{
+  "id": "stage-7-resource-ingestion-rls-plan",
+  "owner": "@avora/data",
+  "stage": "Stage 7 Group 11",
+  "title": "Resource ingestion RLS closure plan",
+  "description": "Covers student-scoped RLS expectations for the completed Stage 7 resource ingestion foundation.",
+  "tables": [
+    "public.resources",
+    "public.resource_ingestion_jobs"
+  ],
+  "cases": [
+    {
+      "name": "student can read own uploaded resource",
+      "table": "public.resources",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot read another student's uploaded resource",
+      "table": "public.resources",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student can read own resource ingestion job",
+      "table": "public.resource_ingestion_jobs",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot read another student's resource ingestion job",
+      "table": "public.resource_ingestion_jobs",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student can insert own queued resource ingestion job",
+      "table": "public.resource_ingestion_jobs",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot insert another student's resource ingestion job",
+      "table": "public.resource_ingestion_jobs",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot update own resource ingestion job claim state",
+      "table": "public.resource_ingestion_jobs",
+      "role": "authenticated",
+      "operation": "update",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot delete own resource ingestion job",
+      "table": "public.resource_ingestion_jobs",
+      "role": "authenticated",
+      "operation": "delete",
+      "scope": "own",
+      "expectation": "denied"
+    }
+  ],
+  "service_role_notes": [
+    "worker mutation relies on service-role bypass",
+    "no permissive authenticated update policy is expected",
+    "no permissive authenticated delete policy is expected"
+  ]
+}

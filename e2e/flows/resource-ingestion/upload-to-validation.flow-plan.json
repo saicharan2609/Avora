@@ -1,0 +1,166 @@
+{
+  "id": "stage-7-resource-ingestion-upload-to-validation",
+  "owner": "@avora/qa",
+  "stage": "Stage 7 Group 11",
+  "title": "Resource upload to ingestion validation flow",
+  "description": "Validates the completed Stage 7 resource ingestion foundation from upload intent through worker validation state transition.",
+  "fixture": "../../fixtures/resource-ingestion.fixture.json",
+  "scope": {
+    "includes": [
+      "declare resource upload intent",
+      "complete resource upload",
+      "persist resource ingestion job",
+      "claim resource ingestion job",
+      "validate resource row and storage object metadata",
+      "transition valid resource to processing",
+      "complete validated job",
+      "transition invalid resource to rejected",
+      "fail invalid validation job",
+      "deny cross-student access"
+    ],
+    "excludes": [
+      "OCR",
+      "file parsing",
+      "text extraction",
+      "AI processing",
+      "embeddings",
+      "retrieval indexing",
+      "summaries",
+      "flashcards",
+      "quizzes",
+      "UI rendering",
+      "mobile flows",
+      "new API endpoints"
+    ]
+  },
+  "actors": [
+    {
+      "name": "student_a",
+      "role": "authenticated_student"
+    },
+    {
+      "name": "student_b",
+      "role": "authenticated_student"
+    },
+    {
+      "name": "worker",
+      "role": "service_role_worker"
+    }
+  ],
+  "success_path": [
+    {
+      "step": 1,
+      "actor": "student_a",
+      "action": "declare_upload",
+      "expected": {
+        "resourceLifecycleState": "pending_upload",
+        "storageBucket": "quarantine",
+        "uploadTicketReturned": true
+      }
+    },
+    {
+      "step": 2,
+      "actor": "student_a",
+      "action": "complete_upload",
+      "expected": {
+        "resourceLifecycleState": "uploaded",
+        "contentHashPersisted": true,
+        "apiResponseShapeUnchanged": true
+      }
+    },
+    {
+      "step": 3,
+      "actor": "student_a",
+      "action": "observe_own_ingestion_job",
+      "expected": {
+        "jobName": "resources.ingestion.requested",
+        "reason": "upload_completed",
+        "priority": "normal",
+        "status": "queued",
+        "studentScoped": true
+      }
+    },
+    {
+      "step": 4,
+      "actor": "worker",
+      "action": "claim_queued_job",
+      "expected": {
+        "status": "claimed",
+        "lockedByPresent": true,
+        "heartbeatAtPresent": true,
+        "attemptCount": 1
+      }
+    },
+    {
+      "step": 5,
+      "actor": "worker",
+      "action": "validate_uploaded_resource",
+      "expected": {
+        "resourceLifecycleState": "processing",
+        "jobStatus": "succeeded",
+        "completedAtPresent": true,
+        "lockedByCleared": true,
+        "heartbeatCleared": true
+      }
+    }
+  ],
+  "failure_path": [
+    {
+      "step": 1,
+      "actor": "student_a",
+      "action": "complete_upload_with_mismatched_metadata",
+      "expected": {
+        "resourceLifecycleState": "uploaded",
+        "jobStatus": "queued"
+      }
+    },
+    {
+      "step": 2,
+      "actor": "worker",
+      "action": "validate_mismatched_resource",
+      "expected": {
+        "resourceLifecycleState": "rejected",
+        "jobStatus": "failed",
+        "failedAtPresent": true,
+        "lastErrorPresent": true
+      }
+    }
+  ],
+  "authorization_path": [
+    {
+      "step": 1,
+      "actor": "student_b",
+      "action": "read_student_a_resource_ingestion_job",
+      "expected": {
+        "access": "denied"
+      }
+    },
+    {
+      "step": 2,
+      "actor": "student_b",
+      "action": "read_student_a_resource",
+      "expected": {
+        "access": "denied"
+      }
+    },
+    {
+      "step": 3,
+      "actor": "student_b",
+      "action": "insert_job_for_student_a",
+      "expected": {
+        "access": "denied"
+      }
+    }
+  ],
+  "assertions": [
+    "complete-upload API response remains compatible with Stage 7 Group 6",
+    "resource ingestion job payload does not contain raw bytes",
+    "resource ingestion job payload does not contain signed URLs",
+    "resource ingestion job payload does not contain credentials",
+    "worker validation does not execute OCR",
+    "worker validation does not parse files",
+    "worker validation does not call AI providers",
+    "worker validation does not generate embeddings",
+    "worker validation does not write retrieval indexes"
+  ]
+}
