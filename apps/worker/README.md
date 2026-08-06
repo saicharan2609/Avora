@@ -2,16 +2,18 @@
 
 Owner: @avora/platform  
 Package type: application  
-Deployable: OCI image to container runtime  
+Deployable: container worker  
 Publishable: no
 
 ## Purpose
 
-`@avora/worker` is the container worker plane composition root for Avora.
+`@avora/worker` is the Avora worker-plane runtime.
 
-It is the deployable runtime reserved for long-running, expensive, retryable work. Stage 5 Group 5 establishes the first runnable worker shell, health endpoint, runtime directory structure, environment seam, Dockerfile, TypeScript wiring, and package scripts.
+It owns background job runtime composition and service-role execution boundaries.
 
-This group does not implement claim-loop behavior, job handlers, database access, Supabase integration, AI behavior, retrieval behavior, adapter behavior, authentication, APIs, business logic, or tests.
+Stage 7 Group 9 connects the worker runtime to durable resource ingestion jobs. The worker can claim queued jobs, heartbeat active claims, and release them for later processing.
+
+This group does not implement resource validation, OCR, parsing, extraction, AI processing, embeddings, retrieval indexing, summaries, flashcards, quizzes, UI, mobile, or API routes.
 
 ## Public surface
 
@@ -19,64 +21,53 @@ This application has no package export surface.
 
 Its runtime surfaces are:
 
-- `src/main.ts`
+- `src/index.ts`
 - `src/runtime/`
-- `src/handlers/`
-- `env.ts`
-- `Dockerfile`
+- `src/resource-ingestion/`
 
 ## Requirement trace
 
 - REPO-003
 - REPO-004
-- REPO-005
-- AD-08
-- AD-11
 - ENG-011
 - ENG-013
-- ENG-014
+- ENG-016
 - ENG-018
-- ENG-100
-- ENG-150
-- ENG-155
-- ENG-192
-- SEC-005
-- SEC-231
-- SEC-240
-- SEC-503
+- ENG-176
+- FR-032
+- FR-035
+- FR-036
+- FR-037
+- FR-039
+- FR-042
+- NFR-004
+- NFR-034
 - NN-04
 - NN-05
+- NN-10
+- SEC-040
+- SEC-081
+- SEC-082
+- SEC-230
+- SEC-231
 
 ## Workspace dependencies
 
 - `@avora/core`
-- `@avora/domain`
 - `@avora/db`
-- `@avora/ai`
 - `@avora/jobs`
-- `@avora/retrieval`
-- `@avora/adapters`
 - `@avora/config`
-
-## Directory responsibilities
-
-- `src/main.ts` owns worker bootstrapping and the health listener.
-- `src/runtime/` is reserved for claim-loop, checkpoint, and shutdown runtime seams.
-- `src/handlers/` is reserved for future job handlers, one file per job class.
-- `env.ts` re-exports the approved worker environment seam from `@avora/config`.
-- `Dockerfile` owns the pinned worker OCI image build.
-- `__tests__/` is reserved for colocated package tests.
 
 ## Boundaries
 
-This application must not import `@avora/ui-web` or `@avora/ui-mobile`.
+This app may use service-role credentials.
 
-This application must not accept client traffic.
+This app must not accept client input.
 
-This application must not use an HTTP framework.
+This app must not import `apps/web` or `apps/mobile`.
 
-The health endpoint is the only listener and takes no request body.
+This app must not import `@avora/ui-web` or `@avora/ui-mobile`.
 
-This application is the only deployable runtime allowed to receive the Supabase service-role credential. The repository must not contain secret values.
+This app must not import `@avora/ai` or `@avora/retrieval` in Stage 7 Group 9.
 
-Stage 5 Group 5 does not implement claim loops, job handlers, queue behavior, checkpoint behavior, heartbeat behavior, database access, Supabase logic, authentication implementation, AI implementation, retrieval implementation, adapter implementation, APIs, React components, React Native components, pages, screens, or tests.
+Resource ingestion execution belongs to Stage 7 Group 10.

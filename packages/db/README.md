@@ -12,7 +12,9 @@ Stage 6 established student identity persistence and role-scoped database client
 
 Stage 7 Group 4 established the resources repository.
 
-Stage 7 Group 8 establishes durable resource ingestion job persistence. Resource ingestion jobs are inserted after upload completion and remain queued until a later worker-plane group implements claim and execution.
+Stage 7 Group 8 established durable resource ingestion job persistence. Resource ingestion jobs are inserted after upload completion and remain queued until worker-plane groups claim and execute them.
+
+Stage 7 Group 9 adds claim, heartbeat, release, and failure-recording repository operations for resource ingestion jobs. These operations are intended for service-role worker runtime composition.
 
 ## Public surface
 
@@ -77,4 +79,4 @@ This package must not import apps.
 
 This package owns concrete Supabase database access only. It does not own domain invariants, route handlers, worker execution, storage SDK behavior, AI behavior, retrieval behavior, React components, React Native components, pages, or screens.
 
-Resource ingestion job persistence in Stage 7 Group 8 only inserts and reads durable queued job rows. Claiming, heartbeat, checkpointing, retry, dead-letter handling, and execution belong to later worker-plane groups.
+Resource ingestion job claim operations in Stage 7 Group 9 only update job ownership and operational status. Resource validation and ingestion execution belong to later groups.

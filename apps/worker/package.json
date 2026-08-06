@@ -2,25 +2,19 @@
   "name": "@avora/worker",
   "private": true,
   "type": "module",
-  "main": "dist/src/main.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "lint:arch": "eslint .",
-    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
-    "start": "node dist/src/main.js"
+    "lint:arch": "eslint ."
   },
   "dependencies": {
-    "@avora/adapters": "workspace:*",
-    "@avora/ai": "workspace:*",
     "@avora/core": "workspace:*",
     "@avora/db": "workspace:*",
-    "@avora/domain": "workspace:*",
-    "@avora/jobs": "workspace:*",
-    "@avora/retrieval": "workspace:*"
+    "@avora/jobs": "workspace:*"
   },
   "devDependencies": {
-    "@avora/config": "workspace:*"
+    "@avora/config": "workspace:*",
+    "@types/node": "24.10.4"
   }
 }

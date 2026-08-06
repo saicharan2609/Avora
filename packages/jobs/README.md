@@ -12,7 +12,9 @@ Stage 4 Group 5 established the package structure.
 
 Stage 7 Group 7 introduced the resource ingestion job handoff contract. This allows upload completion to request future worker-side ingestion without executing ingestion during the HTTP request.
 
-Stage 7 Group 8 introduces durable resource ingestion job persistence contracts. These contracts describe queued resource ingestion jobs persisted by `@avora/db` while keeping worker claim and execution for later groups.
+Stage 7 Group 8 introduced durable resource ingestion job persistence contracts.
+
+Stage 7 Group 9 introduces resource ingestion claim-loop types used by the worker runtime.
 
 ## Public surface
 
@@ -57,6 +59,7 @@ Stage 7 Group 8 introduces durable resource ingestion job persistence contracts.
 
 - Resource ingestion job handoff
 - Durable resource ingestion job persistence contract
+- Resource ingestion claim-loop contract
 
 ## Boundaries
 
@@ -70,6 +73,6 @@ This package must not import `@avora/ui-web` or `@avora/ui-mobile`.
 
 This package must not import `@avora/ai` or `@avora/retrieval`.
 
-This package must not contain worker execution, queue persistence implementation, database migrations, storage SDK behavior, OCR, malware scanning, file parsing, AI processing, embeddings, retrieval indexing, React components, React Native components, pages, screens, or tests in Stage 7 Group 8.
+This package must not contain worker execution, queue persistence implementation, database migrations, storage SDK behavior, OCR, malware scanning, file parsing, AI processing, embeddings, retrieval indexing, React components, React Native components, pages, screens, or tests in Stage 7 Group 9.
 
 Job handoff contracts describe work to be executed later by the worker plane.

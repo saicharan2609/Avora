@@ -3,6 +3,13 @@ import type { IsoDateTimeString } from "@avora/core/time";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Database, Json } from "../../generated/database.types.js";
+import type {
+  ClaimedDbResourceIngestionJobRecord,
+  ClaimQueuedResourceIngestionJobsInput,
+  FailResourceIngestionJobInput,
+  RecordResourceIngestionJobHeartbeatInput,
+  ReleaseResourceIngestionJobInput,
+} from "./claim.js";
 
 export type DbResourceIngestionJobStatus =
   Database["public"]["Enums"]["resource_ingestion_job_status"];
@@ -78,6 +85,18 @@ export type ResourceIngestionJobsRepository = Readonly<{
   getResourceIngestionJobById: (
     input: GetResourceIngestionJobByIdInput,
   ) => Promise<DbResourceIngestionJobRecord | null>;
+  claimQueuedResourceIngestionJobs: (
+    input: ClaimQueuedResourceIngestionJobsInput,
+  ) => Promise<readonly ClaimedDbResourceIngestionJobRecord[]>;
+  recordResourceIngestionJobHeartbeat: (
+    input: RecordResourceIngestionJobHeartbeatInput,
+  ) => Promise<ClaimedDbResourceIngestionJobRecord>;
+  releaseResourceIngestionJob: (
+    input: ReleaseResourceIngestionJobInput,
+  ) => Promise<DbResourceIngestionJobRecord>;
+  failResourceIngestionJob: (
+    input: FailResourceIngestionJobInput,
+  ) => Promise<DbResourceIngestionJobRecord>;
 }>;
 
 export type CreateResourceIngestionJobsRepositoryInput = Readonly<{
@@ -86,8 +105,13 @@ export type CreateResourceIngestionJobsRepositoryInput = Readonly<{
 
 export type ResourceIngestionJobsRepositoryErrorCode =
   | "resource_ingestion_jobs_invalid_payload"
+  | "resource_ingestion_jobs_invalid_claim"
   | "resource_ingestion_jobs_insert_failed"
-  | "resource_ingestion_jobs_read_failed";
+  | "resource_ingestion_jobs_read_failed"
+  | "resource_ingestion_jobs_claim_failed"
+  | "resource_ingestion_jobs_heartbeat_failed"
+  | "resource_ingestion_jobs_release_failed"
+  | "resource_ingestion_jobs_failure_record_failed";
 
 export class ResourceIngestionJobsRepositoryError extends Error {
   public readonly code: ResourceIngestionJobsRepositoryErrorCode;
@@ -159,7 +183,180 @@ export function createResourceIngestionJobsRepository(
 
       return mapResourceIngestionJobRow(data);
     },
+
+    claimQueuedResourceIngestionJobs: async (
+      claim: ClaimQueuedResourceIngestionJobsInput,
+    ): Promise<readonly ClaimedDbResourceIngestionJobRecord[]> => {
+      assertValidClaimInput(claim);
+
+      const staleClaimCutoff = new Date(
+        Date.now() - claim.staleClaimThresholdSeconds * 1000,
+      ).toISOString();
+
+      const { data: candidates, error: readError } = await input.client
+        .from("resource_ingestion_jobs")
+        .select(resourceIngestionJobSelectColumns)
+        .or(
+          [
+            `and(status.eq.queued,available_at.lte.${new Date().toISOString()})`,
+            `and(status.eq.claimed,heartbeat_at.lt.${staleClaimCutoff})`,
+          ].join(","),
+        )
+        .order("priority", { ascending: true })
+        .order("available_at", { ascending: true })
+        .limit(claim.limit);
+
+      if (readError !== null) {
+        throw new ResourceIngestionJobsRepositoryError(
+          "resource_ingestion_jobs_claim_failed",
+          readError.message,
+        );
+      }
+
+      const claimedJobs: ClaimedDbResourceIngestionJobRecord[] = [];
+
+      for (const candidate of candidates) {
+        const { data: claimed, error: updateError } = await input.client
+          .from("resource_ingestion_jobs")
+          .update({
+            status: "claimed",
+            locked_at: new Date().toISOString(),
+            locked_by: claim.workerId,
+            heartbeat_at: new Date().toISOString(),
+            attempt_count: candidate.attempt_count + 1,
+            started_at: candidate.started_at ?? new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq("job_id", candidate.job_id)
+          .in("status", ["queued", "claimed"])
+          .select(resourceIngestionJobSelectColumns)
+          .maybeSingle();
+
+        if (updateError !== null) {
+          throw new ResourceIngestionJobsRepositoryError(
+            "resource_ingestion_jobs_claim_failed",
+            updateError.message,
+          );
+        }
+
+        if (claimed !== null) {
+          claimedJobs.push(mapClaimedResourceIngestionJobRow(claimed));
+        }
+      }
+
+      return claimedJobs;
+    },
+
+    recordResourceIngestionJobHeartbeat: async (
+      heartbeat: RecordResourceIngestionJobHeartbeatInput,
+    ): Promise<ClaimedDbResourceIngestionJobRecord> => {
+      const { data, error } = await input.client
+        .from("resource_ingestion_jobs")
+        .update({
+          heartbeat_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("job_id", heartbeat.jobId)
+        .eq("locked_by", heartbeat.workerId)
+        .eq("status", "claimed")
+        .select(resourceIngestionJobSelectColumns)
+        .single();
+
+      if (error !== null) {
+        throw new ResourceIngestionJobsRepositoryError(
+          "resource_ingestion_jobs_heartbeat_failed",
+          error.message,
+        );
+      }
+
+      return mapClaimedResourceIngestionJobRow(data);
+    },
+
+    releaseResourceIngestionJob: async (
+      release: ReleaseResourceIngestionJobInput,
+    ): Promise<DbResourceIngestionJobRecord> => {
+      const { data, error } = await input.client
+        .from("resource_ingestion_jobs")
+        .update({
+          status: "queued",
+          locked_at: null,
+          locked_by: null,
+          heartbeat_at: null,
+          available_at: release.availableAt,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("job_id", release.jobId)
+        .eq("locked_by", release.workerId)
+        .eq("status", "claimed")
+        .select(resourceIngestionJobSelectColumns)
+        .single();
+
+      if (error !== null) {
+        throw new ResourceIngestionJobsRepositoryError(
+          "resource_ingestion_jobs_release_failed",
+          error.message,
+        );
+      }
+
+      return mapResourceIngestionJobRow(data);
+    },
+
+    failResourceIngestionJob: async (
+      failure: FailResourceIngestionJobInput,
+    ): Promise<DbResourceIngestionJobRecord> => {
+      const { data, error } = await input.client
+        .from("resource_ingestion_jobs")
+        .update({
+          status: "failed",
+          locked_at: null,
+          locked_by: null,
+          heartbeat_at: null,
+          failed_at: new Date().toISOString(),
+          last_error: failure.errorMessage,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("job_id", failure.jobId)
+        .eq("locked_by", failure.workerId)
+        .eq("status", "claimed")
+        .select(resourceIngestionJobSelectColumns)
+        .single();
+
+      if (error !== null) {
+        throw new ResourceIngestionJobsRepositoryError(
+          "resource_ingestion_jobs_failure_record_failed",
+          error.message,
+        );
+      }
+
+      return mapResourceIngestionJobRow(data);
+    },
   };
+}
+
+function assertValidClaimInput(input: ClaimQueuedResourceIngestionJobsInput): void {
+  if (input.workerId.length === 0) {
+    throw new ResourceIngestionJobsRepositoryError(
+      "resource_ingestion_jobs_invalid_claim",
+      "Resource ingestion job claim requires a worker identifier.",
+    );
+  }
+
+  if (!Number.isSafeInteger(input.limit) || input.limit <= 0) {
+    throw new ResourceIngestionJobsRepositoryError(
+      "resource_ingestion_jobs_invalid_claim",
+      "Resource ingestion job claim requires a positive limit.",
+    );
+  }
+
+  if (
+    !Number.isSafeInteger(input.staleClaimThresholdSeconds)
+    || input.staleClaimThresholdSeconds <= 0
+  ) {
+    throw new ResourceIngestionJobsRepositoryError(
+      "resource_ingestion_jobs_invalid_claim",
+      "Resource ingestion job claim requires a positive stale-claim threshold.",
+    );
+  }
 }
 
 function assertValidPayload(payload: DbResourceIngestionJobPayload): void {
@@ -204,6 +401,26 @@ function assertValidPayload(payload: DbResourceIngestionJobPayload): void {
       "Resource ingestion job payload requires a requested-at timestamp.",
     );
   }
+}
+
+function mapClaimedResourceIngestionJobRow(
+  row: Database["public"]["Tables"]["resource_ingestion_jobs"]["Row"],
+): ClaimedDbResourceIngestionJobRecord {
+  const mapped = mapResourceIngestionJobRow(row);
+
+  if (mapped.status !== "claimed" || mapped.lockedAt === null || mapped.lockedBy === null) {
+    throw new ResourceIngestionJobsRepositoryError(
+      "resource_ingestion_jobs_claim_failed",
+      "Resource ingestion job row is not in a claimed state.",
+    );
+  }
+
+  return {
+    ...mapped,
+    status: "claimed",
+    lockedAt: mapped.lockedAt,
+    lockedBy: mapped.lockedBy,
+  };
 }
 
 function mapResourceIngestionJobRow(
@@ -285,11 +502,8 @@ function mapPayload(payload: Json): DbResourceIngestionJobPayload {
   };
 }
 
-function isJsonObject(
-  value: Json | undefined,
-): value is { [key: string]: Json | undefined } {
+function isJsonObject(value: unknown): value is Record<string, Json> {
   return (
-    value !== undefined &&
     typeof value === "object" &&
     value !== null &&
     !Array.isArray(value)
