@@ -8,12 +8,12 @@ Security co-owner: @avora/security
 
 This directory owns transport-only resource API route handlers for the web composition root.
 
-Stage 7 Group 6 wires the resource upload-intent API boundary:
+Stage 7 Group 6 established the resource upload API boundary:
 
-- declare upload intent;
-- complete upload after bytes have reached private storage.
+- declare resource upload intent;
+- complete resource upload after bytes have reached private storage.
 
-The route handlers validate shared API contracts from `@avora/core/contracts/resources`, resolve the authenticated student from the existing web session cookie, compose existing domain and infrastructure pieces, and return contract-shaped responses.
+Stage 7 Group 7 adds the resource ingestion job handoff after successful upload completion. The route creates and enqueues a typed ingestion request through a vendor-free queue seam after the resource row is marked uploaded.
 
 ## Public routes
 
@@ -51,10 +51,14 @@ The route handlers validate shared API contracts from `@avora/core/contracts/res
 
 These route handlers are composition-root transport code.
 
-These route handlers may import shared contracts, domain service factories, database repository implementations, role-scoped database client factories, and approved adapters.
+These route handlers may import shared API contracts, role-scoped database client factories, concrete database repositories, domain queue port types, and job handoff envelope helpers.
 
 These route handlers must not import Supabase SDKs directly.
 
-These route handlers must not implement domain logic, database query logic, storage SDK behavior, ingestion jobs, AI behavior, retrieval behavior, React components, React Native components, pages, screens, or tests.
+These route handlers must not read or require service-role credentials.
+
+These route handlers must not implement storage SDK behavior, database query internals, queue infrastructure, queue persistence, worker execution, ingestion jobs, AI behavior, retrieval behavior, React components, React Native components, pages, screens, or tests.
 
 Request bodies must not accept `studentId`. The authenticated student is resolved from the web session.
+
+No ingestion work executes during the HTTP request.

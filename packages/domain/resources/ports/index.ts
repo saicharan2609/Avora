@@ -7,3 +7,8 @@ export type {
   DeleteObjectInput,
   PromoteObjectInput,
 } from "./BlobStorePort.js";
+export type {
+  ResourceIngestionEnqueueInput,
+  ResourceIngestionEnqueueResult,
+  ResourceIngestionQueuePort,
+} from "./ResourceIngestionQueuePort.js";

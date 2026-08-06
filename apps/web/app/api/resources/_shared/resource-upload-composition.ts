@@ -1,9 +1,14 @@
 import { createSupabaseStorageAdapter } from "@avora/adapters/supabase/storage";
-import { createResourceUploadService } from "@avora/domain/resources";
-import { createResourcesRepository } from "@avora/db/repositories/resources";
 import { createStudentDatabaseClient } from "@avora/db/client";
+import { createResourcesRepository } from "@avora/db/repositories/resources";
+import { createResourceUploadService } from "@avora/domain/resources";
 
 import type { AuthenticatedStudent } from "./authenticated-student";
+import { createWebResourceIngestionQueue } from "./resource-ingestion-queue";
+import {
+  createWebResourceUploadOrchestrator,
+  type WebResourceUploadOrchestrator,
+} from "./resource-upload-orchestrator";
 
 export type WebResourceUploadEnvironment = Readonly<{
   supabaseUrl: string;
@@ -19,10 +24,10 @@ export function readWebResourceUploadEnvironment(): WebResourceUploadEnvironment
   };
 }
 
-export function createWebResourceUploadService(input: Readonly<{
+export function createWebResourceUploadComposition(input: Readonly<{
   environment: WebResourceUploadEnvironment;
   authenticatedStudent: AuthenticatedStudent;
-}>) {
+}>): WebResourceUploadOrchestrator {
   const studentDatabase = createStudentDatabaseClient({
     supabaseUrl: input.environment.supabaseUrl,
     supabaseAnonKey: input.environment.supabaseAnonKey,
@@ -38,9 +43,16 @@ export function createWebResourceUploadService(input: Readonly<{
     supabaseServiceRoleKey: input.environment.supabaseServiceRoleKey,
   });
 
-  return createResourceUploadService({
+  const uploadService = createResourceUploadService({
     repository,
     blobStore,
+  });
+
+  const ingestionQueue = createWebResourceIngestionQueue();
+
+  return createWebResourceUploadOrchestrator({
+    uploadService,
+    ingestionQueue,
   });
 }
 

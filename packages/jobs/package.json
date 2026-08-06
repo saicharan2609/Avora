@@ -3,15 +3,15 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./ports": "./ports/index.ts",
-    "./queue": "./queue/index.ts",
-    "./state-machines": "./state-machines/index.ts",
-    "./claim": "./claim/index.ts",
-    "./checkpoint": "./checkpoint/index.ts",
-    "./heartbeat": "./heartbeat/index.ts",
-    "./priorities": "./priorities/index.ts",
-    "./dead-letter": "./dead-letter/index.ts"
+    ".": "./dist/src/index.js",
+    "./ports": "./dist/ports/index.js",
+    "./queue": "./dist/queue/index.js",
+    "./state-machines": "./dist/state-machines/index.js",
+    "./claim": "./dist/claim/index.js",
+    "./checkpoint": "./dist/checkpoint/index.js",
+    "./heartbeat": "./dist/heartbeat/index.js",
+    "./priorities": "./dist/priorities/index.js",
+    "./dead-letter": "./dist/dead-letter/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -20,8 +20,7 @@
     "lint:arch": "eslint ."
   },
   "dependencies": {
-    "@avora/core": "workspace:*",
-    "@avora/db": "workspace:*"
+    "@avora/core": "workspace:*"
   },
   "devDependencies": {
     "@avora/config": "workspace:*"

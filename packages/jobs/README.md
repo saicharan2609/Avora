@@ -6,11 +6,11 @@ Publishable: no
 
 ## Purpose
 
-`@avora/jobs` owns Avora's job machinery package boundary.
+`@avora/jobs` owns job-plane contracts, queue-facing handoff types, claim seams, checkpoint seams, heartbeat seams, priority metadata, state-machine seams, and dead-letter seams.
 
-It is the future home for queue ports, queue primitives, job state-machine machinery, claim/checkpoint/heartbeat primitives, priority classes, and dead-letter handling.
+Stage 4 Group 5 established the package structure.
 
-Stage 4 Group 5 establishes only the directory structure, empty public seams, TypeScript wiring, and export wiring.
+Stage 7 Group 7 introduces the resource ingestion job handoff contract. This allows upload completion to request future worker-side ingestion without executing ingestion during the HTTP request.
 
 ## Public surface
 
@@ -26,43 +26,47 @@ Stage 4 Group 5 establishes only the directory structure, empty public seams, Ty
 
 ## Requirement trace
 
-- REPO-001
 - REPO-003
 - REPO-004
-- REPO-012
 - ENG-011
 - ENG-013
+- ENG-015
+- ENG-016
 - ENG-018
-- ENG-019
-- ENG-154
+- ENG-176
+- FR-032
+- FR-035
+- FR-036
+- FR-037
+- FR-039
+- FR-042
+- NFR-004
+- NFR-034
+- NN-04
 - NN-05
+- NN-10
 
 ## Workspace dependencies
 
 - `@avora/core`
-- `@avora/db`
 - `@avora/config`
 
-## Directory responsibilities
+## Current job handoff contracts
 
-- `ports/` owns package-level job ports.
-- `queue/` is reserved for queue primitives.
-- `state-machines/` is reserved for job state-machine machinery.
-- `claim/` is reserved for claim primitives.
-- `checkpoint/` is reserved for checkpoint primitives.
-- `heartbeat/` is reserved for heartbeat primitives.
-- `priorities/` is reserved for priority-class machinery.
-- `dead-letter/` is reserved for dead-letter handling.
-- `__tests__/` is reserved for colocated package tests.
+- Resource ingestion job handoff
 
 ## Boundaries
 
 This package must not import `@avora/domain`.
 
-This package must not import `@avora/ai`.
+This package must not import `@avora/db`.
+
+This package must not import `@avora/adapters`.
 
 This package must not import `@avora/ui-web` or `@avora/ui-mobile`.
 
-Job definitions live in the owning domain module. Only cross-cutting job machinery lives in this package.
+This package must not import `@avora/ai` or `@avora/retrieval`.
 
-Stage 4 Group 5 does not implement queues, state machines, claim logic, checkpoint logic, heartbeat logic, priority logic, dead-letter handling, business logic, database schema, Supabase logic, APIs, authentication, AI implementation, UI code, or tests.
+This package must not contain worker execution, queue persistence, database migrations, storage SDK behavior, OCR, malware scanning, file parsing, AI processing, embeddings, retrieval indexing, React components, React Native components, pages, screens, or tests in Stage 7 Group 7.
+
+Job handoff contracts describe work to be executed later by the worker plane.

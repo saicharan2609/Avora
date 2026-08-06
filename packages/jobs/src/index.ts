@@ -6,3 +6,11 @@ export type * from "../checkpoint/index.js";
 export type * from "../heartbeat/index.js";
 export type * from "../priorities/index.js";
 export type * from "../dead-letter/index.js";
+
+export {
+  createResourceIngestionJobEnvelope,
+  resourceIngestionJobName,
+  resourceIngestionJobPriorities,
+  resourceIngestionJobReasons,
+  resourceIngestionJobStorageBuckets,
+} from "../queue/index.js";

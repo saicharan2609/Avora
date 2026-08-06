@@ -19,7 +19,7 @@ import {
   formatZodError,
 } from "../../../_shared/json";
 import {
-  createWebResourceUploadService,
+  createWebResourceUploadComposition,
   readWebResourceUploadEnvironment,
 } from "../../../_shared/resource-upload-composition";
 import { serializeCompleteResourceUploadResult } from "../../../_shared/resource-upload-serializer";
@@ -60,7 +60,7 @@ export async function POST(
       environment,
     });
 
-    const service = createWebResourceUploadService({
+    const service = createWebResourceUploadComposition({
       environment,
       authenticatedStudent,
     });

@@ -8,7 +8,9 @@ The `resources` module owns resource-domain boundaries and invariants.
 
 Stage 7 Group 1 established the resource upload-intent contract surface used before ingestion implementation begins. It defines resource lifecycle states, storage path contracts, upload ticket contracts, and the vendor-free blob-store port.
 
-Stage 7 Group 3 establishes the resource upload application-service seam. The service coordinates a vendor-free resource repository port with the vendor-free blob-store port, while preserving the rule that storage implementation and database implementation live outside the service.
+Stage 7 Group 3 established the resource upload application-service seam. The service coordinates a vendor-free resource repository port with the vendor-free blob-store port, while preserving the rule that storage implementation and database implementation live outside the service.
+
+Stage 7 Group 7 establishes the resource ingestion job handoff boundary. Upload completion can now produce a typed ingestion job request through a vendor-free enqueue port. This group does not execute ingestion work.
 
 ## Public surface
 
@@ -55,10 +57,12 @@ Stage 7 Group 3 establishes the resource upload application-service seam. The se
 - Upload intent
 - Upload completion
 - Upload ticket
+- Resource ingestion job request
 
 ## Current ports
 
 - `BlobStorePort`
+- `ResourceIngestionQueuePort`
 - `ResourceRepositoryPort`
 
 ## Current services
@@ -67,10 +71,12 @@ Stage 7 Group 3 establishes the resource upload application-service seam. The se
 
 ## Boundaries
 
-This module must not contain upload route handlers, storage vendor implementation, database client implementation, Supabase configuration, authentication implementation, AI implementation, retrieval implementation, jobs implementation, React components, React Native components, pages, screens, or tests in Stage 7 Group 3.
+This module must not contain upload route handlers, storage vendor implementation, database client implementation, Supabase configuration, authentication implementation, AI implementation, retrieval implementation, jobs infrastructure, worker execution, React components, React Native components, pages, screens, or tests in Stage 7 Group 7.
 
-This module may declare vendor-free resource contracts, repository ports, storage ports, and application services.
+This module may declare vendor-free resource contracts, repository ports, storage ports, job contracts, queue ports, and application services.
 
 Supabase-specific storage implementation belongs outside this module.
 
 Supabase-specific database access belongs outside this module.
+
+Resource ingestion execution belongs to a later worker-plane group.
