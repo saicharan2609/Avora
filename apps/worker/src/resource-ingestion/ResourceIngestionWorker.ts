@@ -1,4 +1,3 @@
-import type { IsoDateTimeString } from "@avora/core/time";
 import type {
   ClaimedResourceIngestionJob,
   ResourceIngestionClaimLoopOptions,
@@ -7,9 +6,7 @@ import type { ResourceIngestionJobsRepository } from "@avora/db/repositories/job
 
 export type ResourceIngestionJobHandlerResult =
   | Readonly<{
-      outcome: "deferred";
-      availableAt: IsoDateTimeString;
-      reason: string;
+      outcome: "completed";
     }>
   | Readonly<{
       outcome: "failed";
@@ -65,11 +62,10 @@ export function createResourceIngestionWorker(
 
       const result = await input.handler.handle(firstJob);
 
-      if (result.outcome === "deferred") {
-        await input.repository.releaseResourceIngestionJob({
+      if (result.outcome === "completed") {
+        await input.repository.completeResourceIngestionJob({
           jobId: firstJob.jobId,
           workerId: input.workerId,
-          availableAt: result.availableAt,
         });
 
         return "claimed";
@@ -82,20 +78,6 @@ export function createResourceIngestionWorker(
       });
 
       return "claimed";
-    },
-  };
-}
-
-export function createDeferredResourceIngestionJobHandler(): ResourceIngestionJobHandler {
-  return {
-    handle: async (): Promise<ResourceIngestionJobHandlerResult> => {
-      const availableAt = new Date(Date.now() + 60_000).toISOString() as IsoDateTimeString;
-
-      return {
-        outcome: "deferred",
-        availableAt,
-        reason: "Resource ingestion validation is implemented in a later stage.",
-      };
     },
   };
 }

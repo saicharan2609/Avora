@@ -1,8 +1,11 @@
+import { createSupabaseStorageInspectionAdapter } from "@avora/adapters/supabase/storage";
 import { createServiceRoleDatabaseClient } from "@avora/db/client";
 import { createResourceIngestionJobsRepository } from "@avora/db/repositories/jobs";
+import { createResourcesRepository } from "@avora/db/repositories/resources";
+import { createResourceIngestionValidationService } from "@avora/domain/resources";
 
+import { createResourceIngestionValidationHandler } from "../resource-ingestion/ResourceIngestionValidationHandler.js";
 import {
-  createDeferredResourceIngestionJobHandler,
   createResourceIngestionWorker,
   type ResourceIngestionWorker,
 } from "../resource-ingestion/ResourceIngestionWorker.js";
@@ -21,7 +24,7 @@ export function readWorkerRuntimeEnvironment(): WorkerRuntimeEnvironment {
   return {
     supabaseUrl: readRequiredEnvironmentValue("SUPABASE_URL"),
     supabaseServiceRoleKey: readRequiredEnvironmentValue("SUPABASE_SERVICE_ROLE_KEY"),
-    workerId: process.env["AVORIA_WORKER_ID"] ?? `worker-${process.pid}`,
+    workerId: process.env["AVORA_WORKER_ID"] ?? `worker-${process.pid}`,
   };
 }
 
@@ -33,14 +36,30 @@ export function createWorkerRuntime(
     supabaseServiceRoleKey: environment.supabaseServiceRoleKey,
   });
 
+  const resourcesRepository = createResourcesRepository({
+    client: database.client,
+  });
+
   const resourceIngestionJobsRepository = createResourceIngestionJobsRepository({
     client: database.client,
+  });
+
+  const storageInspection = createSupabaseStorageInspectionAdapter({
+    supabaseUrl: environment.supabaseUrl,
+    supabaseServiceRoleKey: environment.supabaseServiceRoleKey,
+  });
+
+  const validationService = createResourceIngestionValidationService({
+    repository: resourcesRepository,
+    objectInspection: storageInspection,
   });
 
   return {
     resourceIngestionWorker: createResourceIngestionWorker({
       repository: resourceIngestionJobsRepository,
-      handler: createDeferredResourceIngestionJobHandler(),
+      handler: createResourceIngestionValidationHandler({
+        validationService,
+      }),
       workerId: environment.workerId,
     }),
   };

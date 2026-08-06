@@ -7,9 +7,11 @@ Domain owner: @avora/data
 
 This directory owns worker-runtime wiring for resource ingestion jobs.
 
-Stage 7 Group 9 connects the worker process to durable resource ingestion jobs by claiming queued jobs, heartbeating active claims, and delegating each claim to a handler interface.
+Stage 7 Group 9 connected the worker process to durable resource ingestion jobs by claiming queued jobs, heartbeating active claims, and delegating each claim to a handler interface.
 
-This group intentionally does not validate uploaded resources, inspect storage objects, parse files, run OCR, call AI providers, generate embeddings, index retrieval content, or update resource lifecycle state.
+Stage 7 Group 10 adds resource ingestion validation. Claimed jobs are validated against the resource row and storage object metadata. Valid resources transition to `processing`; invalid resources transition to `rejected`.
+
+This group intentionally does not parse files, run OCR, call AI providers, generate embeddings, index retrieval content, or update resources to `ready`.
 
 ## Public surface
 
@@ -21,4 +23,4 @@ This directory may use service-role database composition because `apps/worker` i
 
 This directory must not import `apps/web`, UI packages, React, React Native, Expo, `@avora/ai`, or `@avora/retrieval`.
 
-Resource ingestion execution belongs to Stage 7 Group 10.
+Resource extraction belongs to a later stage.

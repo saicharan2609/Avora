@@ -20,3 +20,13 @@ export {
   assertStoragePathBelongsToStudent,
   createStudentResourceObjectPath,
 } from "./path.js";
+export type {
+  CreateSupabaseStorageInspectionAdapterInput,
+  SupabaseStorageInspectionAdapter,
+  SupabaseStorageInspectionAdapterErrorCode,
+} from "./inspection.js";
+
+export {
+  createSupabaseStorageInspectionAdapter,
+  SupabaseStorageInspectionAdapterError,
+} from "./inspection.js";

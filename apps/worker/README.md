@@ -11,9 +11,11 @@ Publishable: no
 
 It owns background job runtime composition and service-role execution boundaries.
 
-Stage 7 Group 9 connects the worker runtime to durable resource ingestion jobs. The worker can claim queued jobs, heartbeat active claims, and release them for later processing.
+Stage 7 Group 9 connected the worker runtime to durable resource ingestion jobs. The worker can claim queued jobs, heartbeat active claims, and release them for later processing.
 
-This group does not implement resource validation, OCR, parsing, extraction, AI processing, embeddings, retrieval indexing, summaries, flashcards, quizzes, UI, mobile, or API routes.
+Stage 7 Group 10 validates claimed resource ingestion jobs. The worker verifies resource ownership, lifecycle state, storage location, content hash, byte size, MIME type, and storage object existence before transitioning the resource to `processing` or `rejected`.
+
+This group does not implement OCR, parsing, extraction, AI processing, embeddings, retrieval indexing, summaries, flashcards, quizzes, UI, mobile, or API routes.
 
 ## Public surface
 
@@ -53,8 +55,10 @@ Its runtime surfaces are:
 
 ## Workspace dependencies
 
+- `@avora/adapters`
 - `@avora/core`
 - `@avora/db`
+- `@avora/domain`
 - `@avora/jobs`
 - `@avora/config`
 
@@ -68,6 +72,6 @@ This app must not import `apps/web` or `apps/mobile`.
 
 This app must not import `@avora/ui-web` or `@avora/ui-mobile`.
 
-This app must not import `@avora/ai` or `@avora/retrieval` in Stage 7 Group 9.
+This app must not import `@avora/ai` or `@avora/retrieval` in Stage 7 Group 10.
 
-Resource ingestion execution belongs to Stage 7 Group 10.
+Resource extraction belongs to a later stage.

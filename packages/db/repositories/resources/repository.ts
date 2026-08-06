@@ -3,7 +3,11 @@ import type { ResourceId } from "@avora/core/identity";
 import type { DatabaseClient } from "../../client/index.js";
 import type {
   CreatePendingResourceUploadInput,
+  DbResourceRecord,
   GetResourceByIdInput,
+  GetResourceForIngestionInput,
+  MarkResourceProcessingInput,
+  MarkResourceRejectedInput,
   MarkResourceUploadCompletedInput,
   ResourcesRepository,
 } from "./contracts.js";
@@ -24,7 +28,9 @@ export function createResourcesRepository(
   input: CreateResourcesRepositoryInput,
 ): ResourcesRepository {
   return {
-    createPendingUpload: async (uploadInput: CreatePendingResourceUploadInput) => {
+    createPendingUpload: async (
+      uploadInput: CreatePendingResourceUploadInput,
+    ): Promise<DbResourceRecord> => {
       const resourceId = globalThis.crypto.randomUUID() as ResourceId;
 
       const storageObjectPath = createResourceStorageObjectPath({
@@ -67,7 +73,9 @@ export function createResourcesRepository(
       return mapResourceRow(data);
     },
 
-    markUploadCompleted: async (uploadInput: MarkResourceUploadCompletedInput) => {
+    markUploadCompleted: async (
+      uploadInput: MarkResourceUploadCompletedInput,
+    ): Promise<DbResourceRecord> => {
       const { data, error } = await input.client
         .from("resources")
         .update({
@@ -98,7 +106,81 @@ export function createResourcesRepository(
       return mapResourceRow(data);
     },
 
-    getById: async (readInput: GetResourceByIdInput) => {
+    getResourceForIngestion: async (
+      lookup: GetResourceForIngestionInput,
+    ): Promise<DbResourceRecord | null> => {
+      const { data, error } = await input.client
+        .from("resources")
+        .select(resourceSelectColumns)
+        .eq("student_id", lookup.studentId)
+        .eq("resource_id", lookup.resourceId)
+        .maybeSingle();
+
+      if (error !== null) {
+        throw new ResourcesRepositoryError(
+          "resources_repository_read_failed",
+          error.message,
+        );
+      }
+
+      return data === null ? null : mapResourceRow(data);
+    },
+
+    markResourceProcessing: async (
+      resource: MarkResourceProcessingInput,
+    ): Promise<DbResourceRecord> => {
+      const { data, error } = await input.client
+        .from("resources")
+        .update({
+          lifecycle_state: "processing",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("student_id", resource.studentId)
+        .eq("resource_id", resource.resourceId)
+        .eq("lifecycle_state", "uploaded")
+        .select(resourceSelectColumns)
+        .single();
+
+      if (error !== null) {
+        throw new ResourcesRepositoryError(
+          "resources_repository_update_failed",
+          error.message,
+        );
+      }
+
+      return mapResourceRow(data);
+    },
+
+    markResourceRejected: async (
+      resource: MarkResourceRejectedInput,
+    ): Promise<DbResourceRecord> => {
+      void resource.reason;
+
+      const { data, error } = await input.client
+        .from("resources")
+        .update({
+          lifecycle_state: "rejected",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("student_id", resource.studentId)
+        .eq("resource_id", resource.resourceId)
+        .in("lifecycle_state", ["uploaded", "processing"])
+        .select(resourceSelectColumns)
+        .single();
+
+      if (error !== null) {
+        throw new ResourcesRepositoryError(
+          "resources_repository_update_failed",
+          error.message,
+        );
+      }
+
+      return mapResourceRow(data);
+    },
+
+    getById: async (
+      readInput: GetResourceByIdInput,
+    ): Promise<DbResourceRecord | null> => {
       const { data, error } = await input.client
         .from("resources")
         .select(resourceSelectColumns)

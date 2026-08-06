@@ -1,6 +1,7 @@
 export type {
   ClaimedDbResourceIngestionJobRecord,
   ClaimQueuedResourceIngestionJobsInput,
+  CompleteResourceIngestionJobInput,
   FailResourceIngestionJobInput,
   RecordResourceIngestionJobHeartbeatInput,
   ReleaseResourceIngestionJobInput,

@@ -1,45 +1,26 @@
-# storage
+# supabase storage
 
 Owner: @avora/platform  
-Security co-owner: @avora/security
+Domain owner: @avora/data
 
 ## Purpose
 
-The `storage` directory owns the Supabase Storage vendor adapter.
+This directory owns Supabase Storage adapter implementations.
 
-The domain resources module declares the vendor-free blob-store port. This adapter provides Supabase Storage behavior without importing `@avora/domain`, preserving the repository dependency matrix.
+Stage 7 Group 2 established upload-ticket storage behavior.
+
+Stage 7 Group 10 adds storage object inspection for worker-side resource ingestion validation.
 
 ## Public surface
 
 - `@avora/adapters/supabase/storage`
 
-## Requirement trace
-
-- ENG-018
-- ENG-026
-- ENG-176
-- FR-035
-- FR-036
-- FR-037
-- NFR-034
-- NN-04
-- NN-10
-- SEC-230
-- SEC-231
-
-## Supported operations
-
-- Create signed upload ticket.
-- Create signed read URL.
-- Promote object between buckets.
-- Delete object.
-
 ## Boundaries
 
-This directory delegates object storage to Supabase Storage.
+This adapter may import `@supabase/supabase-js`.
 
-This directory must not import `@avora/domain`.
+This adapter must not import `@avora/domain`.
 
-This directory must not contain upload route handlers, web upload UI, mobile upload UI, resource repository methods, ingestion jobs, extraction, classification, AI behavior, retrieval behavior, React components, React Native components, pages, screens, or tests in Stage 7 Group 2.
+This adapter must not import apps, UI packages, AI packages, or retrieval packages.
 
-Service-role credentials must not be used in browser or mobile runtimes.
+Storage inspection only checks object existence and metadata. It does not parse, OCR, extract, index, or process resource content.

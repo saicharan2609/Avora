@@ -12,3 +12,8 @@ export type {
   ResourceIngestionEnqueueResult,
   ResourceIngestionQueuePort,
 } from "./ResourceIngestionQueuePort.js";
+export type {
+  InspectResourceObjectInput,
+  InspectResourceObjectResult,
+  ResourceObjectInspectionPort,
+} from "./ResourceObjectInspectionPort.js";

@@ -20,6 +20,11 @@ export type ReleaseResourceIngestionJobInput = Readonly<{
   availableAt: IsoDateTimeString;
 }>;
 
+export type CompleteResourceIngestionJobInput = Readonly<{
+  jobId: JobId;
+  workerId: string;
+}>;
+
 export type FailResourceIngestionJobInput = Readonly<{
   jobId: JobId;
   workerId: string;

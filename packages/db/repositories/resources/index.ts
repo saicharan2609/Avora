@@ -10,7 +10,8 @@ export type {
   ResourcesRepository,
 } from "./contracts.js";
 export type { ResourcesRepositoryErrorCode } from "./errors.js";
-export type { CreateResourcesRepositoryInput } from "./repository.js";
+export type { CreateResourcesRepositoryInput,
+ } from "./repository.js";
 
 export {
   dbResourceKinds,
@@ -22,4 +23,4 @@ export {
   createResourceStorageObjectPath,
   mapResourceRow,
 } from "./mapper.js";
-export { createResourcesRepository } from "./repository.js";
+export { createResourcesRepository} from "./repository.js";

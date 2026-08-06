@@ -20,7 +20,6 @@ export const dbResourceLifecycleStates = [
   "processing",
   "ready",
   "failed",
-  "deleted",
 ] as const;
 
 export type DbResourceLifecycleState = (typeof dbResourceLifecycleStates)[number];
@@ -74,8 +73,27 @@ export type GetResourceByIdInput = Readonly<{
   resourceId: ResourceId;
 }>;
 
+export type GetResourceForIngestionInput = Readonly<{
+  studentId: StudentId;
+  resourceId: ResourceId;
+}>;
+
+export type MarkResourceProcessingInput = Readonly<{
+  studentId: StudentId;
+  resourceId: ResourceId;
+}>;
+
+export type MarkResourceRejectedInput = Readonly<{
+  studentId: StudentId;
+  resourceId: ResourceId;
+  reason: string;
+}>;
+
 export type ResourcesRepository = Readonly<{
   createPendingUpload: (input: CreatePendingResourceUploadInput) => Promise<DbResourceRecord>;
   markUploadCompleted: (input: MarkResourceUploadCompletedInput) => Promise<DbResourceRecord>;
+  getResourceForIngestion: (input: GetResourceForIngestionInput) => Promise<DbResourceRecord | null>;
+  markResourceProcessing: (input: MarkResourceProcessingInput) => Promise<DbResourceRecord>;
+  markResourceRejected: (input: MarkResourceRejectedInput) => Promise<DbResourceRecord>;
   getById: (input: GetResourceByIdInput) => Promise<DbResourceRecord | null>;
 }>;

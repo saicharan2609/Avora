@@ -17,3 +17,12 @@ export type {
 export { resourceKinds } from "./ResourceKind.contract.js";
 export { resourceLifecycleStates } from "./ResourceLifecycleState.contract.js";
 export { resourceStorageBuckets } from "./ResourceStorage.contract.js";
+export type {
+  ResourceIngestionValidationIssue,
+  ResourceIngestionValidationIssueCode,
+  ResourceIngestionValidationResult,
+} from "./validation/ResourceIngestionValidation.contract.js";
+
+export {
+  resourceIngestionValidationIssueCodes,
+} from "./validation/ResourceIngestionValidation.contract.js";

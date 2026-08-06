@@ -6,6 +6,7 @@ import type { Database, Json } from "../../generated/database.types.js";
 import type {
   ClaimedDbResourceIngestionJobRecord,
   ClaimQueuedResourceIngestionJobsInput,
+  CompleteResourceIngestionJobInput,
   FailResourceIngestionJobInput,
   RecordResourceIngestionJobHeartbeatInput,
   ReleaseResourceIngestionJobInput,
@@ -94,6 +95,9 @@ export type ResourceIngestionJobsRepository = Readonly<{
   releaseResourceIngestionJob: (
     input: ReleaseResourceIngestionJobInput,
   ) => Promise<DbResourceIngestionJobRecord>;
+  completeResourceIngestionJob: (
+    input: CompleteResourceIngestionJobInput,
+  ) => Promise<DbResourceIngestionJobRecord>;
   failResourceIngestionJob: (
     input: FailResourceIngestionJobInput,
   ) => Promise<DbResourceIngestionJobRecord>;
@@ -109,6 +113,7 @@ export type ResourceIngestionJobsRepositoryErrorCode =
   | "resource_ingestion_jobs_insert_failed"
   | "resource_ingestion_jobs_read_failed"
   | "resource_ingestion_jobs_claim_failed"
+  | "resource_ingestion_jobs_completion_failed"
   | "resource_ingestion_jobs_heartbeat_failed"
   | "resource_ingestion_jobs_release_failed"
   | "resource_ingestion_jobs_failure_record_failed";
@@ -330,6 +335,34 @@ export function createResourceIngestionJobsRepository(
 
       return mapResourceIngestionJobRow(data);
     },
+    completeResourceIngestionJob: async (
+  completion: CompleteResourceIngestionJobInput,
+): Promise<DbResourceIngestionJobRecord> => {
+  const { data, error } = await input.client
+    .from("resource_ingestion_jobs")
+    .update({
+      status: "succeeded",
+      locked_at: null,
+      locked_by: null,
+      heartbeat_at: null,
+      completed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("job_id", completion.jobId)
+    .eq("locked_by", completion.workerId)
+    .eq("status", "claimed")
+    .select(resourceIngestionJobSelectColumns)
+    .single();
+
+  if (error !== null) {
+    throw new ResourceIngestionJobsRepositoryError(
+      "resource_ingestion_jobs_completion_failed",
+      error.message,
+    );
+  }
+
+  return mapResourceIngestionJobRow(data);
+},
   };
 }
 

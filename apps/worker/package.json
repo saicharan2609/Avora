@@ -9,8 +9,10 @@
     "lint:arch": "eslint ."
   },
   "dependencies": {
+    "@avora/adapters": "workspace:*",
     "@avora/core": "workspace:*",
     "@avora/db": "workspace:*",
+    "@avora/domain": "workspace:*",
     "@avora/jobs": "workspace:*"
   },
   "devDependencies": {
