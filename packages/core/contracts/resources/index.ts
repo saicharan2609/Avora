@@ -15,7 +15,7 @@ export type {
   ResourceUploadApiStorageBucket,
   ResourceUploadApiStorageLocation,
   ResourceUploadApiTicket,
-} from "./contracts/resources/index.js";
+} from "./ResourceUploadApi.contract.js";
 
 export {
   completeResourceUploadContract,
@@ -45,10 +45,4 @@ export {
   resourceUploadApiStorageBuckets,
   resourceUploadApiStorageLocationSchema,
   resourceUploadApiTicketSchema,
-} from "./contracts/resources/index.js";
-
-export type {
-  EmptyRequestBody,
-  EmptyResponseBody,
-  RequestContract,
-} from "./contracts/index.js";
+} from "./ResourceUploadApi.contract.js";
