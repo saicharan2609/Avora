@@ -6,15 +6,13 @@ Publishable: no
 
 ## Purpose
 
-`@avora/db` is the data-access package for Avora.
+`@avora/db` owns typed database access, role-scoped Supabase clients, generated schema types, concrete repository mechanisms, and the RLS policy harness.
 
-It owns the package-level data-access seams for role-scoped clients, generated schema types, repository primitives, database ports, and the RLS negative-authorisation harness.
+Stage 6 established the Supabase repository foundation, student identity persistence, auth-user trigger, and role-scoped client seams.
 
-Stage 6 Group 2 introduced the first student-scoped database table, `public.students`, with deny-by-default RLS posture, reviewed policy artifact, generated database type update, and negative-authorisation harness coverage.
+Stage 7 Group 1 introduced `public.resources` as the durable resource upload-intent row.
 
-Stage 6 Group 3 added the Supabase Auth database trigger that creates the durable `public.students` row when an auth user is created. This keeps continuous identity creation in the data plane and avoids application-owned credential or session handling.
-
-Stage 6 Group 4 adds the role-scoped database client seam used by web server code and worker code. It introduces the Supabase JavaScript SDK only inside `@avora/db`, where role-scoped database clients are owned.
+Stage 7 Group 4 introduces the concrete resource repository implementation for `public.resources`. The implementation is structurally compatible with the resource-domain repository port but does not import `@avora/domain`, preserving the repository dependency matrix.
 
 ## Public surface
 
@@ -22,44 +20,41 @@ Stage 6 Group 4 adds the role-scoped database client seam used by web server cod
 - `@avora/db/client`
 - `@avora/db/generated`
 - `@avora/db/repositories`
+- `@avora/db/repositories/resources`
 - `@avora/db/ports`
 - `@avora/db/rls`
 - `@avora/db/rls/harness`
 
 ## Requirement trace
 
-- REPO-001
-- REPO-003
-- REPO-004
 - REPO-018
 - REPO-019
 - ENG-011
-- ENG-013
+- ENG-012
 - ENG-016
 - ENG-018
-- ENG-019
 - ENG-053
-- ENG-162
+- ENG-150
 - ENG-163
 - ENG-164
-- ENG-165
 - ENG-169
 - ENG-172
 - ENG-173
 - ENG-175
-- ENG-179
-- ENG-180
-- ENG-183
-- ENG-184
-- ENG-186
+- ENG-176
+- FR-032
+- FR-035
+- FR-036
+- FR-037
+- FR-039
+- FR-042
+- NFR-004
+- NFR-034
 - NN-04
-- NN-10
-- NN-12
 - SEC-040
 - SEC-081
 - SEC-082
 - SEC-230
-- SEC-231
 
 ## Workspace dependencies
 
@@ -72,40 +67,23 @@ Stage 6 Group 4 adds the role-scoped database client seam used by web server cod
 
 ## Directory responsibilities
 
-- `client/` owns role-scoped database client seams.
-- `generated/` owns generated schema type artifacts from `supabase/`.
-- `repositories/` owns future base repository primitives.
-- `ports/` owns package-level database ports consumed across modules.
-- `rls/harness/` owns the negative-authorisation harness contract.
-- `rls/__tests__/` owns negative-authorisation coverage plans.
-- `scripts/` owns package-owned database scripts.
-- `__tests__/` is reserved for colocated package tests.
-
-## Database commands
-
-- `db:generate` guards generated schema type workflow wiring.
-- `db:diff` guards migration-diff workflow wiring.
-- `db:lint` checks Supabase artifact placement and policy-file shape.
-- `test:rls` runs the RLS harness wiring check.
-
-## Current database surface
-
-- `public.students`
-- `app_private.create_student_for_auth_user()`
-- `on_auth_user_created_create_student` trigger on `auth.users`
-
-## Client roles
-
-- `student` clients are scoped by the student's verified access token.
-- `service` clients are reserved for the worker runtime only.
-- anonymous client-input runtimes must not receive service-role credentials.
+- `client/` owns role-scoped Supabase clients.
+- `generated/` owns generated database schema types.
+- `repositories/` owns concrete database repository mechanisms.
+- `repositories/resources/` owns concrete access to `public.resources`.
+- `ports/` owns database execution seams that are not module-specific.
+- `rls/` owns RLS policy metadata and the negative-authorisation harness.
+- `scripts/` owns package-local database artifact scripts.
+- `src/` owns package-level barrel exports.
 
 ## Boundaries
 
 This package must not import `@avora/domain`.
 
-This package must not import `@avora/ui-web`, `@avora/ui-mobile`, `@avora/ai`, application packages, or harness packages.
+This package must not import `@avora/ui-web`, `@avora/ui-mobile`, `@avora/ai`, `@avora/jobs`, or `@avora/retrieval`.
 
-This package must not contain domain services, feature business logic, API handlers, React components, React Native components, pages, screens, authentication implementation, AI implementation, or vendor adapter logic outside its database-client responsibility.
+This package executes parameterised database queries as the role represented by the supplied role-scoped client.
 
-Stage 6 Group 4 does not implement web login UI, mobile login UI, OAuth button flows, email OTP flows, application APIs, repository methods, session storage, step-up authentication, consent seeding, entitlement seeding, or feature data access.
+This package must not contain domain services, route handlers, storage SDK adapters outside approved database client use, authentication implementation, AI behavior, retrieval behavior, jobs behavior, React components, React Native components, pages, or screens.
+
+Concrete repositories in this package are database mechanisms. Domain services consume repository ports from their domain package and may receive structurally compatible implementations from composition roots.

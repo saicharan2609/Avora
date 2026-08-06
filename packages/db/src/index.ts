@@ -8,3 +8,4 @@ export {
   createServiceRoleDatabaseClient,
   createStudentDatabaseClient,
 } from "../client/index.js";
+export { createResourcesRepository } from "../repositories/index.js";

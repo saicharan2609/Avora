@@ -2,10 +2,15 @@
  * GENERATED FILE — DO NOT EDIT BY HAND.
  *
  * Source: supabase/
- * Stage: Stage 7 Group 1 resource upload-intent baseline.
+ * Stage: Stage 7 Group 4 resource repository compatibility baseline.
  *
  * This file represents the generated database type baseline after introducing
  * public.students and public.resources as student-scoped tables.
+ *
+ * The shape intentionally follows the Supabase generated TypeScript structure
+ * expected by @supabase/supabase-js. Do not wrap the schema in deep Readonly
+ * types because the typed PostgREST client expects mutable Row, Insert, Update,
+ * and Relationships shapes.
  */
 
 export type Json =
@@ -13,46 +18,46 @@ export type Json =
   | number
   | boolean
   | null
-  | { readonly [key: string]: Json | undefined }
-  | readonly Json[];
+  | { [key: string]: Json | undefined }
+  | Json[];
 
-export type Database = Readonly<{
-  public: Readonly<{
-    Tables: Readonly<{
-      students: Readonly<{
-        Row: Readonly<{
+export type Database = {
+  public: {
+    Tables: {
+      students: {
+        Row: {
           student_id: string;
           display_name: string | null;
           lifecycle_status: "active" | "pending_deletion" | "deleted";
           created_at: string;
           updated_at: string;
-        }>;
-        Insert: Readonly<{
+        };
+        Insert: {
           student_id: string;
           display_name?: string | null;
           lifecycle_status?: "active" | "pending_deletion" | "deleted";
           created_at?: string;
           updated_at?: string;
-        }>;
-        Update: Readonly<{
+        };
+        Update: {
           student_id?: string;
           display_name?: string | null;
           lifecycle_status?: "active" | "pending_deletion" | "deleted";
           created_at?: string;
           updated_at?: string;
-        }>;
-        Relationships: readonly [
-          Readonly<{
+        };
+        Relationships: [
+          {
             foreignKeyName: "students_student_id_fkey";
-            columns: readonly ["student_id"];
+            columns: ["student_id"];
             isOneToOne: true;
             referencedRelation: "users";
-            referencedColumns: readonly ["id"];
-          }>,
+            referencedColumns: ["id"];
+          },
         ];
-      }>;
-      resources: Readonly<{
-        Row: Readonly<{
+      };
+      resources: {
+        Row: {
           resource_id: string;
           student_id: string;
           resource_kind: "document" | "image" | "scan" | "audio" | "video" | "archive" | "other";
@@ -73,8 +78,8 @@ export type Database = Readonly<{
           storage_version: number;
           created_at: string;
           updated_at: string;
-        }>;
-        Insert: Readonly<{
+        };
+        Insert: {
           resource_id?: string;
           student_id: string;
           resource_kind: "document" | "image" | "scan" | "audio" | "video" | "archive" | "other";
@@ -95,8 +100,8 @@ export type Database = Readonly<{
           storage_version?: number;
           created_at?: string;
           updated_at?: string;
-        }>;
-        Update: Readonly<{
+        };
+        Update: {
           resource_id?: string;
           student_id?: string;
           resource_kind?: "document" | "image" | "scan" | "audio" | "video" | "archive" | "other";
@@ -117,33 +122,33 @@ export type Database = Readonly<{
           storage_version?: number;
           created_at?: string;
           updated_at?: string;
-        }>;
-        Relationships: readonly [
-          Readonly<{
+        };
+        Relationships: [
+          {
             foreignKeyName: "resources_student_id_fkey";
-            columns: readonly ["student_id"];
+            columns: ["student_id"];
             isOneToOne: false;
             referencedRelation: "students";
-            referencedColumns: readonly ["student_id"];
-          }>,
+            referencedColumns: ["student_id"];
+          },
         ];
-      }>;
-    }>;
-    Views: Readonly<Record<string, never>>;
-    Functions: Readonly<Record<string, never>>;
-    Enums: Readonly<Record<string, never>>;
-    CompositeTypes: Readonly<Record<string, never>>;
-  }>;
-  app_private: Readonly<{
-    Tables: Readonly<Record<string, never>>;
-    Views: Readonly<Record<string, never>>;
-    Functions: Readonly<{
-      create_student_for_auth_user: Readonly<{
-        Args: Readonly<Record<string, never>>;
+      };
+    };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
+  };
+  app_private: {
+    Tables: Record<string, never>;
+    Views: Record<string, never>;
+    Functions: {
+      create_student_for_auth_user: {
+        Args: Record<string, never>;
         Returns: unknown;
-      }>;
-    }>;
-    Enums: Readonly<Record<string, never>>;
-    CompositeTypes: Readonly<Record<string, never>>;
-  }>;
-}>;
+      };
+    };
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
+  };
+};

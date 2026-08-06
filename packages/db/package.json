@@ -3,13 +3,14 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./client": "./client/index.ts",
-    "./generated": "./generated/index.ts",
-    "./repositories": "./repositories/index.ts",
-    "./ports": "./ports/index.ts",
-    "./rls": "./rls/index.ts",
-    "./rls/harness": "./rls/harness/index.ts"
+    ".": "./dist/src/index.js",
+    "./client": "./dist/client/index.js",
+    "./generated": "./dist/generated/index.js",
+    "./repositories": "./dist/repositories/index.js",
+    "./repositories/resources": "./dist/repositories/resources/index.js",
+    "./ports": "./dist/ports/index.js",
+    "./rls": "./dist/rls/index.js",
+    "./rls/harness": "./dist/rls/harness/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -17,7 +18,7 @@
     "lint": "eslint .",
     "lint:arch": "eslint .",
     "db:generate": "node scripts/generate-types.mjs",
-    "db:diff": "node scripts/diff-placeholder.mjs",
+    "db:diff": "node scripts/diff.mjs",
     "db:lint": "node scripts/lint-supabase-artifacts.mjs",
     "test:rls": "node scripts/run-rls-harness.mjs"
   },

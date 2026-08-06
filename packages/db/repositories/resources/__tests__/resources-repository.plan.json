@@ -1,0 +1,38 @@
+{
+  "package": "@avora/db",
+  "repository": "resources",
+  "stage": "Stage 7 Group 4",
+  "purpose": "Concrete repository test plan for public.resources access through role-scoped database clients.",
+  "cases": [
+    {
+      "caseName": "resources_repository.create_pending_upload.inserts_student_scoped_resource",
+      "operation": "createPendingUpload",
+      "expectedOutcome": "returns a pending_upload resource with quarantine storage"
+    },
+    {
+      "caseName": "resources_repository.create_pending_upload.storage_path_begins_with_student_id",
+      "operation": "createPendingUpload",
+      "expectedOutcome": "storage.objectPath begins with studentId"
+    },
+    {
+      "caseName": "resources_repository.mark_upload_completed.only_updates_pending_resource_for_student",
+      "operation": "markUploadCompleted",
+      "expectedOutcome": "updates lifecycleState to uploaded and writes contentHash"
+    },
+    {
+      "caseName": "resources_repository.mark_upload_completed.cross_student_resource_not_found",
+      "operation": "markUploadCompleted",
+      "expectedOutcome": "throws resources_repository_missing_completed_resource"
+    },
+    {
+      "caseName": "resources_repository.get_by_id.own_resource_returns_record",
+      "operation": "getById",
+      "expectedOutcome": "returns the resource record"
+    },
+    {
+      "caseName": "resources_repository.get_by_id.cross_student_resource_returns_null",
+      "operation": "getById",
+      "expectedOutcome": "returns null"
+    }
+  ]
+}
