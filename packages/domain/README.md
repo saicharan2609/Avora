@@ -57,3 +57,15 @@ This package must not import `@avora/ui-web` or `@avora/ui-mobile`.
 This package must not contain HTTP framework code, API handlers, React components, React Native components, pages, screens, database schema, Supabase configuration, authentication implementation, AI provider implementation, vendor SDK usage, or tests.
 
 Cross-module imports must resolve through a module public entry point.
+
+## Stage 8 Group 1 — Academic structure contracts
+
+Stage 8 Group 1 adds the `academic` domain module.
+
+Public surface:
+
+- `@avora/domain/academic`
+
+The module defines vendor-free contracts for academic terms, subjects, recursive structure units, academic structure trees, academic paths, and placement confidence.
+
+This group does not add database schema, repositories, route handlers, setup services, UI, mobile, worker behavior, AI behavior, retrieval behavior, or tests.
