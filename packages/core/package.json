@@ -6,6 +6,7 @@
     ".": "./dist/index.js",
     "./identity": "./dist/identity/index.js",
     "./contracts": "./dist/contracts/index.js",
+    "./api/academic": "./dist/api/academic/index.js",
     "./contracts/resources": "./dist/contracts/resources/index.js",
     "./domain-types": "./dist/domain-types/index.js",
     "./events": "./dist/events/index.js",

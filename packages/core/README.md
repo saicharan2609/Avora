@@ -84,3 +84,21 @@ This package must not import `@avora/domain`, `@avora/db`, `@avora/adapters`, `@
 This package must not contain route handlers, database execution, storage execution, domain services, worker handlers, React components, React Native components, pages, screens, or tests in Stage 7 Group 5.
 
 API request contracts must not accept `studentId` for student-scoped operations. The composition root resolves identity from the authenticated session and passes it inward.
+
+## Stage 8 Group 5 — Academic setup API contracts
+
+Stage 8 Group 5 adds JSON-safe API contracts for academic setup.
+
+New public surface:
+
+- `@avora/core/api/academic`
+
+Contract coverage:
+
+- create academic term;
+- create subject;
+- create recursive structure unit;
+- read academic setup progress;
+- read academic structure tree.
+
+This group does not add web route handlers, database repositories, domain services, UI, mobile, worker behavior, AI behavior, retrieval behavior, or e2e flows.
