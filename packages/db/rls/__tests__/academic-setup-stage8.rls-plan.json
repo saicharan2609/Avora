@@ -1,0 +1,157 @@
+{
+  "id": "stage-8-academic-setup-rls-closure-plan",
+  "owner": "@avora/data",
+  "stage": "Stage 8 Group 7",
+  "title": "Academic setup RLS closure plan",
+  "description": "Covers student-scoped RLS expectations for the completed Stage 8 academic setup foundation.",
+  "tables": [
+    "public.academic_terms",
+    "public.subjects",
+    "public.structure_units"
+  ],
+  "cases": [
+    {
+      "name": "student can create own academic term",
+      "table": "public.academic_terms",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot create another student's academic term",
+      "table": "public.academic_terms",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student can read own academic term",
+      "table": "public.academic_terms",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot read another student's academic term",
+      "table": "public.academic_terms",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student can create own subject inside own term",
+      "table": "public.subjects",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot create subject inside another student's term",
+      "table": "public.subjects",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student can read own subject",
+      "table": "public.subjects",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot read another student's subject",
+      "table": "public.subjects",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student can create own root structure unit",
+      "table": "public.structure_units",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student can create own child structure unit",
+      "table": "public.structure_units",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "own_recursive",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot create structure unit inside another student's subject",
+      "table": "public.structure_units",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "cross_student_subject",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot create child unit under another student's parent unit",
+      "table": "public.structure_units",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "cross_student_parent",
+      "expectation": "denied"
+    },
+    {
+      "name": "student can read own structure units",
+      "table": "public.structure_units",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot read another student's structure units",
+      "table": "public.structure_units",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot delete own academic term",
+      "table": "public.academic_terms",
+      "role": "authenticated",
+      "operation": "delete",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot delete own subject",
+      "table": "public.subjects",
+      "role": "authenticated",
+      "operation": "delete",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot delete own structure unit",
+      "table": "public.structure_units",
+      "role": "authenticated",
+      "operation": "delete",
+      "scope": "own",
+      "expectation": "denied"
+    }
+  ],
+  "ownership_notes": [
+    "academic_terms are directly student-owned",
+    "subjects use same-student term ownership through composite foreign keys",
+    "structure_units use same-student term and subject ownership through composite foreign keys",
+    "recursive structure unit parents are constrained by student ownership",
+    "no authenticated delete policy is expected in Stage 8"
+  ]
+}

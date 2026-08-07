@@ -1,0 +1,112 @@
+{
+  "id": "stage-8-academic-setup-api-plan",
+  "owner": "@avora/web",
+  "stage": "Stage 8 Group 7",
+  "title": "Academic setup API validation plan",
+  "description": "Documents route-level assertions for the completed Stage 8 academic setup API boundary.",
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/api/academic/setup/progress",
+      "requiresAuthentication": true,
+      "expectedSuccessStatus": 200,
+      "responseContract": "GetAcademicSetupProgressResponse"
+    },
+    {
+      "method": "POST",
+      "path": "/api/academic/setup/terms",
+      "requiresAuthentication": true,
+      "expectedSuccessStatus": 201,
+      "requestContract": "CreateAcademicTermRequest",
+      "responseContract": "CreateAcademicTermResponse"
+    },
+    {
+      "method": "POST",
+      "path": "/api/academic/setup/subjects",
+      "requiresAuthentication": true,
+      "expectedSuccessStatus": 201,
+      "requestContract": "CreateSubjectRequest",
+      "responseContract": "CreateSubjectResponse"
+    },
+    {
+      "method": "POST",
+      "path": "/api/academic/setup/structure-units",
+      "requiresAuthentication": true,
+      "expectedSuccessStatus": 201,
+      "requestContract": "CreateStructureUnitRequest",
+      "responseContract": "CreateStructureUnitResponse"
+    },
+    {
+      "method": "GET",
+      "path": "/api/academic/tree",
+      "requiresAuthentication": true,
+      "expectedSuccessStatus": 200,
+      "responseContract": "GetAcademicStructureTreeResponse"
+    }
+  ],
+  "authentication": [
+    {
+      "case": "missing authentication",
+      "expectedStatus": 401,
+      "expectedErrorCode": "academic_api_unauthorized"
+    },
+    {
+      "case": "invalid bearer token",
+      "expectedStatus": 401,
+      "expectedErrorCode": "academic_api_unauthorized"
+    },
+    {
+      "case": "valid student token",
+      "expectedStatus": "route_specific_success_status"
+    }
+  ],
+  "validation": [
+    {
+      "route": "POST /api/academic/setup/terms",
+      "case": "missing label",
+      "expectedStatus": 400,
+      "expectedErrorCode": "academic_api_invalid_request"
+    },
+    {
+      "route": "POST /api/academic/setup/subjects",
+      "case": "missing termId",
+      "expectedStatus": 400,
+      "expectedErrorCode": "academic_api_invalid_request"
+    },
+    {
+      "route": "POST /api/academic/setup/subjects",
+      "case": "missing displayName",
+      "expectedStatus": 400,
+      "expectedErrorCode": "academic_api_invalid_request"
+    },
+    {
+      "route": "POST /api/academic/setup/structure-units",
+      "case": "unsupported unitKind",
+      "expectedStatus": 400,
+      "expectedErrorCode": "academic_api_invalid_request"
+    },
+    {
+      "route": "POST /api/academic/setup/structure-units",
+      "case": "unsupported source",
+      "expectedStatus": 400,
+      "expectedErrorCode": "academic_api_invalid_request"
+    },
+    {
+      "route": "POST /api/academic/setup/structure-units",
+      "case": "negative sortOrder",
+      "expectedStatus": 400,
+      "expectedErrorCode": "academic_api_invalid_request"
+    }
+  ],
+  "boundary_assertions": [
+    "route handlers do not import @supabase/supabase-js directly",
+    "route handlers do not import @avora/adapters",
+    "route handlers do not import @avora/ai",
+    "route handlers do not import @avora/retrieval",
+    "route handlers do not import UI packages",
+    "route handlers do not import worker packages",
+    "route handlers serialize responses through @avora/core/api/academic",
+    "route handlers use student-scoped database access",
+    "route handlers do not use service-role credentials"
+  ]
+}

@@ -42,3 +42,13 @@ Authentication resolution belongs in `_shared/academic-api-auth.ts`.
 Domain orchestration belongs in `_shared/academic-setup-orchestrator.ts`.
 
 This directory does not implement UI, mobile screens, AI behavior, retrieval behavior, worker behavior, or e2e flow harnesses.
+
+## Stage 8 Group 7 — Academic setup API harness
+
+Stage 8 Group 7 adds a route-level validation plan under:
+
+- `__tests__/academic-setup-api.plan.json`
+
+The plan records expected authentication, request validation, response contracts, and boundary assertions for the completed Stage 8 academic setup API.
+
+The plan is documentation-first in this group. It does not add route handler behavior beyond Stage 8 Group 6.

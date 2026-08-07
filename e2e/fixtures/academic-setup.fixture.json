@@ -1,0 +1,111 @@
+{
+  "id": "academic-setup-stage-8-synthetic-fixture",
+  "owner": "@avora/qa",
+  "classification": "synthetic",
+  "containsProductionData": false,
+  "containsAcademicContent": false,
+  "students": [
+    {
+      "alias": "student_a",
+      "studentId": "00000000-0000-4000-8000-0000000000a1"
+    },
+    {
+      "alias": "student_b",
+      "studentId": "00000000-0000-4000-8000-0000000000b1"
+    }
+  ],
+  "terms": [
+    {
+      "alias": "term_fall_2026",
+      "studentAlias": "student_a",
+      "termId": "00000000-0000-4000-8000-000000008101",
+      "label": "Fall 2026",
+      "institutionName": "Synthetic University",
+      "startsOn": "2026-08-15",
+      "endsOn": "2026-12-20",
+      "expectedLifecycleState": "planned"
+    }
+  ],
+  "subjects": [
+    {
+      "alias": "subject_data_structures",
+      "studentAlias": "student_a",
+      "termAlias": "term_fall_2026",
+      "subjectId": "00000000-0000-4000-8000-000000008201",
+      "displayName": "Data Structures",
+      "subjectCode": "CS-201",
+      "description": "Synthetic subject used for Stage 8 setup validation.",
+      "expectedLifecycleState": "active"
+    }
+  ],
+  "structureUnits": [
+    {
+      "alias": "unit_module_graphs",
+      "studentAlias": "student_a",
+      "termAlias": "term_fall_2026",
+      "subjectAlias": "subject_data_structures",
+      "structureUnitId": "00000000-0000-4000-8000-000000008301",
+      "parentUnitAlias": null,
+      "title": "Graphs",
+      "description": "Synthetic module used for Stage 8 setup validation.",
+      "unitKind": "module",
+      "source": "student_declared",
+      "sortOrder": 0
+    },
+    {
+      "alias": "unit_topic_graph_traversal",
+      "studentAlias": "student_a",
+      "termAlias": "term_fall_2026",
+      "subjectAlias": "subject_data_structures",
+      "structureUnitId": "00000000-0000-4000-8000-000000008302",
+      "parentUnitAlias": "unit_module_graphs",
+      "title": "Graph Traversal",
+      "description": "Synthetic topic used for Stage 8 setup validation.",
+      "unitKind": "topic",
+      "source": "student_declared",
+      "sortOrder": 0
+    }
+  ],
+  "expectedProgress": {
+    "initial": {
+      "status": "not_started",
+      "termCount": 0,
+      "activeTermCount": 0,
+      "subjectCount": 0,
+      "structureUnitCount": 0,
+      "hasActiveTerm": false,
+      "hasSubject": false,
+      "hasStructure": false
+    },
+    "afterTerm": {
+      "status": "in_progress",
+      "termCount": 1,
+      "activeTermCount": 1,
+      "subjectCount": 0,
+      "structureUnitCount": 0,
+      "hasActiveTerm": true,
+      "hasSubject": false,
+      "hasStructure": false
+    },
+    "afterSubject": {
+      "status": "in_progress",
+      "termCount": 1,
+      "activeTermCount": 1,
+      "subjectCount": 1,
+      "structureUnitCount": 0,
+      "hasActiveTerm": true,
+      "hasSubject": true,
+      "hasStructure": false
+    },
+    "afterStructure": {
+      "status": "complete",
+      "termCount": 1,
+      "activeTermCount": 1,
+      "subjectCount": 1,
+      "structureUnitCount": 2,
+      "hasActiveTerm": true,
+      "hasSubject": true,
+      "hasStructure": true
+    }
+  }
+}

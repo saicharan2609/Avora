@@ -66,3 +66,16 @@ The flow covers upload intent, upload completion, durable job persistence, worke
 This flow uses synthetic fixtures only.
 
 This flow must not use production data, service-role credentials, direct database repository imports, OCR, parsing, AI, embeddings, retrieval, UI, or mobile behavior.
+
+## Stage 8 Group 7 — Academic setup flow
+
+Stage 8 Group 7 adds the academic setup flow plan under:
+
+- `flows/academic-setup/`
+- `fixtures/academic-setup.fixture.json`
+
+The flow covers authenticated setup progress reads, academic term creation, subject creation, recursive structure-unit creation, academic tree reads, and cross-student denial.
+
+This flow uses synthetic fixtures only.
+
+This flow must not use production data, service-role credentials, direct database repository imports, UI behavior, mobile behavior, worker behavior, AI behavior, or retrieval behavior.

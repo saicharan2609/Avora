@@ -1,0 +1,209 @@
+{
+  "id": "stage-8-academic-setup-flow",
+  "owner": "@avora/qa",
+  "stage": "Stage 8 Group 7",
+  "title": "Academic setup completion flow",
+  "description": "Validates the completed Stage 8 academic setup foundation from authenticated API setup through academic structure tree reads and cross-student denial.",
+  "fixture": "../../fixtures/academic-setup.fixture.json",
+  "scope": {
+    "includes": [
+      "read initial academic setup progress",
+      "create academic term",
+      "create subject inside term",
+      "create root structure unit inside subject",
+      "create child structure unit inside root unit",
+      "read completed academic setup progress",
+      "read academic structure tree",
+      "deny cross-student reads",
+      "deny cross-student writes"
+    ],
+    "excludes": [
+      "academic setup UI",
+      "mobile setup screens",
+      "AI-generated academic structure",
+      "resource placement into academic structure",
+      "retrieval indexing",
+      "worker execution",
+      "notifications",
+      "calendar sync",
+      "real institution data"
+    ]
+  },
+  "actors": [
+    {
+      "name": "student_a",
+      "role": "authenticated_student"
+    },
+    {
+      "name": "student_b",
+      "role": "authenticated_student"
+    }
+  ],
+  "success_path": [
+    {
+      "step": 1,
+      "actor": "student_a",
+      "method": "GET",
+      "route": "/api/academic/setup/progress",
+      "action": "read_initial_setup_progress",
+      "expected": {
+        "status": "not_started",
+        "termCount": 0,
+        "subjectCount": 0,
+        "structureUnitCount": 0,
+        "hasActiveTerm": false,
+        "hasSubject": false,
+        "hasStructure": false
+      }
+    },
+    {
+      "step": 2,
+      "actor": "student_a",
+      "method": "POST",
+      "route": "/api/academic/setup/terms",
+      "action": "create_academic_term",
+      "requestFixture": "term_fall_2026",
+      "expected": {
+        "responseStatus": 201,
+        "termReturned": true,
+        "termLifecycleState": "planned",
+        "progressStatus": "in_progress",
+        "termCount": 1,
+        "hasActiveTerm": true
+      }
+    },
+    {
+      "step": 3,
+      "actor": "student_a",
+      "method": "POST",
+      "route": "/api/academic/setup/subjects",
+      "action": "create_subject",
+      "requestFixture": "subject_data_structures",
+      "expected": {
+        "responseStatus": 201,
+        "subjectReturned": true,
+        "subjectLifecycleState": "active",
+        "progressStatus": "in_progress",
+        "subjectCount": 1,
+        "hasSubject": true
+      }
+    },
+    {
+      "step": 4,
+      "actor": "student_a",
+      "method": "POST",
+      "route": "/api/academic/setup/structure-units",
+      "action": "create_root_structure_unit",
+      "requestFixture": "unit_module_graphs",
+      "expected": {
+        "responseStatus": 201,
+        "structureUnitReturned": true,
+        "parentUnitId": null,
+        "unitKind": "module",
+        "source": "student_declared",
+        "progressStatus": "complete",
+        "structureUnitCount": 1,
+        "hasStructure": true
+      }
+    },
+    {
+      "step": 5,
+      "actor": "student_a",
+      "method": "POST",
+      "route": "/api/academic/setup/structure-units",
+      "action": "create_child_structure_unit",
+      "requestFixture": "unit_topic_graph_traversal",
+      "expected": {
+        "responseStatus": 201,
+        "structureUnitReturned": true,
+        "parentUnitIdMatchesRoot": true,
+        "unitKind": "topic",
+        "source": "student_declared",
+        "progressStatus": "complete",
+        "structureUnitCount": 2
+      }
+    },
+    {
+      "step": 6,
+      "actor": "student_a",
+      "method": "GET",
+      "route": "/api/academic/setup/progress",
+      "action": "read_completed_setup_progress",
+      "expected": {
+        "status": "complete",
+        "termCount": 1,
+        "subjectCount": 1,
+        "structureUnitCount": 2,
+        "hasActiveTerm": true,
+        "hasSubject": true,
+        "hasStructure": true
+      }
+    },
+    {
+      "step": 7,
+      "actor": "student_a",
+      "method": "GET",
+      "route": "/api/academic/tree",
+      "action": "read_academic_structure_tree",
+      "expected": {
+        "termCount": 1,
+        "subjectCount": 1,
+        "rootStructureUnitCount": 1,
+        "childStructureUnitCount": 1,
+        "treePreservesParentChildRelationship": true,
+        "treeDoesNotExposeStudentId": true
+      }
+    }
+  ],
+  "authorization_path": [
+    {
+      "step": 1,
+      "actor": "student_b",
+      "method": "GET",
+      "route": "/api/academic/tree",
+      "action": "read_other_student_tree",
+      "expected": {
+        "access": "denied_or_empty",
+        "studentADataVisible": false
+      }
+    },
+    {
+      "step": 2,
+      "actor": "student_b",
+      "method": "POST",
+      "route": "/api/academic/setup/subjects",
+      "action": "create_subject_in_student_a_term",
+      "expected": {
+        "access": "denied",
+        "studentADataMutated": false
+      }
+    },
+    {
+      "step": 3,
+      "actor": "student_b",
+      "method": "POST",
+      "route": "/api/academic/setup/structure-units",
+      "action": "create_unit_in_student_a_subject",
+      "expected": {
+        "access": "denied",
+        "studentADataMutated": false
+      }
+    }
+  ],
+  "assertions": [
+    "route handlers do not import Supabase SDKs directly",
+    "route handlers use current student-scoped database composition",
+    "API responses are JSON-safe",
+    "API responses do not expose service-role details",
+    "academic tree responses do not expose student_id",
+    "cross-student term ownership is denied",
+    "cross-student subject ownership is denied",
+    "cross-student structure-unit ownership is denied",
+    "recursive structure units preserve parent-child relationships",
+    "no UI behavior is introduced",
+    "no mobile behavior is introduced",
+    "no worker behavior is introduced",
+    "no AI behavior is introduced",
+    "no retrieval behavior is introduced"
+  ]
+}

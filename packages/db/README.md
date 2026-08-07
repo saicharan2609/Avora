@@ -123,3 +123,13 @@ Repository coverage:
 - full academic structure tree reads.
 
 This group does not add domain services, API contracts, web routes, UI, mobile behavior, worker behavior, AI behavior, retrieval behavior, or e2e flows.
+
+## Stage 8 Group 7 — Academic setup RLS closure plan
+
+Stage 8 Group 7 adds an academic setup RLS closure plan under:
+
+- `rls/__tests__/academic-setup-stage8.rls-plan.json`
+
+The plan covers student-owned term visibility, subject visibility, recursive structure-unit visibility, cross-student denial, and the absence of authenticated delete policies for the academic setup graph.
+
+The academic graph remains student-scoped through RLS and same-student composite foreign keys.
