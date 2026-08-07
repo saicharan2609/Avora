@@ -106,3 +106,20 @@ New tables:
 The schema is student-scoped and uses composite foreign keys to preserve same-student ownership across terms, subjects, and recursive structure units.
 
 No repositories are implemented in this group.
+
+## Stage 8 Group 3 — Academic graph repositories
+
+Stage 8 Group 3 adds concrete Supabase-backed repositories for the academic graph.
+
+New public surface:
+
+- `@avora/db/repositories/academic`
+
+Repository coverage:
+
+- academic term creation and reads;
+- subject creation and reads;
+- recursive structure unit creation and reads;
+- full academic structure tree reads.
+
+This group does not add domain services, API contracts, web routes, UI, mobile behavior, worker behavior, AI behavior, retrieval behavior, or e2e flows.

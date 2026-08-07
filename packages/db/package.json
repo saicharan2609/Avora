@@ -6,6 +6,7 @@
     ".": "./dist/src/index.js",
     "./client": "./dist/client/index.js",
     "./generated": "./dist/generated/index.js",
+    "./repositories/academic": "./dist/repositories/academic/index.js",
     "./repositories": "./dist/repositories/index.js",
     "./repositories/resources": "./dist/repositories/resources/index.js",
     "./repositories/jobs": "./dist/repositories/jobs/index.js"
