@@ -101,7 +101,175 @@ export type Database = {
           },
         ];
       };
-
+      academic_terms: {
+  Row: {
+    created_at: string;
+    ends_on: string | null;
+    institution_name: string | null;
+    label: string;
+    lifecycle_state: Database["public"]["Enums"]["academic_term_lifecycle_state"];
+    starts_on: string | null;
+    student_id: string;
+    term_id: string;
+    updated_at: string;
+  };
+  Insert: {
+    created_at?: string;
+    ends_on?: string | null;
+    institution_name?: string | null;
+    label: string;
+    lifecycle_state?: Database["public"]["Enums"]["academic_term_lifecycle_state"];
+    starts_on?: string | null;
+    student_id: string;
+    term_id?: string;
+    updated_at?: string;
+  };
+  Update: {
+    created_at?: string;
+    ends_on?: string | null;
+    institution_name?: string | null;
+    label?: string;
+    lifecycle_state?: Database["public"]["Enums"]["academic_term_lifecycle_state"];
+    starts_on?: string | null;
+    student_id?: string;
+    term_id?: string;
+    updated_at?: string;
+  };
+  Relationships: [
+    {
+      foreignKeyName: "academic_terms_student_id_fkey";
+      columns: ["student_id"];
+      isOneToOne: false;
+      referencedRelation: "students";
+      referencedColumns: ["student_id"];
+    },
+  ];
+};
+subjects: {
+  Row: {
+    created_at: string;
+    description: string | null;
+    display_name: string;
+    lifecycle_state: Database["public"]["Enums"]["subject_lifecycle_state"];
+    student_id: string;
+    subject_code: string | null;
+    subject_id: string;
+    term_id: string;
+    updated_at: string;
+  };
+  Insert: {
+    created_at?: string;
+    description?: string | null;
+    display_name: string;
+    lifecycle_state?: Database["public"]["Enums"]["subject_lifecycle_state"];
+    student_id: string;
+    subject_code?: string | null;
+    subject_id?: string;
+    term_id: string;
+    updated_at?: string;
+  };
+  Update: {
+    created_at?: string;
+    description?: string | null;
+    display_name?: string;
+    lifecycle_state?: Database["public"]["Enums"]["subject_lifecycle_state"];
+    student_id?: string;
+    subject_code?: string | null;
+    subject_id?: string;
+    term_id?: string;
+    updated_at?: string;
+  };
+  Relationships: [
+    {
+      foreignKeyName: "subjects_student_fkey";
+      columns: ["student_id"];
+      isOneToOne: false;
+      referencedRelation: "students";
+      referencedColumns: ["student_id"];
+    },
+    {
+      foreignKeyName: "subjects_term_fkey";
+      columns: ["student_id", "term_id"];
+      isOneToOne: false;
+      referencedRelation: "academic_terms";
+      referencedColumns: ["student_id", "term_id"];
+    },
+  ];
+};
+structure_units: {
+  Row: {
+    created_at: string;
+    description: string | null;
+    parent_unit_id: string | null;
+    sort_order: number;
+    source: Database["public"]["Enums"]["structure_unit_source"];
+    structure_unit_id: string;
+    student_id: string;
+    subject_id: string;
+    term_id: string;
+    title: string;
+    unit_kind: Database["public"]["Enums"]["academic_structure_unit_kind"];
+    updated_at: string;
+  };
+  Insert: {
+    created_at?: string;
+    description?: string | null;
+    parent_unit_id?: string | null;
+    sort_order?: number;
+    source?: Database["public"]["Enums"]["structure_unit_source"];
+    structure_unit_id?: string;
+    student_id: string;
+    subject_id: string;
+    term_id: string;
+    title: string;
+    unit_kind: Database["public"]["Enums"]["academic_structure_unit_kind"];
+    updated_at?: string;
+  };
+  Update: {
+    created_at?: string;
+    description?: string | null;
+    parent_unit_id?: string | null;
+    sort_order?: number;
+    source?: Database["public"]["Enums"]["structure_unit_source"];
+    structure_unit_id?: string;
+    student_id?: string;
+    subject_id?: string;
+    term_id?: string;
+    title?: string;
+    unit_kind?: Database["public"]["Enums"]["academic_structure_unit_kind"];
+    updated_at?: string;
+  };
+  Relationships: [
+    {
+      foreignKeyName: "structure_units_student_fkey";
+      columns: ["student_id"];
+      isOneToOne: false;
+      referencedRelation: "students";
+      referencedColumns: ["student_id"];
+    },
+    {
+      foreignKeyName: "structure_units_term_fkey";
+      columns: ["student_id", "term_id"];
+      isOneToOne: false;
+      referencedRelation: "academic_terms";
+      referencedColumns: ["student_id", "term_id"];
+    },
+    {
+      foreignKeyName: "structure_units_subject_fkey";
+      columns: ["student_id", "term_id", "subject_id"];
+      isOneToOne: false;
+      referencedRelation: "subjects";
+      referencedColumns: ["student_id", "term_id", "subject_id"];
+    },
+    {
+      foreignKeyName: "structure_units_parent_fkey";
+      columns: ["student_id", "parent_unit_id"];
+      isOneToOne: false;
+      referencedRelation: "structure_units";
+      referencedColumns: ["student_id", "structure_unit_id"];
+    },
+  ];
+};
       resources: {
   Row: {
     byte_size: number;
@@ -194,7 +362,31 @@ export type Database = {
         | "failed"
         | "dead_lettered"
         | "cancelled";
+    
+     academic_structure_unit_kind:
+  | "module"
+  | "topic"
+  | "week"
+  | "lecture"
+  | "assignment_group"
+  | "exam_area"
+  | "custom";
 
+academic_term_lifecycle_state:
+  | "planned"
+  | "active"
+  | "completed"
+  | "archived";
+
+structure_unit_source:
+  | "student_declared"
+  | "imported"
+  | "system_suggested";
+
+subject_lifecycle_state:
+  | "active"
+  | "archived";
+  
       resource_kind:
   | "document"
   | "image"

@@ -92,3 +92,17 @@ Stage 7 Group 11 adds a resource ingestion RLS closure plan under:
 The plan covers student-owned resource visibility, resource ingestion job visibility, own-job insertion, cross-student denial, and the absence of authenticated update/delete policies for job execution state.
 
 Worker mutation continues to rely on service-role bypass rather than permissive authenticated policies.
+
+## Stage 8 Group 2 — Academic structure graph schema
+
+Stage 8 Group 2 adds Supabase schema and RLS artifacts for the academic graph.
+
+New tables:
+
+- `public.academic_terms`
+- `public.subjects`
+- `public.structure_units`
+
+The schema is student-scoped and uses composite foreign keys to preserve same-student ownership across terms, subjects, and recursive structure units.
+
+No repositories are implemented in this group.
