@@ -82,3 +82,15 @@ The service supports first-term setup, subject creation, recursive structure-uni
 The service depends on `AcademicSetupRepositoryPort` and does not import `@avora/db`.
 
 No API contracts, web routes, UI, mobile, worker behavior, AI behavior, retrieval behavior, or e2e flows are added in this group.
+
+## Stage 9 Group 1 — Resource extraction domain contracts
+
+Stage 9 Group 1 extends the resources domain module with vendor-free extraction contracts.
+
+New surface area is exported through:
+
+- `@avora/domain/resources`
+
+The group defines extraction requests, extraction results, extracted content blocks, source locators, strategy versions, and the `ResourceExtractionPort`.
+
+No persistence, adapters, worker execution, AI behavior, retrieval behavior, API routes, UI, or mobile behavior are added in this group.

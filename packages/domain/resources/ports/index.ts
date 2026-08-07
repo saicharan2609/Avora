@@ -17,3 +17,6 @@ export type {
   InspectResourceObjectResult,
   ResourceObjectInspectionPort,
 } from "./ResourceObjectInspectionPort.js";
+export type {
+  ResourceExtractionPort,
+} from "./ResourceExtractionPort.js";

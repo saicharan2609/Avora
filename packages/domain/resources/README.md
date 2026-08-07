@@ -85,3 +85,28 @@ Supabase-specific storage implementation belongs outside this module.
 Supabase-specific database access belongs outside this module.
 
 Resource extraction belongs to a later stage.
+
+## Stage 9 Group 1 — Resource extraction contracts
+
+Stage 9 Group 1 adds vendor-free resource extraction contracts.
+
+New contract coverage:
+
+- extraction document identifiers;
+- extraction and chunking strategy versions;
+- source locators;
+- bounding boxes;
+- text spans;
+- time ranges;
+- extracted content blocks;
+- extraction documents;
+- extraction request and result contracts;
+- extraction failure contracts.
+
+New port:
+
+- `ResourceExtractionPort`
+
+This group does not add database schema, repositories, storage adapters, OCR adapters, AI adapters, worker execution, embeddings, retrieval indexing, summaries, notes, flashcards, quizzes, API routes, UI, or mobile screens.
+
+The contracts preserve locator metadata so later retrieval and citation verification can resolve content back to the original student resource.

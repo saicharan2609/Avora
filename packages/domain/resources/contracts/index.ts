@@ -26,3 +26,29 @@ export type {
 export {
   resourceIngestionValidationIssueCodes,
 } from "./validation/ResourceIngestionValidation.contract.js";
+export type {
+  ResourceBoundingBox,
+  ResourceChunkingStrategyVersion,
+  ResourceExtractedContentBlock,
+  ResourceExtractedContentBlockId,
+  ResourceExtractedContentBlockKind,
+  ResourceExtractionDocument,
+  ResourceExtractionDocumentId,
+  ResourceExtractionDocumentStatus,
+  ResourceExtractionFailure,
+  ResourceExtractionFailureCode,
+  ResourceExtractionRequest,
+  ResourceExtractionResult,
+  ResourceExtractionStrategyVersion,
+  ResourceSourceLocator,
+  ResourceSourceLocatorKind,
+  ResourceTextSpan,
+  ResourceTimeRange,
+} from "./extraction/index.js";
+
+export {
+  resourceExtractedContentBlockKinds,
+  resourceExtractionDocumentStatuses,
+  resourceExtractionFailureCodes,
+  resourceSourceLocatorKinds,
+} from "./extraction/index.js";

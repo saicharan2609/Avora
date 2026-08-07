@@ -12,6 +12,10 @@ export {
 
 export {
   resourceIngestionValidationIssueCodes,
+   resourceExtractedContentBlockKinds,
+  resourceExtractionDocumentStatuses,
+  resourceExtractionFailureCodes,
+  resourceSourceLocatorKinds,
 } from "./contracts/index.js";
 
 export {
