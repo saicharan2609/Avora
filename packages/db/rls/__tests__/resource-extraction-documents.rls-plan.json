@@ -1,0 +1,101 @@
+{
+  "id": "stage-9-resource-extraction-documents-rls-plan",
+  "owner": "@avora/data",
+  "stage": "Stage 9 Group 2",
+  "title": "Resource extraction documents RLS plan",
+  "description": "Covers student-scoped RLS expectations for resource extraction documents and extracted content blocks.",
+  "tables": [
+    "public.resource_extraction_documents",
+    "public.resource_extracted_content_blocks"
+  ],
+  "cases": [
+    {
+      "name": "student can select own resource extraction documents",
+      "table": "public.resource_extraction_documents",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot select another student's resource extraction documents",
+      "table": "public.resource_extraction_documents",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot insert own resource extraction document",
+      "table": "public.resource_extraction_documents",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot update own resource extraction document",
+      "table": "public.resource_extraction_documents",
+      "role": "authenticated",
+      "operation": "update",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot delete own resource extraction document",
+      "table": "public.resource_extraction_documents",
+      "role": "authenticated",
+      "operation": "delete",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student can select own extracted content blocks",
+      "table": "public.resource_extracted_content_blocks",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot select another student's extracted content blocks",
+      "table": "public.resource_extracted_content_blocks",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot insert own extracted content block",
+      "table": "public.resource_extracted_content_blocks",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot update own extracted content block",
+      "table": "public.resource_extracted_content_blocks",
+      "role": "authenticated",
+      "operation": "update",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot delete own extracted content block",
+      "table": "public.resource_extracted_content_blocks",
+      "role": "authenticated",
+      "operation": "delete",
+      "scope": "own",
+      "expectation": "denied"
+    }
+  ],
+  "ownership_notes": [
+    "resource_extraction_documents are student-owned and resource-owned",
+    "resource_extraction_documents reference public.resources through a same-student composite foreign key",
+    "resource_extracted_content_blocks reference extraction documents through a same-student composite foreign key",
+    "recursive parent content blocks are constrained by student and extraction document ownership",
+    "authenticated students have select-only access",
+    "worker mutation relies on service-role bypass"
+  ]
+}

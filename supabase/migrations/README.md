@@ -31,3 +31,14 @@ This migration creates the student-owned academic structure graph:
 - `public.academic_terms`
 - `public.subjects`
 - `public.structure_units`
+
+## Stage 9 Group 2
+
+Stage 9 Group 2 adds:
+
+- `20260807122600_resource_extraction_documents.sql`
+
+This migration creates resource extraction persistence tables:
+
+- `public.resource_extraction_documents`
+- `public.resource_extracted_content_blocks`

@@ -44,3 +44,16 @@ New tables:
 The artifacts preserve student-scoped RLS and same-student graph ownership.
 
 Repositories, services, API routes, UI, mobile, AI, and retrieval are intentionally not included in this group.
+
+## Stage 9 Group 2 — Resource extraction documents
+
+Stage 9 Group 2 adds reviewed Supabase artifacts for resource extraction persistence.
+
+New tables:
+
+- `public.resource_extraction_documents`
+- `public.resource_extracted_content_blocks`
+
+The artifacts preserve student-scoped read access while keeping extraction output mutation service-role-only.
+
+Repositories, worker execution, adapters, OCR, parsing, AI, retrieval, API routes, UI, and mobile behavior are intentionally not included in this group.

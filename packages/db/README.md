@@ -133,3 +133,22 @@ Stage 8 Group 7 adds an academic setup RLS closure plan under:
 The plan covers student-owned term visibility, subject visibility, recursive structure-unit visibility, cross-student denial, and the absence of authenticated delete policies for the academic setup graph.
 
 The academic graph remains student-scoped through RLS and same-student composite foreign keys.
+
+## Stage 9 Group 2 — Resource extraction persistence schema
+
+Stage 9 Group 2 adds Supabase schema and RLS artifacts for resource extraction output.
+
+New tables:
+
+- `public.resource_extraction_documents`
+- `public.resource_extracted_content_blocks`
+
+The schema persists extraction documents and locator-preserving extracted content blocks for student-owned resources.
+
+Authenticated students may read their own extraction output.
+
+Authenticated students may not insert, update, or delete extraction output.
+
+Worker mutation relies on service-role bypass.
+
+No repositories are implemented in this group.

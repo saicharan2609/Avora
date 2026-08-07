@@ -32,3 +32,18 @@ The policy artifact mirrors RLS for:
 - `public.structure_units`
 
 No authenticated delete policy is introduced.
+
+## Stage 9 Group 2
+
+Stage 9 Group 2 adds:
+
+- `resource_extraction_documents.policy.sql`
+
+The policy artifact mirrors RLS for:
+
+- `public.resource_extraction_documents`
+- `public.resource_extracted_content_blocks`
+
+Authenticated users receive select-only access to their own extraction output.
+
+No authenticated insert, update, or delete policy is introduced.

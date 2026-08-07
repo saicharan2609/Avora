@@ -29,3 +29,14 @@ Stage 8 Group 2 adds generated database type sections for:
 - `public.structure_units`
 
 The generated shape must remain compatible with `@supabase/supabase-js` typed PostgREST generics. Do not wrap the generated shape in deep readonly types.
+
+## Stage 9 Group 2 — Resource extraction generated types
+
+Stage 9 Group 2 adds generated database type sections for:
+
+- `public.resource_extraction_documents`
+- `public.resource_extracted_content_blocks`
+
+The generated shape must remain compatible with `@supabase/supabase-js` typed PostgREST generics.
+
+Do not wrap the generated shape in deep readonly types.

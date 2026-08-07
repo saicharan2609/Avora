@@ -101,6 +101,124 @@ export type Database = {
           },
         ];
       };
+      resource_extraction_documents: {
+  Row: {
+    chunking_strategy_version: string;
+    created_at: string;
+    extracted_at: string;
+    extraction_document_id: string;
+    extraction_strategy_version: string;
+    resource_id: string;
+    status: Database["public"]["Enums"]["resource_extraction_document_status"];
+    student_id: string;
+    updated_at: string;
+  };
+  Insert: {
+    chunking_strategy_version: string;
+    created_at?: string;
+    extracted_at?: string;
+    extraction_document_id?: string;
+    extraction_strategy_version: string;
+    resource_id: string;
+    status: Database["public"]["Enums"]["resource_extraction_document_status"];
+    student_id: string;
+    updated_at?: string;
+  };
+  Update: {
+    chunking_strategy_version?: string;
+    created_at?: string;
+    extracted_at?: string;
+    extraction_document_id?: string;
+    extraction_strategy_version?: string;
+    resource_id?: string;
+    status?: Database["public"]["Enums"]["resource_extraction_document_status"];
+    student_id?: string;
+    updated_at?: string;
+  };
+  Relationships: [
+    {
+      foreignKeyName: "resource_extraction_documents_student_fkey";
+      columns: ["student_id"];
+      isOneToOne: false;
+      referencedRelation: "students";
+      referencedColumns: ["student_id"];
+    },
+    {
+      foreignKeyName: "resource_extraction_documents_resource_fkey";
+      columns: ["student_id", "resource_id"];
+      isOneToOne: false;
+      referencedRelation: "resources";
+      referencedColumns: ["student_id", "resource_id"];
+    },
+  ];
+};
+resource_extracted_content_blocks: {
+  Row: {
+    block_id: string;
+    confidence: number | null;
+    created_at: string;
+    extraction_document_id: string;
+    kind: Database["public"]["Enums"]["resource_extracted_content_block_kind"];
+    locator: Json;
+    parent_block_id: string | null;
+    resource_id: string;
+    sort_order: number;
+    student_id: string;
+    text: string;
+    updated_at: string;
+  };
+  Insert: {
+    block_id?: string;
+    confidence?: number | null;
+    created_at?: string;
+    extraction_document_id: string;
+    kind: Database["public"]["Enums"]["resource_extracted_content_block_kind"];
+    locator: Json;
+    parent_block_id?: string | null;
+    resource_id: string;
+    sort_order: number;
+    student_id: string;
+    text: string;
+    updated_at?: string;
+  };
+  Update: {
+    block_id?: string;
+    confidence?: number | null;
+    created_at?: string;
+    extraction_document_id?: string;
+    kind?: Database["public"]["Enums"]["resource_extracted_content_block_kind"];
+    locator?: Json;
+    parent_block_id?: string | null;
+    resource_id?: string;
+    sort_order?: number;
+    student_id?: string;
+    text?: string;
+    updated_at?: string;
+  };
+  Relationships: [
+    {
+      foreignKeyName: "resource_extracted_content_blocks_student_fkey";
+      columns: ["student_id"];
+      isOneToOne: false;
+      referencedRelation: "students";
+      referencedColumns: ["student_id"];
+    },
+    {
+      foreignKeyName: "resource_extracted_content_blocks_document_fkey";
+      columns: ["student_id", "resource_id", "extraction_document_id"];
+      isOneToOne: false;
+      referencedRelation: "resource_extraction_documents";
+      referencedColumns: ["student_id", "resource_id", "extraction_document_id"];
+    },
+    {
+      foreignKeyName: "resource_extracted_content_blocks_parent_fkey";
+      columns: ["student_id", "extraction_document_id", "parent_block_id"];
+      isOneToOne: false;
+      referencedRelation: "resource_extracted_content_blocks";
+      referencedColumns: ["student_id", "extraction_document_id", "block_id"];
+    },
+  ];
+};
       academic_terms: {
   Row: {
     created_at: string;
@@ -371,6 +489,24 @@ structure_units: {
   | "assignment_group"
   | "exam_area"
   | "custom";
+  
+  resource_extracted_content_block_kind:
+  | "heading"
+  | "paragraph"
+  | "list"
+  | "table"
+  | "formula"
+  | "code"
+  | "figure"
+  | "diagram"
+  | "transcript"
+  | "metadata"
+  | "unknown";
+
+resource_extraction_document_status:
+  | "extracted"
+  | "partially_extracted"
+  | "failed";
 
 academic_term_lifecycle_state:
   | "planned"
@@ -386,7 +522,7 @@ structure_unit_source:
 subject_lifecycle_state:
   | "active"
   | "archived";
-  
+
       resource_kind:
   | "document"
   | "image"
