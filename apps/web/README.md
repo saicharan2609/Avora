@@ -145,3 +145,23 @@ Student-scoped request bodies must not accept `studentId`. The authenticated com
 Service-role credentials must not be required by this application.
 
 Resource ingestion execution belongs to a later worker-plane group.
+
+## Stage 8 Group 6 — Academic setup API
+
+Stage 8 Group 6 adds authenticated academic setup API routes.
+
+New routes:
+
+- `GET /api/academic/setup/progress`
+- `POST /api/academic/setup/terms`
+- `POST /api/academic/setup/subjects`
+- `POST /api/academic/setup/structure-units`
+- `GET /api/academic/tree`
+
+The routes compose `@avora/core/api/academic`, `@avora/domain/academic`, and `@avora/db/repositories/academic`.
+
+Route handlers do not import Supabase SDKs directly.
+
+This implementation uses the current repository-compatible `createStudentDatabaseClient` from `@avora/db/client`.
+
+This group does not add UI, mobile screens, worker behavior, AI behavior, retrieval behavior, database schema, or e2e flow harnesses.
