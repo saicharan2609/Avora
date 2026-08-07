@@ -6,9 +6,9 @@ Publishable: no
 
 ## Purpose
 
-The `academic` module owns vendor-free academic structure contracts.
+The `academic` module owns vendor-free academic structure contracts and setup domain services.
 
-Stage 8 Group 1 establishes the first academic graph contract surface:
+Stage 8 Group 1 established the first academic graph contract surface:
 
 - academic terms;
 - subjects;
@@ -17,7 +17,9 @@ Stage 8 Group 1 establishes the first academic graph contract surface:
 - academic structure trees;
 - placement confidence.
 
-This module does not own persistence, route handlers, UI, worker behavior, AI behavior, retrieval behavior, or tests in Stage 8 Group 1.
+Stage 8 Group 4 adds the adaptive academic setup service. The service can create the first academic term, add subjects, add recursive structure units, and calculate setup progress through a vendor-free repository port.
+
+This module does not own persistence, route handlers, UI, worker behavior, AI behavior, retrieval behavior, or tests in Stage 8 Group 4.
 
 ## Public surface
 
@@ -46,6 +48,8 @@ This module does not own persistence, route handlers, UI, worker behavior, AI be
 ## Internal layers
 
 - `contracts/`
+- `repositories/`
+- `services/`
 
 ## Current contracts
 
@@ -55,6 +59,15 @@ This module does not own persistence, route handlers, UI, worker behavior, AI be
 - `AcademicStructurePath`
 - `AcademicStructureTree`
 - `PlacementConfidence`
+- `AcademicSetupProgress`
+
+## Current repository ports
+
+- `AcademicSetupRepositoryPort`
+
+## Current services
+
+- `AcademicSetupService`
 
 ## Boundaries
 
@@ -72,4 +85,6 @@ This module must not import UI packages or apps.
 
 This module may import shared identity and time primitives from `@avora/core`.
 
-Database schema, RLS, generated types, and repositories belong to later Stage 8 groups.
+Database schema, RLS, generated types, and concrete repositories belong outside this module.
+
+API contracts and web route composition belong to later Stage 8 groups.

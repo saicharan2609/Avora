@@ -8,3 +8,8 @@ export {
   structureUnitSources,
   subjectLifecycleStates,
 } from "../academic/index.js";
+export {
+  academicSetupProgressStatuses,
+  AcademicSetupServiceError,
+  createAcademicSetupService,
+} from "../academic/index.js";

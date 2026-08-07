@@ -60,3 +60,12 @@ export {
   placementConfidenceLevels,
   placementConfidenceSources,
 } from "./PlacementConfidence.contract.js";
+export type {
+  AcademicSetupProgress,
+  AcademicSetupProgressStatus,
+  GetAcademicSetupProgressInput,
+} from "./AcademicSetup.contract.js";
+
+export {
+  academicSetupProgressStatuses,
+} from "./AcademicSetup.contract.js";
