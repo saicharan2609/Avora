@@ -66,3 +66,26 @@ This package must not import `@avora/ui-web` or `@avora/ui-mobile`.
 This package must not import feature modules or provider SDKs.
 
 Stage 4 Group 5 does not implement chunking, embeddings, scope resolution, search, insufficiency thresholds, provider access, business logic, database schema, Supabase logic, APIs, authentication, AI implementation, UI code, or tests.
+
+## Stage 10 Group 1 — Retrieval chunk contracts
+
+Stage 10 Group 1 adds the first Knowledge and Retrieval foundation.
+
+New public surface:
+
+- `@avora/retrieval/chunking`
+
+New contract coverage:
+
+- retrieval chunk identifiers;
+- retrieval chunk source linkage;
+- retrieval chunk locators;
+- retrieval chunk content;
+- retrieval chunk sanitisation metadata;
+- retrieval chunk scope facets;
+- retrieval chunk records;
+- retrieval chunk creation inputs.
+
+This group implements contracts only.
+
+It does not add database persistence, migrations, repositories, embeddings, vector search, keyword search, hybrid search, runtime scope resolution, insufficiency thresholds, AI Gateway context assembly, citation verification, worker execution, web routes, UI, mobile screens, or E2E flows.
