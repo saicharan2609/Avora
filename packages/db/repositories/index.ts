@@ -12,3 +12,9 @@ export {
   AcademicGraphRepositoryError,
   createAcademicGraphRepository,
 } from "./academic/index.js";
+export type * from "./extraction/index.js";
+
+export {
+  ResourceExtractionRepositoryError,
+  createResourceExtractionRepository,
+} from "./extraction/index.js";

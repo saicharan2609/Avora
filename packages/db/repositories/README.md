@@ -38,3 +38,15 @@ The academic repository owns concrete database access for `public.academic_terms
 It must not import `@avora/domain`.
 
 Academic setup orchestration belongs to a later Stage 8 group.
+
+## Stage 9 Group 3 — Resource extraction repository
+
+Stage 9 Group 3 adds:
+
+- `extraction/`
+
+The extraction repository owns concrete database access for `public.resource_extraction_documents` and `public.resource_extracted_content_blocks`.
+
+It must not import `@avora/domain`.
+
+Extraction execution, parsing, OCR, AI processing, embeddings, and retrieval indexing belong to later groups.

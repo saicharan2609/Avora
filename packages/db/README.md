@@ -152,3 +152,21 @@ Authenticated students may not insert, update, or delete extraction output.
 Worker mutation relies on service-role bypass.
 
 No repositories are implemented in this group.
+
+## Stage 9 Group 3 — Resource extraction repositories
+
+Stage 9 Group 3 adds concrete Supabase-backed repositories for resource extraction output.
+
+New public surface:
+
+- `@avora/db/repositories/extraction`
+
+Repository coverage:
+
+- resource extraction document creation;
+- extracted content block creation;
+- extraction document reads;
+- extracted content block reads;
+- hierarchical extracted content block tree reads.
+
+This group does not add worker execution, extraction adapters, OCR, parsing, AI, embeddings, retrieval indexing, API routes, UI, mobile behavior, or e2e flows.

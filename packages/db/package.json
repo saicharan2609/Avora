@@ -9,6 +9,7 @@
     "./repositories/academic": "./dist/repositories/academic/index.js",
     "./repositories": "./dist/repositories/index.js",
     "./repositories/resources": "./dist/repositories/resources/index.js",
+    "./repositories/extraction": "./dist/repositories/extraction/index.js",
     "./repositories/jobs": "./dist/repositories/jobs/index.js"
   },
   "scripts": {
