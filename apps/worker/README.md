@@ -75,3 +75,17 @@ This app must not import `@avora/ui-web` or `@avora/ui-mobile`.
 This app must not import `@avora/ai` or `@avora/retrieval` in Stage 7 Group 10.
 
 Resource extraction belongs to a later stage.
+
+## Stage 9 Group 6 — Resource extraction worker handler
+
+Stage 9 Group 6 adds the worker-plane resource extraction handler.
+
+New worker-local module:
+
+- `src/resource-extraction/`
+
+The handler consumes `ResourceExtractionJobRequest` from `@avora/jobs/resource-extraction`, maps the job payload into a domain `ResourceExtractionRequest`, invokes `ResourceExtractionService`, and persists successful or partially successful extraction output through `ResourceExtractionRepository`.
+
+The handler does not claim jobs, acknowledge jobs, update resource status, parse files, inspect storage, call OCR adapters, call AI adapters, create embeddings, index retrieval chunks, expose API routes, or implement UI/mobile behavior.
+
+The handler must be composed by worker runtime code with already-constructed dependencies.
