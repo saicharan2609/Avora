@@ -8,6 +8,8 @@ export {
   createResourceUploadService,
   ResourceUploadServiceError,
   createResourceIngestionValidationService,
+   ResourceExtractionServiceError,
+  createResourceExtractionService,
 } from "./services/index.js";
 
 export {

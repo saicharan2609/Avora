@@ -22,3 +22,13 @@ export type {
 export {
   createResourceIngestionValidationService,
 } from "./ResourceIngestionValidationService.js";
+export type {
+  ResourceExtractionService,
+  ResourceExtractionServiceDependencies,
+  ResourceExtractionServiceErrorCode,
+} from "./ResourceExtractionService.js";
+
+export {
+  ResourceExtractionServiceError,
+  createResourceExtractionService,
+} from "./ResourceExtractionService.js";

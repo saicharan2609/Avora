@@ -40,3 +40,13 @@ Services in this directory must not import vendor SDKs.
 Services in this directory must not import database clients.
 
 Services in this directory must not contain API handlers, Supabase query builders, storage SDK calls, authentication implementation, AI implementation, retrieval implementation, jobs implementation, React components, React Native components, pages, screens, or tests.
+
+## Stage 9 Group 4 — Resource extraction service
+
+Stage 9 Group 4 adds the vendor-free `ResourceExtractionService`.
+
+The service validates `ResourceExtractionRequest` inputs, invokes a provided `ResourceExtractionPort`, and checks that extracted or partially extracted documents match the requested student, resource, extraction strategy version, and chunking strategy version.
+
+The service does not persist extraction output.
+
+The service does not parse files, inspect storage, call OCR adapters, call AI adapters, create embeddings, index retrieval chunks, or expose web routes.

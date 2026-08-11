@@ -94,3 +94,16 @@ New surface area is exported through:
 The group defines extraction requests, extraction results, extracted content blocks, source locators, strategy versions, and the `ResourceExtractionPort`.
 
 No persistence, adapters, worker execution, AI behavior, retrieval behavior, API routes, UI, or mobile behavior are added in this group.
+
+## Stage 9 Group 4 — Resource extraction service
+
+Stage 9 Group 4 extends the resources domain module with a vendor-free extraction application service.
+
+New runtime exports are available from:
+
+- `@avora/domain/resources`
+- `@avora/domain`
+
+The service validates extraction requests, invokes `ResourceExtractionPort`, and verifies consistency of successful or partial extraction results.
+
+No database repositories, adapters, worker behavior, AI behavior, retrieval behavior, API routes, UI, or mobile behavior are added in this group.
