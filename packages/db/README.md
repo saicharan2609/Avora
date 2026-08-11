@@ -201,3 +201,21 @@ Authenticated students may not insert, update, or delete chunks.
 Worker mutation relies on service-role bypass.
 
 This group does not add repositories, embeddings, vector search, keyword search, hybrid search, AI Gateway citation verification, worker execution, web routes, UI, mobile behavior, or e2e flows.
+## Stage 10 Group 3 — Retrieval chunk repositories
+
+Stage 10 Group 3 adds concrete Supabase-backed repositories for retrieval chunks.
+
+New public surface:
+
+- `@avora/db/repositories/chunks`
+
+Repository coverage:
+
+- retrieval chunk creation;
+- batch retrieval chunk creation;
+- retrieval chunk read by id;
+- retrieval chunk reads by resource;
+- retrieval chunk reads by extraction document;
+- retrieval chunk reads by scope facets.
+
+This group does not add database migrations, RLS policies, chunking algorithms, embeddings, vector search, keyword search, hybrid retrieval, scope resolution runtime, AI Gateway citation verification, worker execution, web routes, UI, mobile behavior, or e2e flows.

@@ -50,3 +50,14 @@ The extraction repository owns concrete database access for `public.resource_ext
 It must not import `@avora/domain`.
 
 Extraction execution, parsing, OCR, AI processing, embeddings, and retrieval indexing belong to later groups.
+## Stage 10 Group 3 — Retrieval chunk repository
+
+Stage 10 Group 3 adds:
+
+- `chunks/`
+
+The chunks repository owns concrete database access for `public.chunks`.
+
+It must not import `@avora/retrieval`, `@avora/domain`, `@avora/jobs`, `@avora/ai`, adapters, apps, or UI packages.
+
+Retrieval mechanics, chunking algorithms, scope resolution runtime, embeddings, hybrid search, insufficiency, AI Gateway context assembly, and citation verification belong to later groups.

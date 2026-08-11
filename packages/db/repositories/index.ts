@@ -18,3 +18,9 @@ export {
   ResourceExtractionRepositoryError,
   createResourceExtractionRepository,
 } from "./extraction/index.js";
+export type * from "./chunks/index.js";
+
+export {
+  RetrievalChunkRepositoryError,
+  createRetrievalChunkRepository,
+} from "./chunks/index.js";
