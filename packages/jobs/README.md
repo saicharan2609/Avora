@@ -76,3 +76,23 @@ This package must not import `@avora/ai` or `@avora/retrieval`.
 This package must not contain worker execution, queue persistence implementation, database migrations, storage SDK behavior, OCR, malware scanning, file parsing, AI processing, embeddings, retrieval indexing, React components, React Native components, pages, screens, or tests in Stage 7 Group 9.
 
 Job handoff contracts describe work to be executed later by the worker plane.
+
+## Stage 9 Group 5 — Resource extraction job handoff
+
+Stage 9 Group 5 adds job contracts for resource extraction handoff.
+
+New public surface:
+
+- `@avora/jobs/resource-extraction`
+
+New job name:
+
+- `resource.extraction.extract`
+
+New queue port:
+
+- `ResourceExtractionQueuePort`
+
+This group allows later worker-plane code to enqueue extraction work after a resource passes validation and enters `processing`.
+
+This group does not add worker execution, database repository composition, extraction adapters, OCR, parsing, AI, embeddings, retrieval indexing, API routes, UI, mobile behavior, or e2e flows.s

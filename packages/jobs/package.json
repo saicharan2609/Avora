@@ -9,6 +9,7 @@
     "./state-machines": "./dist/state-machines/index.js",
     "./claim": "./dist/claim/index.js",
     "./checkpoint": "./dist/checkpoint/index.js",
+    "./resource-extraction": "./dist/resource-extraction/index.js",
     "./heartbeat": "./dist/heartbeat/index.js",
     "./priorities": "./dist/priorities/index.js",
     "./dead-letter": "./dist/dead-letter/index.js"

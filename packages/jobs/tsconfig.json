@@ -11,6 +11,7 @@
     "state-machines/**/*.ts",
     "claim/**/*.ts",
     "checkpoint/**/*.ts",
+    "resource-extraction/**/*.ts",
     "heartbeat/**/*.ts",
     "priorities/**/*.ts",
     "dead-letter/**/*.ts"

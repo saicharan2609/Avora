@@ -15,3 +15,12 @@ export {
   resourceIngestionJobStatuses,
   resourceIngestionJobStorageBuckets,
 } from "../queue/index.js";
+export type * from "../resource-extraction/index.js";
+
+export {
+  createResourceExtractionJobEnvelope,
+  resourceExtractionJobName,
+  resourceExtractionJobPriorities,
+  resourceExtractionJobReasons,
+  resourceExtractionStorageBuckets,
+} from "../resource-extraction/index.js";
