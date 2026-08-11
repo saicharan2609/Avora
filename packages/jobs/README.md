@@ -96,3 +96,11 @@ New queue port:
 This group allows later worker-plane code to enqueue extraction work after a resource passes validation and enters `processing`.
 
 This group does not add worker execution, database repository composition, extraction adapters, OCR, parsing, AI, embeddings, retrieval indexing, API routes, UI, mobile behavior, or e2e flows.s
+
+## Stage 9 Group 7 — Resource extraction job handoff traceability
+
+Stage 9 Group 7 adds final completion traceability for the resource extraction job handoff.
+
+The completion harness validates that `ResourceExtractionJobRequest`, `resourceExtractionJobName`, and the job payload contract are consumed by the worker handler validation plan.
+
+No jobs package runtime behavior is changed in this group.

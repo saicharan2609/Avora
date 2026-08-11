@@ -89,3 +89,13 @@ The handler consumes `ResourceExtractionJobRequest` from `@avora/jobs/resource-e
 The handler does not claim jobs, acknowledge jobs, update resource status, parse files, inspect storage, call OCR adapters, call AI adapters, create embeddings, index retrieval chunks, expose API routes, or implement UI/mobile behavior.
 
 The handler must be composed by worker runtime code with already-constructed dependencies.
+
+## Stage 9 Group 7 — Resource extraction worker completion harness
+
+Stage 9 Group 7 adds a worker handler validation plan under:
+
+- `src/resource-extraction/__tests__/resource-extraction-worker.plan.json`
+
+The plan records expected worker handler behavior for extracted, partially extracted, failed, invalid job, invalid payload, and persistence failure cases.
+
+This group does not change worker runtime behavior.

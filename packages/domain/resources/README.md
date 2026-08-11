@@ -110,3 +110,31 @@ New port:
 This group does not add database schema, repositories, storage adapters, OCR adapters, AI adapters, worker execution, embeddings, retrieval indexing, summaries, notes, flashcards, quizzes, API routes, UI, or mobile screens.
 
 The contracts preserve locator metadata so later retrieval and citation verification can resolve content back to the original student resource.
+
+## Stage 9 Group 4 — Resource extraction service
+
+Stage 9 Group 4 adds the domain application service for resource extraction.
+
+New service:
+
+- `ResourceExtractionService`
+
+New factory:
+
+- `createResourceExtractionService`
+
+New error:
+
+- `ResourceExtractionServiceError`
+
+The service composes the vendor-free `ResourceExtractionPort` introduced in Stage 9 Group 1.
+
+This group keeps extraction orchestration inside the domain layer while leaving persistence, worker execution, concrete parsing, OCR, AI, embeddings, and retrieval indexing to later groups.s
+
+## Stage 9 Group 7 — Resource extraction completion traceability
+
+Stage 9 Group 7 adds final completion traceability for the resource extraction pipeline.
+
+The completion harness validates that the contracts and service added in the resources domain module are connected through the worker handler, job handoff, DB repository, persistence schema, and RLS plans.
+
+No domain runtime behavior is changed in this group.

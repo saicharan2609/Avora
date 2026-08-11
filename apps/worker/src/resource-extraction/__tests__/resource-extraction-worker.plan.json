@@ -1,0 +1,134 @@
+{
+  "id": "stage-9-resource-extraction-worker-handler-plan",
+  "owner": "@avora/worker",
+  "stage": "Stage 9 Group 7",
+  "title": "Resource extraction worker handler validation plan",
+  "description": "Documents worker-level assertions for the Stage 9 resource extraction worker handler.",
+  "fixture": "../../../../../e2e/fixtures/resource-extraction.fixture.json",
+  "handler": {
+    "name": "resource-extraction-worker-handler",
+    "factory": "createResourceExtractionWorkerHandler",
+    "input": "HandleResourceExtractionJobInput",
+    "output": "ResourceExtractionWorkerHandledResult"
+  },
+  "dependencies": [
+    {
+      "name": "ResourceExtractionService",
+      "source": "@avora/domain/resources",
+      "required": true
+    },
+    {
+      "name": "ResourceExtractionRepository",
+      "source": "@avora/db/repositories/extraction",
+      "required": true
+    },
+    {
+      "name": "ResourceExtractionJobRequest",
+      "source": "@avora/jobs/resource-extraction",
+      "required": true
+    }
+  ],
+  "success_cases": [
+    {
+      "name": "handles extracted result",
+      "jobName": "resource.extraction.extract",
+      "serviceOutcome": "extracted",
+      "expected": {
+        "outcome": "extracted",
+        "persistsDocument": true,
+        "persistsBlocks": true,
+        "persistedBlockCount": 3,
+        "failure": null
+      }
+    },
+    {
+      "name": "handles partially extracted result",
+      "jobName": "resource.extraction.extract",
+      "serviceOutcome": "partially_extracted",
+      "expected": {
+        "outcome": "partially_extracted",
+        "persistsDocument": true,
+        "persistsBlocks": true,
+        "returnsWarningAsFailure": true
+      }
+    },
+    {
+      "name": "handles failed result without persistence",
+      "jobName": "resource.extraction.extract",
+      "serviceOutcome": "failed",
+      "expected": {
+        "outcome": "failed",
+        "persistsDocument": false,
+        "persistsBlocks": false,
+        "extractionDocumentId": null,
+        "persistedBlockCount": 0,
+        "failureReturned": true
+      }
+    }
+  ],
+  "failure_cases": [
+    {
+      "name": "rejects unsupported job name",
+      "expectedError": {
+        "name": "ResourceExtractionWorkerHandlerError",
+        "code": "resource_extraction_worker_invalid_job"
+      }
+    },
+    {
+      "name": "rejects missing storage object path",
+      "expectedError": {
+        "name": "ResourceExtractionWorkerHandlerError",
+        "code": "resource_extraction_worker_invalid_job"
+      }
+    },
+    {
+      "name": "rejects missing declared mime type",
+      "expectedError": {
+        "name": "ResourceExtractionWorkerHandlerError",
+        "code": "resource_extraction_worker_invalid_job"
+      }
+    },
+    {
+      "name": "rejects missing content hash",
+      "expectedError": {
+        "name": "ResourceExtractionWorkerHandlerError",
+        "code": "resource_extraction_worker_invalid_job"
+      }
+    },
+    {
+      "name": "rejects missing extraction strategy version",
+      "expectedError": {
+        "name": "ResourceExtractionWorkerHandlerError",
+        "code": "resource_extraction_worker_invalid_job"
+      }
+    },
+    {
+      "name": "rejects missing chunking strategy version",
+      "expectedError": {
+        "name": "ResourceExtractionWorkerHandlerError",
+        "code": "resource_extraction_worker_invalid_job"
+      }
+    },
+    {
+      "name": "wraps repository persistence failure",
+      "expectedError": {
+        "name": "ResourceExtractionWorkerHandlerError",
+        "code": "resource_extraction_worker_persistence_failed"
+      }
+    }
+  ],
+  "boundary_assertions": [
+    "handler does not create database clients directly",
+    "handler does not import @supabase/supabase-js",
+    "handler does not import @avora/adapters",
+    "handler does not import @avora/ai",
+    "handler does not import @avora/retrieval",
+    "handler does not import web or mobile apps",
+    "handler does not claim jobs",
+    "handler does not acknowledge jobs",
+    "handler does not update resource lifecycle status",
+    "handler does not parse files directly",
+    "handler does not create embeddings",
+    "handler does not index retrieval chunks"
+  ]
+}

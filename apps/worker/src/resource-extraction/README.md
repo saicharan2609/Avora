@@ -44,3 +44,13 @@ This directory must not import UI packages.
 This directory must not import `@supabase/supabase-js` directly.
 
 Concrete runtime composition must pass in already-constructed domain services and repositories.
+
+## Stage 9 Group 7 — Worker handler validation plan
+
+Stage 9 Group 7 adds:
+
+- `__tests__/resource-extraction-worker.plan.json`
+
+The plan validates how the resource extraction worker handler consumes `ResourceExtractionJobRequest`, invokes `ResourceExtractionService`, persists extraction output through `ResourceExtractionRepository`, and returns deterministic handled results.
+
+The plan is documentation-first in this group. It does not add job polling, claiming, acknowledgement, resource lifecycle updates, parsing, OCR, AI, embeddings, retrieval indexing, API routes, UI, or mobile behavior.

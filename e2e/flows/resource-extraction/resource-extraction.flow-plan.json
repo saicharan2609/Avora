@@ -1,0 +1,294 @@
+{
+  "id": "stage-9-resource-extraction-flow",
+  "owner": "@avora/qa",
+  "stage": "Stage 9 Group 7",
+  "title": "Resource extraction completion flow",
+  "description": "Validates the completed Stage 9 resource extraction foundation from job handoff through worker handling, domain extraction, repository persistence, locator preservation, hierarchy preservation, and RLS expectations.",
+  "fixture": "../../fixtures/resource-extraction.fixture.json",
+  "scope": {
+    "includes": [
+      "resource extraction job envelope creation",
+      "resource extraction worker handler validation",
+      "resource extraction request mapping",
+      "resource extraction service invocation",
+      "extracted document persistence",
+      "extracted content block persistence",
+      "locator metadata preservation",
+      "parent-child extracted content hierarchy preservation",
+      "repository tree read validation",
+      "student-scoped RLS read validation",
+      "authenticated mutation denial validation"
+    ],
+    "excludes": [
+      "resource upload API",
+      "resource ingestion validation runtime",
+      "queue polling",
+      "job claiming",
+      "job acknowledgement",
+      "resource lifecycle status transition implementation",
+      "storage object download",
+      "OCR adapters",
+      "parser adapters",
+      "AI adapters",
+      "embedding",
+      "retrieval indexing",
+      "summaries",
+      "notes",
+      "flashcards",
+      "quizzes",
+      "web routes",
+      "UI",
+      "mobile screens",
+      "real student content",
+      "production credentials"
+    ]
+  },
+  "actors": [
+    {
+      "name": "student_a",
+      "role": "authenticated_student"
+    },
+    {
+      "name": "student_b",
+      "role": "authenticated_student"
+    },
+    {
+      "name": "worker",
+      "role": "service_role_worker_runtime"
+    }
+  ],
+  "success_path": [
+    {
+      "step": 1,
+      "actor": "worker",
+      "action": "create_resource_extraction_job_envelope",
+      "contract": "createResourceExtractionJobEnvelope",
+      "requestFixture": "resource_extraction_job_payload_pdf",
+      "expected": {
+        "jobName": "resource.extraction.extract",
+        "reason": "resource_validation_succeeded",
+        "priority": "normal",
+        "payloadContainsStudentId": true,
+        "payloadContainsResourceId": true,
+        "payloadContainsStorage": true,
+        "payloadContainsDeclaredMimeType": true,
+        "payloadContainsContentHash": true,
+        "payloadContainsExtractionStrategyVersion": true,
+        "payloadContainsChunkingStrategyVersion": true
+      }
+    },
+    {
+      "step": 2,
+      "actor": "worker",
+      "action": "handle_resource_extraction_job",
+      "contract": "createResourceExtractionWorkerHandler",
+      "requestFixture": "resource_extraction_job_request_pdf",
+      "expected": {
+        "handlerName": "resource-extraction-worker-handler",
+        "jobName": "resource.extraction.extract",
+        "outcome": "extracted",
+        "extractionDocumentIdReturned": true,
+        "persistedBlockCount": 3,
+        "failure": null
+      }
+    },
+    {
+      "step": 3,
+      "actor": "worker",
+      "action": "persist_resource_extraction_document",
+      "contract": "createResourceExtractionDocumentWithBlocks",
+      "expected": {
+        "documentStatus": "extracted",
+        "extractionStrategyVersion": "extractor.v1",
+        "chunkingStrategyVersion": "chunker.v1",
+        "studentIdMatchesJob": true,
+        "resourceIdMatchesJob": true
+      }
+    },
+    {
+      "step": 4,
+      "actor": "worker",
+      "action": "persist_extracted_content_blocks",
+      "contract": "createResourceExtractionDocumentWithBlocks",
+      "expected": {
+        "blockCount": 3,
+        "containsHeading": true,
+        "containsParagraph": true,
+        "containsList": true,
+        "allBlocksHaveLocator": true,
+        "allBlocksHaveNonEmptyText": true,
+        "allSortOrdersAreNonNegative": true,
+        "confidenceValuesAreNullOrBetweenZeroAndOne": true
+      }
+    },
+    {
+      "step": 5,
+      "actor": "worker",
+      "action": "read_resource_extraction_document_tree",
+      "contract": "getResourceExtractionDocumentTree",
+      "expected": {
+        "documentReturned": true,
+        "rootBlockCount": 2,
+        "childBlockCount": 1,
+        "treePreservesParentChildRelationship": true,
+        "treeSortsBySortOrderThenBlockId": true
+      }
+    },
+    {
+      "step": 6,
+      "actor": "student_a",
+      "action": "read_own_resource_extraction_document",
+      "table": "public.resource_extraction_documents",
+      "expected": {
+        "access": "allowed",
+        "documentVisible": true
+      }
+    },
+    {
+      "step": 7,
+      "actor": "student_a",
+      "action": "read_own_resource_extracted_content_blocks",
+      "table": "public.resource_extracted_content_blocks",
+      "expected": {
+        "access": "allowed",
+        "blocksVisible": true
+      }
+    }
+  ],
+  "failure_path": [
+    {
+      "step": 1,
+      "actor": "worker",
+      "action": "handle_failed_extraction_result",
+      "expected": {
+        "outcome": "failed",
+        "extractionDocumentId": null,
+        "persistedBlockCount": 0,
+        "failureReturned": true,
+        "documentNotPersistedByWorkerHandler": true
+      }
+    },
+    {
+      "step": 2,
+      "actor": "worker",
+      "action": "reject_invalid_job_name",
+      "expected": {
+        "throwsTypedWorkerHandlerError": true,
+        "errorCode": "resource_extraction_worker_invalid_job"
+      }
+    },
+    {
+      "step": 3,
+      "actor": "worker",
+      "action": "reject_invalid_payload",
+      "expected": {
+        "throwsTypedWorkerHandlerError": true,
+        "errorCode": "resource_extraction_worker_invalid_job"
+      }
+    }
+  ],
+  "authorization_path": [
+    {
+      "step": 1,
+      "actor": "student_b",
+      "action": "read_other_student_resource_extraction_documents",
+      "table": "public.resource_extraction_documents",
+      "expected": {
+        "access": "denied_or_empty",
+        "studentADataVisible": false
+      }
+    },
+    {
+      "step": 2,
+      "actor": "student_b",
+      "action": "read_other_student_resource_extracted_content_blocks",
+      "table": "public.resource_extracted_content_blocks",
+      "expected": {
+        "access": "denied_or_empty",
+        "studentADataVisible": false
+      }
+    },
+    {
+      "step": 3,
+      "actor": "student_a",
+      "action": "insert_own_resource_extraction_document",
+      "table": "public.resource_extraction_documents",
+      "expected": {
+        "access": "denied",
+        "mutationAllowed": false
+      }
+    },
+    {
+      "step": 4,
+      "actor": "student_a",
+      "action": "update_own_resource_extraction_document",
+      "table": "public.resource_extraction_documents",
+      "expected": {
+        "access": "denied",
+        "mutationAllowed": false
+      }
+    },
+    {
+      "step": 5,
+      "actor": "student_a",
+      "action": "delete_own_resource_extraction_document",
+      "table": "public.resource_extraction_documents",
+      "expected": {
+        "access": "denied",
+        "mutationAllowed": false
+      }
+    },
+    {
+      "step": 6,
+      "actor": "student_a",
+      "action": "insert_own_resource_extracted_content_block",
+      "table": "public.resource_extracted_content_blocks",
+      "expected": {
+        "access": "denied",
+        "mutationAllowed": false
+      }
+    },
+    {
+      "step": 7,
+      "actor": "student_a",
+      "action": "update_own_resource_extracted_content_block",
+      "table": "public.resource_extracted_content_blocks",
+      "expected": {
+        "access": "denied",
+        "mutationAllowed": false
+      }
+    },
+    {
+      "step": 8,
+      "actor": "student_a",
+      "action": "delete_own_resource_extracted_content_block",
+      "table": "public.resource_extracted_content_blocks",
+      "expected": {
+        "access": "denied",
+        "mutationAllowed": false
+      }
+    }
+  ],
+  "assertions": [
+    "resource extraction job handoff uses resource.extraction.extract",
+    "worker handler accepts only resource extraction jobs",
+    "worker handler maps job payload to ResourceExtractionRequest",
+    "domain extraction service validates request consistency",
+    "successful extraction output is persisted",
+    "partial extraction output is persisted with warning",
+    "failed extraction output is not persisted by Group 6 worker handler",
+    "extracted content blocks preserve source locator metadata",
+    "extracted content blocks preserve parent-child hierarchy",
+    "repository tree reads preserve deterministic order",
+    "student can read own extraction output",
+    "student cannot read another student's extraction output",
+    "student cannot insert extraction output",
+    "student cannot update extraction output",
+    "student cannot delete extraction output",
+    "no web route is required for Stage 9",
+    "no UI behavior is required for Stage 9",
+    "no mobile behavior is required for Stage 9",
+    "no AI adapter is required for Stage 9",
+    "no retrieval indexing is required for Stage 9"
+  ]
+}

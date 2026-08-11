@@ -53,3 +53,13 @@ This repository must not import UI packages or apps.
 This repository may use generated Supabase database types and role-scoped Supabase clients.
 
 This repository owns concrete persistence access only. Extraction execution, parsing, OCR, chunking, AI, embeddings, and retrieval indexing belong to later groups.
+
+## Stage 9 Group 7 — Repository validation plan
+
+Stage 9 Group 7 adds:
+
+- `__tests__/resource-extraction-repository.plan.json`
+
+The plan records repository expectations for creating extraction documents, creating extracted content blocks, reading extraction documents, listing blocks, and building extracted content block trees.
+
+The plan also records boundary assertions that the repository must not import domain, jobs, adapters, AI, retrieval, apps, or UI packages.

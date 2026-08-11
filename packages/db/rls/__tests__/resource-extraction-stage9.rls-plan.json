@@ -1,0 +1,113 @@
+{
+  "id": "stage-9-resource-extraction-final-rls-plan",
+  "owner": "@avora/data",
+  "stage": "Stage 9 Group 7",
+  "title": "Resource extraction final RLS validation plan",
+  "description": "Final Stage 9 RLS closure plan for extraction documents and extracted content blocks.",
+  "tables": [
+    "public.resource_extraction_documents",
+    "public.resource_extracted_content_blocks"
+  ],
+  "cases": [
+    {
+      "name": "student can select own resource extraction documents",
+      "table": "public.resource_extraction_documents",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot select another student's resource extraction documents",
+      "table": "public.resource_extraction_documents",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot insert own resource extraction document",
+      "table": "public.resource_extraction_documents",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot update own resource extraction document",
+      "table": "public.resource_extraction_documents",
+      "role": "authenticated",
+      "operation": "update",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot delete own resource extraction document",
+      "table": "public.resource_extraction_documents",
+      "role": "authenticated",
+      "operation": "delete",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student can select own resource extracted content blocks",
+      "table": "public.resource_extracted_content_blocks",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot select another student's resource extracted content blocks",
+      "table": "public.resource_extracted_content_blocks",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot insert own resource extracted content block",
+      "table": "public.resource_extracted_content_blocks",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot update own resource extracted content block",
+      "table": "public.resource_extracted_content_blocks",
+      "role": "authenticated",
+      "operation": "update",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot delete own resource extracted content block",
+      "table": "public.resource_extracted_content_blocks",
+      "role": "authenticated",
+      "operation": "delete",
+      "scope": "own",
+      "expectation": "denied"
+    }
+  ],
+  "ownership_notes": [
+    "resource_extraction_documents are student-owned and resource-owned",
+    "resource_extraction_documents reference resources through same-student composite ownership",
+    "resource_extracted_content_blocks reference extraction documents through same-student composite ownership",
+    "parent extracted content blocks are constrained to the same student and extraction document",
+    "authenticated students have select-only access",
+    "worker mutation relies on service-role bypass",
+    "no authenticated insert, update, or delete policy is expected for Stage 9"
+  ],
+  "completion_assertions": [
+    "RLS enabled on public.resource_extraction_documents",
+    "RLS forced on public.resource_extraction_documents",
+    "RLS enabled on public.resource_extracted_content_blocks",
+    "RLS forced on public.resource_extracted_content_blocks",
+    "select own policy exists for resource_extraction_documents",
+    "select own policy exists for resource_extracted_content_blocks",
+    "no authenticated insert policy exists for extraction output",
+    "no authenticated update policy exists for extraction output",
+    "no authenticated delete policy exists for extraction output"
+  ]
+}

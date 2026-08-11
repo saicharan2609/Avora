@@ -1,0 +1,98 @@
+{
+  "id": "stage-9-resource-extraction-repository-plan",
+  "owner": "@avora/data",
+  "stage": "Stage 9 Group 7",
+  "title": "Resource extraction repository validation plan",
+  "description": "Documents repository-level assertions for Stage 9 extraction persistence.",
+  "fixture": "../../../../../e2e/fixtures/resource-extraction.fixture.json",
+  "repository": {
+    "factory": "createResourceExtractionRepository",
+    "publicSurface": "@avora/db/repositories/extraction"
+  },
+  "methods": [
+    {
+      "name": "createResourceExtractionDocument",
+      "expected": {
+        "createsDocument": true,
+        "requiresStudentId": true,
+        "requiresResourceId": true,
+        "requiresExtractionStrategyVersion": true,
+        "requiresChunkingStrategyVersion": true,
+        "requiresExtractedAt": true
+      }
+    },
+    {
+      "name": "createResourceExtractedContentBlocks",
+      "expected": {
+        "createsBlocks": true,
+        "allowsEmptyInputAsNoop": true,
+        "rejectsEmptyText": true,
+        "rejectsNegativeSortOrder": true,
+        "rejectsOutOfRangeConfidence": true,
+        "rejectsSelfParent": true
+      }
+    },
+    {
+      "name": "createResourceExtractionDocumentWithBlocks",
+      "expected": {
+        "createsDocument": true,
+        "createsBlocks": true,
+        "returnsDocumentAndBlocks": true
+      }
+    },
+    {
+      "name": "getResourceExtractionDocumentById",
+      "expected": {
+        "filtersByStudentId": true,
+        "filtersByExtractionDocumentId": true,
+        "returnsNullWhenMissing": true
+      }
+    },
+    {
+      "name": "listResourceExtractionDocumentsByResource",
+      "expected": {
+        "filtersByStudentId": true,
+        "filtersByResourceId": true,
+        "ordersByExtractedAtDescending": true
+      }
+    },
+    {
+      "name": "listResourceExtractedContentBlocks",
+      "expected": {
+        "filtersByStudentId": true,
+        "filtersByExtractionDocumentId": true,
+        "ordersBySortOrderThenBlockId": true
+      }
+    },
+    {
+      "name": "getResourceExtractionDocumentTree",
+      "expected": {
+        "returnsNullWhenDocumentMissing": true,
+        "buildsParentChildHierarchy": true,
+        "sortsSiblingsBySortOrderThenBlockId": true,
+        "throwsTypedErrorWhenParentMissing": true
+      }
+    }
+  ],
+  "locator_assertions": [
+    "locator must be a JSON object",
+    "locator must include kind",
+    "locator kind must be supported",
+    "document_page locator may include pageNumber",
+    "slide locator may include slideNumber",
+    "image_region locator may include boundingBox",
+    "text_span locator may include textSpan",
+    "audio_time_range locator may include timeRange",
+    "video_time_range locator may include timeRange",
+    "unknown locator remains valid with null optional fields"
+  ],
+  "boundary_assertions": [
+    "repository does not import @avora/domain",
+    "repository does not import @avora/adapters",
+    "repository does not import @avora/jobs",
+    "repository does not import @avora/ai",
+    "repository does not import @avora/retrieval",
+    "repository uses exact literal select strings",
+    "repository maps generated database rows to DB-shaped records"
+  ]
+}

@@ -170,3 +170,16 @@ Repository coverage:
 - hierarchical extracted content block tree reads.
 
 This group does not add worker execution, extraction adapters, OCR, parsing, AI, embeddings, retrieval indexing, API routes, UI, mobile behavior, or e2e flows.
+
+## Stage 9 Group 7 — Resource extraction persistence completion harness
+
+Stage 9 Group 7 adds final validation plan artifacts for resource extraction persistence.
+
+New plan files:
+
+- `repositories/extraction/__tests__/resource-extraction-repository.plan.json`
+- `rls/__tests__/resource-extraction-stage9.rls-plan.json`
+
+The plans cover repository persistence, locator parsing, extracted content hierarchy, student-scoped reads, cross-student denial, and authenticated mutation denial.
+
+This group does not modify database schema or repository runtime behavior.

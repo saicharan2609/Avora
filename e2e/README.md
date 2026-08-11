@@ -79,3 +79,15 @@ The flow covers authenticated setup progress reads, academic term creation, subj
 This flow uses synthetic fixtures only.
 
 This flow must not use production data, service-role credentials, direct database repository imports, UI behavior, mobile behavior, worker behavior, AI behavior, or retrieval behavior.
+## Stage 9 Group 7 — Resource extraction flow
+
+Stage 9 Group 7 adds the resource extraction completion flow under:
+
+- `flows/resource-extraction/`
+- `fixtures/resource-extraction.fixture.json`
+
+The flow covers resource extraction job handoff, worker handler validation, domain extraction service invocation, extraction repository persistence, source locator preservation, parent-child extracted block hierarchy, and RLS expectations.
+
+This flow uses synthetic fixtures only.
+
+This flow must not use production data, real student content, service-role credentials, direct runtime imports, OCR adapters, parser adapters, AI adapters, embeddings, retrieval indexing, API routes, UI, or mobile behavior.

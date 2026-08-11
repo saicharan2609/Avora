@@ -1,0 +1,194 @@
+{
+  "id": "resource-extraction-stage-9-synthetic-fixture",
+  "owner": "@avora/qa",
+  "classification": "synthetic",
+  "containsProductionData": false,
+  "containsStudentContent": false,
+  "containsRealAcademicMaterial": false,
+  "students": [
+    {
+      "alias": "student_a",
+      "studentId": "00000000-0000-4000-8000-0000000090a1"
+    },
+    {
+      "alias": "student_b",
+      "studentId": "00000000-0000-4000-8000-0000000090b1"
+    }
+  ],
+  "resources": [
+    {
+      "alias": "resource_pdf_graph_notes",
+      "studentAlias": "student_a",
+      "resourceId": "00000000-0000-4000-8000-000000009101",
+      "declaredMimeType": "application/pdf",
+      "byteSize": 4096,
+      "contentHash": "sha256:stage9syntheticresourcehash000000000000000000000000000000000000000000000000000001",
+      "storage": {
+        "bucket": "resources",
+        "objectPath": "students/00000000-0000-4000-8000-0000000090a1/resources/00000000-0000-4000-8000-000000009101/original.pdf"
+      },
+      "expectedValidatedStatus": "processing"
+    }
+  ],
+  "job": {
+    "alias": "resource_extraction_job_request_pdf",
+    "name": "resource.extraction.extract",
+    "reason": "resource_validation_succeeded",
+    "priority": "normal",
+    "payloadAlias": "resource_extraction_job_payload_pdf"
+  },
+  "jobPayloads": [
+    {
+      "alias": "resource_extraction_job_payload_pdf",
+      "studentAlias": "student_a",
+      "resourceAlias": "resource_pdf_graph_notes",
+      "storage": {
+        "bucket": "resources",
+        "objectPath": "students/00000000-0000-4000-8000-0000000090a1/resources/00000000-0000-4000-8000-000000009101/original.pdf"
+      },
+      "declaredMimeType": "application/pdf",
+      "byteSize": 4096,
+      "contentHash": "sha256:stage9syntheticresourcehash000000000000000000000000000000000000000000000000000001",
+      "extractionStrategyVersion": "extractor.v1",
+      "chunkingStrategyVersion": "chunker.v1",
+      "requestedAt": "2026-08-11T09:43:00.000Z"
+    }
+  ],
+  "extractionDocuments": [
+    {
+      "alias": "extraction_document_pdf_graph_notes",
+      "extractionDocumentId": "00000000-0000-4000-8000-000000009201",
+      "studentAlias": "student_a",
+      "resourceAlias": "resource_pdf_graph_notes",
+      "status": "extracted",
+      "extractionStrategyVersion": "extractor.v1",
+      "chunkingStrategyVersion": "chunker.v1",
+      "extractedAt": "2026-08-11T09:44:00.000Z"
+    }
+  ],
+  "extractedContentBlocks": [
+    {
+      "alias": "block_heading_graph_notes",
+      "blockId": "00000000-0000-4000-8000-000000009301",
+      "extractionDocumentAlias": "extraction_document_pdf_graph_notes",
+      "studentAlias": "student_a",
+      "resourceAlias": "resource_pdf_graph_notes",
+      "kind": "heading",
+      "text": "Synthetic Graph Notes",
+      "locator": {
+        "kind": "document_page",
+        "pageNumber": 1,
+        "slideNumber": null,
+        "boundingBox": {
+          "x": 0.1,
+          "y": 0.1,
+          "width": 0.8,
+          "height": 0.08,
+          "unit": "ratio"
+        },
+        "textSpan": null,
+        "timeRange": null,
+        "label": "Page 1 heading"
+      },
+      "sortOrder": 0,
+      "parentBlockAlias": null,
+      "confidence": 0.98
+    },
+    {
+      "alias": "block_paragraph_graph_definition",
+      "blockId": "00000000-0000-4000-8000-000000009302",
+      "extractionDocumentAlias": "extraction_document_pdf_graph_notes",
+      "studentAlias": "student_a",
+      "resourceAlias": "resource_pdf_graph_notes",
+      "kind": "paragraph",
+      "text": "A graph is represented synthetically as vertices and edges for validation.",
+      "locator": {
+        "kind": "document_page",
+        "pageNumber": 1,
+        "slideNumber": null,
+        "boundingBox": {
+          "x": 0.1,
+          "y": 0.22,
+          "width": 0.8,
+          "height": 0.14,
+          "unit": "ratio"
+        },
+        "textSpan": {
+          "startOffset": 0,
+          "endOffset": 72
+        },
+        "timeRange": null,
+        "label": "Page 1 paragraph"
+      },
+      "sortOrder": 1,
+      "parentBlockAlias": null,
+      "confidence": 0.96
+    },
+    {
+      "alias": "block_list_graph_terms",
+      "blockId": "00000000-0000-4000-8000-000000009303",
+      "extractionDocumentAlias": "extraction_document_pdf_graph_notes",
+      "studentAlias": "student_a",
+      "resourceAlias": "resource_pdf_graph_notes",
+      "kind": "list",
+      "text": "Vertex; Edge; Path",
+      "locator": {
+        "kind": "document_page",
+        "pageNumber": 1,
+        "slideNumber": null,
+        "boundingBox": {
+          "x": 0.15,
+          "y": 0.4,
+          "width": 0.72,
+          "height": 0.12,
+          "unit": "ratio"
+        },
+        "textSpan": {
+          "startOffset": 73,
+          "endOffset": 91
+        },
+        "timeRange": null,
+        "label": "Page 1 list"
+      },
+      "sortOrder": 0,
+      "parentBlockAlias": "block_paragraph_graph_definition",
+      "confidence": 0.94
+    }
+  ],
+  "expectedWorkerResult": {
+    "handlerName": "resource-extraction-worker-handler",
+    "jobName": "resource.extraction.extract",
+    "outcome": "extracted",
+    "extractionDocumentAlias": "extraction_document_pdf_graph_notes",
+    "persistedBlockCount": 3,
+    "failure": null
+  },
+  "expectedRepositoryTree": {
+    "documentAlias": "extraction_document_pdf_graph_notes",
+    "rootBlockAliases": [
+      "block_heading_graph_notes",
+      "block_paragraph_graph_definition"
+    ],
+    "childBlockAliases": [
+      "block_list_graph_terms"
+    ],
+    "parentChildPairs": [
+      {
+        "parent": "block_paragraph_graph_definition",
+        "child": "block_list_graph_terms"
+      }
+    ]
+  },
+  "expectedRls": {
+    "studentCanReadOwnExtractionDocuments": true,
+    "studentCanReadOwnExtractedContentBlocks": true,
+    "studentCannotReadOtherStudentExtractionDocuments": true,
+    "studentCannotReadOtherStudentExtractedContentBlocks": true,
+    "authenticatedStudentCannotInsertExtractionDocuments": true,
+    "authenticatedStudentCannotUpdateExtractionDocuments": true,
+    "authenticatedStudentCannotDeleteExtractionDocuments": true,
+    "authenticatedStudentCannotInsertExtractedContentBlocks": true,
+    "authenticatedStudentCannotUpdateExtractedContentBlocks": true,
+    "authenticatedStudentCannotDeleteExtractedContentBlocks": true
+  }
+}
