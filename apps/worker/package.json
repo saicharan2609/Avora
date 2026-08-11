@@ -13,6 +13,7 @@
     "@avora/core": "workspace:*",
     "@avora/db": "workspace:*",
     "@avora/domain": "workspace:*",
+    "@avora/retrieval": "workspace:*",
     "@avora/jobs": "workspace:*"
   },
   "devDependencies": {

@@ -99,3 +99,19 @@ Stage 9 Group 7 adds a worker handler validation plan under:
 The plan records expected worker handler behavior for extracted, partially extracted, failed, invalid job, invalid payload, and persistence failure cases.
 
 This group does not change worker runtime behavior.
+## Stage 11 Group 3 — Chunking pipeline
+
+Stage 11 Group 3 adds a worker-local resource chunking composition module:
+
+- `src/resource-chunking/`
+
+The worker module composes existing extraction output, deterministic retrieval chunking, and the existing retrieval chunk repository.
+
+Data flow:
+
+```text
+resource extraction document
++ extracted content blocks
+→ @avora/retrieval/chunking
+→ worker-local chunk mapper
+→ retrieval chunk repository

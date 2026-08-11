@@ -13,3 +13,19 @@ export {
   retrievalChunkScopeLevels,
   retrievalChunkStatuses,
 } from "../chunking/index.js";
+export type {
+  ChunkingStrategy,
+  CreateResourceChunkerInput,
+  ResourceChunker,
+  ResourceChunkerExtractedContentBlock,
+  ResourceChunkerExtractionDocument,
+  ResourceChunkerInput,
+  ResourceChunkerResult,
+  ResourceChunkerScope,
+  ResourceChunkerErrorCode,
+} from "../chunking/index.js";
+
+export {
+  createResourceChunker,
+  ResourceChunkerError,
+} from "../chunking/index.js";

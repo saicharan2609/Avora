@@ -19,3 +19,18 @@ export {
   mapResourceExtractionJobPayloadToRequest,
   resourceExtractionWorkerHandlerName,
 } from "./resource-extraction/index.js";
+export type {
+  PersistRetrievalChunksInput,
+  ResourceChunkingExtractionRepository,
+  ResourceChunkingWorkerDependencies,
+  ResourceChunkingWorkerInput,
+  ResourceChunkingWorkerResult,
+  ResourceChunkingWorkerErrorCode,
+  ResourceChunkingWorkerHandler,
+} from "./resource-chunking/index.js";
+
+export {
+  ResourceChunkingWorkerError,
+  createResourceChunkingWorkerHandler,
+  resourceChunkingWorkerHandlerName,
+} from "./resource-chunking/index.js";

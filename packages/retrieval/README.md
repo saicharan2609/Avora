@@ -89,3 +89,35 @@ New contract coverage:
 This group implements contracts only.
 
 It does not add database persistence, migrations, repositories, embeddings, vector search, keyword search, hybrid search, runtime scope resolution, insufficiency thresholds, AI Gateway context assembly, citation verification, worker execution, web routes, UI, mobile screens, or E2E flows.
+## Stage 11 Group 3 — Chunking pipeline
+
+Stage 11 Group 3 adds deterministic chunking mechanics for extracted student resources.
+
+Public surface:
+
+- `createResourceChunker`
+- `ChunkingStrategy`
+- `ResourceChunker`
+
+The chunking pipeline converts ordered extracted content blocks into retrieval chunk creation inputs while preserving citation-critical source information:
+
+- `studentId`;
+- `resourceId`;
+- `extractionDocumentId`;
+- `sourceBlockIds`;
+- `sourceContentHash`;
+- source locator metadata;
+- deterministic `sortOrder`;
+- `chunkingStrategyVersion`.
+
+Chunking is deterministic and strategy-versioned. It does not call AI models, provider SDKs, embedding services, vector search, keyword search, hybrid search, or tutor orchestration.
+
+Chunk boundaries are structure-aware:
+
+- headings begin a new chunk when the current chunk is non-empty;
+- tables, formulae, code, figures, and diagrams remain coherent;
+- paragraph, list, transcript, metadata, and unknown content can accumulate until the configured token budget.
+
+The chunk locator is copied from the first included extracted content block. Source block ids preserve source order.
+
+This group does not add database migrations, RLS policies, repositories, embeddings, vector indexes, AI Gateway logic, web APIs, mobile APIs, evals, or e2e flows.

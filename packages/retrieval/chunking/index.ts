@@ -32,3 +32,25 @@ export {
   retrievalChunkScopeLevels,
   retrievalChunkStatuses,
 } from "./contracts/index.js";
+export type {
+  ChunkingStrategy,
+  CreateResourceChunkerInput,
+  ResourceChunker,
+  ResourceChunkerExtractedContentBlock,
+  ResourceChunkerExtractionDocument,
+  ResourceChunkerInput,
+  ResourceChunkerResult,
+  ResourceChunkerScope,
+} from "./ResourceChunker.js";
+
+export type {
+  ResourceChunkerErrorCode,
+} from "./ResourceChunker.errors.js";
+
+export {
+  createResourceChunker,
+} from "./ResourceChunker.js";
+
+export {
+  ResourceChunkerError,
+} from "./ResourceChunker.errors.js";
