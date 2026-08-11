@@ -40,3 +40,15 @@ Stage 9 Group 2 adds generated database type sections for:
 The generated shape must remain compatible with `@supabase/supabase-js` typed PostgREST generics.
 
 Do not wrap the generated shape in deep readonly types.
+
+## Stage 10 Group 2 — Retrieval chunk generated types
+
+Stage 10 Group 2 adds generated database type sections for:
+
+- `public.chunks`
+
+The generated shape must remain compatible with `@supabase/supabase-js` typed PostgREST generics.
+
+Do not wrap the generated shape in deep readonly types.
+
+Chunk rows are student-scoped derived artifacts and form the persistence basis for later retrieval and citation-bearing relations.

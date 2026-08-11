@@ -47,3 +47,17 @@ The policy artifact mirrors RLS for:
 Authenticated users receive select-only access to their own extraction output.
 
 No authenticated insert, update, or delete policy is introduced.
+
+## Stage 10 Group 2
+
+Stage 10 Group 2 adds:
+
+- `chunks.policy.sql`
+
+The policy artifact mirrors RLS for:
+
+- `public.chunks`
+
+Authenticated users receive select-only access to their own chunks.
+
+No authenticated insert, update, or delete policy is introduced.

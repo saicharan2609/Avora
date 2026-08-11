@@ -101,6 +101,121 @@ export type Database = {
           },
         ];
       };
+      chunks: {
+  Row: {
+    chunk_id: string;
+    chunking_strategy_version: string;
+    content_kind: Database["public"]["Enums"]["retrieval_chunk_content_kind"];
+    created_at: string;
+    extraction_document_id: string;
+    locator: Json;
+    resource_id: string;
+    sanitisation_status: Database["public"]["Enums"]["retrieval_chunk_sanitisation_status"];
+    sanitisation_strategy_version: string;
+    sanitisation_warnings: Json;
+    sort_order: number;
+    source_block_ids: string[];
+    source_content_hash: string;
+    status: Database["public"]["Enums"]["retrieval_chunk_status"];
+    structure_unit_id: string | null;
+    student_id: string;
+    subject_id: string | null;
+    term_id: string | null;
+    text: string;
+    token_estimate: number;
+    updated_at: string;
+  };
+  Insert: {
+    chunk_id?: string;
+    chunking_strategy_version: string;
+    content_kind: Database["public"]["Enums"]["retrieval_chunk_content_kind"];
+    created_at?: string;
+    extraction_document_id: string;
+    locator: Json;
+    resource_id: string;
+    sanitisation_status: Database["public"]["Enums"]["retrieval_chunk_sanitisation_status"];
+    sanitisation_strategy_version: string;
+    sanitisation_warnings?: Json;
+    sort_order: number;
+    source_block_ids: string[];
+    source_content_hash: string;
+    status?: Database["public"]["Enums"]["retrieval_chunk_status"];
+    structure_unit_id?: string | null;
+    student_id: string;
+    subject_id?: string | null;
+    term_id?: string | null;
+    text: string;
+    token_estimate: number;
+    updated_at?: string;
+  };
+  Update: {
+    chunk_id?: string;
+    chunking_strategy_version?: string;
+    content_kind?: Database["public"]["Enums"]["retrieval_chunk_content_kind"];
+    created_at?: string;
+    extraction_document_id?: string;
+    locator?: Json;
+    resource_id?: string;
+    sanitisation_status?: Database["public"]["Enums"]["retrieval_chunk_sanitisation_status"];
+    sanitisation_strategy_version?: string;
+    sanitisation_warnings?: Json;
+    sort_order?: number;
+    source_block_ids?: string[];
+    source_content_hash?: string;
+    status?: Database["public"]["Enums"]["retrieval_chunk_status"];
+    structure_unit_id?: string | null;
+    student_id?: string;
+    subject_id?: string | null;
+    term_id?: string | null;
+    text?: string;
+    token_estimate?: number;
+    updated_at?: string;
+  };
+  Relationships: [
+    {
+      foreignKeyName: "chunks_student_fkey";
+      columns: ["student_id"];
+      isOneToOne: false;
+      referencedRelation: "students";
+      referencedColumns: ["student_id"];
+    },
+    {
+      foreignKeyName: "chunks_resource_fkey";
+      columns: ["student_id", "resource_id"];
+      isOneToOne: false;
+      referencedRelation: "resources";
+      referencedColumns: ["student_id", "resource_id"];
+    },
+    {
+      foreignKeyName: "chunks_extraction_document_fkey";
+      columns: ["student_id", "resource_id", "extraction_document_id"];
+      isOneToOne: false;
+      referencedRelation: "resource_extraction_documents";
+      referencedColumns: ["student_id", "resource_id", "extraction_document_id"];
+    },
+    {
+      foreignKeyName: "chunks_term_fkey";
+      columns: ["student_id", "term_id"];
+      isOneToOne: false;
+      referencedRelation: "academic_terms";
+      referencedColumns: ["student_id", "term_id"];
+    },
+    {
+      foreignKeyName: "chunks_subject_fkey";
+      columns: ["student_id", "term_id", "subject_id"];
+      isOneToOne: false;
+      referencedRelation: "subjects";
+      referencedColumns: ["student_id", "term_id", "subject_id"];
+    },
+    {
+      foreignKeyName: "chunks_structure_unit_fkey";
+      columns: ["student_id", "structure_unit_id"];
+      isOneToOne: false;
+      referencedRelation: "structure_units";
+      referencedColumns: ["student_id", "structure_unit_id"];
+    },
+  ];
+};
       resource_extraction_documents: {
   Row: {
     chunking_strategy_version: string;
@@ -480,6 +595,29 @@ structure_units: {
         | "failed"
         | "dead_lettered"
         | "cancelled";
+
+        retrieval_chunk_content_kind:
+  | "heading"
+  | "paragraph"
+  | "list"
+  | "table"
+  | "formula"
+  | "code"
+  | "figure"
+  | "diagram"
+  | "transcript"
+  | "metadata"
+  | "mixed"
+  | "unknown";
+
+retrieval_chunk_sanitisation_status:
+  | "sanitised"
+  | "sanitised_with_warnings";
+
+retrieval_chunk_status:
+  | "ready"
+  | "superseded"
+  | "deleted";
     
      academic_structure_unit_kind:
   | "module"

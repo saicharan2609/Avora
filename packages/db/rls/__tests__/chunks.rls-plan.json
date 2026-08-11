@@ -1,0 +1,69 @@
+{
+  "id": "stage-10-retrieval-chunks-rls-plan",
+  "owner": "@avora/data",
+  "stage": "Stage 10 Group 2",
+  "title": "Retrieval chunks RLS plan",
+  "description": "Covers student-scoped RLS expectations for retrieval chunks.",
+  "tables": [
+    "public.chunks"
+  ],
+  "cases": [
+    {
+      "name": "student can select own chunks",
+      "table": "public.chunks",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot select another student's chunks",
+      "table": "public.chunks",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot insert own chunk",
+      "table": "public.chunks",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot update own chunk",
+      "table": "public.chunks",
+      "role": "authenticated",
+      "operation": "update",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot delete own chunk",
+      "table": "public.chunks",
+      "role": "authenticated",
+      "operation": "delete",
+      "scope": "own",
+      "expectation": "denied"
+    }
+  ],
+  "ownership_notes": [
+    "chunks are student-owned derived artifacts",
+    "chunks reference public.resources through same-student composite ownership",
+    "chunks reference public.resource_extraction_documents through same-student composite ownership",
+    "chunks optionally reference academic terms, subjects, and structure units as retrieval scope facets",
+    "authenticated students have select-only access",
+    "worker mutation relies on service-role bypass",
+    "no authenticated insert, update, or delete policy is expected in Stage 10 Group 2"
+  ],
+  "index_notes": [
+    "student_id is indexed directly",
+    "student_id appears first in composite scope indexes",
+    "resource_id is available for resource-scope retrieval",
+    "term_id, subject_id, and structure_unit_id are available for later scope resolution",
+    "locator kind is indexed for later citation and deep-link support",
+    "chunking_strategy_version is indexed for controlled backfills"
+  ]
+}

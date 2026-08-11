@@ -42,3 +42,13 @@ This migration creates resource extraction persistence tables:
 
 - `public.resource_extraction_documents`
 - `public.resource_extracted_content_blocks`
+
+## Stage 10 Group 2
+
+Stage 10 Group 2 adds:
+
+- `20260811172000_retrieval_chunks.sql`
+
+This migration creates retrieval chunk persistence:
+
+- `public.chunks`

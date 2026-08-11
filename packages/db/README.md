@@ -183,3 +183,21 @@ New plan files:
 The plans cover repository persistence, locator parsing, extracted content hierarchy, student-scoped reads, cross-student denial, and authenticated mutation denial.
 
 This group does not modify database schema or repository runtime behavior.
+
+## Stage 10 Group 2 — Retrieval chunk persistence schema
+
+Stage 10 Group 2 adds Supabase schema and RLS artifacts for retrieval chunks.
+
+New table:
+
+- `public.chunks`
+
+The table persists locator-preserving, strategy-versioned retrieval chunks derived from extracted student resources.
+
+Authenticated students may read their own chunks.
+
+Authenticated students may not insert, update, or delete chunks.
+
+Worker mutation relies on service-role bypass.
+
+This group does not add repositories, embeddings, vector search, keyword search, hybrid search, AI Gateway citation verification, worker execution, web routes, UI, mobile behavior, or e2e flows.

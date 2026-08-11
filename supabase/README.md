@@ -57,3 +57,15 @@ New tables:
 The artifacts preserve student-scoped read access while keeping extraction output mutation service-role-only.
 
 Repositories, worker execution, adapters, OCR, parsing, AI, retrieval, API routes, UI, and mobile behavior are intentionally not included in this group.
+
+## Stage 10 Group 2 — Retrieval chunks
+
+Stage 10 Group 2 adds reviewed Supabase artifacts for retrieval chunk persistence.
+
+New table:
+
+- `public.chunks`
+
+The artifact preserves student-scoped read access while keeping chunk mutation service-role-only.
+
+Repositories, embeddings, vector search, keyword search, hybrid search, AI Gateway citation verification, worker execution, API routes, UI, and mobile behavior are intentionally not included in this group.
