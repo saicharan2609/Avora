@@ -9,6 +9,7 @@
     "./strategies": "./strategies/index.ts",
     "./scope": "./scope/index.ts",
     "./search": "./search/index.ts",
+    "./indexing": "./indexing/index.js",
     "./insufficiency": "./insufficiency/index.ts"
   },
   "scripts": {

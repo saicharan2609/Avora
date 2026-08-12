@@ -89,3 +89,16 @@ Provider SDKs are permitted only under `adapters/`.
 The `gateway/envelope/` path is the only AI package location that may construct model input.
 
 Stage 4 Group 5 does not implement routing policy, prompts, provider SDKs, model calls, gateway behavior, budget logic, context assembly, envelopes, invocation, validation, citation resolution, telemetry, business logic, database schema, Supabase logic, APIs, authentication, UI code, or tests.
+## Stage 11 Group 4 — Embedding adapter seam
+
+Stage 11 Group 4 adds the provider-neutral embedding port used by resource indexing.
+
+Public surface:
+
+- `@avora/ai/embeddings`
+- `EmbeddingPort`
+- `EmbeddingVector`
+
+The port accepts chunk text and returns embedding vectors. It does not embed through a concrete provider in this group.
+
+Provider SDKs, provider keys, model names, routing policy, vector search, tutor orchestration, web APIs, mobile APIs, evals, and e2e flows are intentionally out of scope.

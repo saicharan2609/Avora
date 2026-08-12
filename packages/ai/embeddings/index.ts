@@ -1,6 +1,3 @@
-export type * from "../gateway/index.js";
-export type * from "../ports/index.js";
-export type * from "../adapters/index.js";
 export type {
   EmbedTextsInput,
   EmbedTextsResult,
@@ -10,4 +7,4 @@ export type {
   EmbeddingStrategyVersion,
   EmbeddingTextInput,
   EmbeddingVector,
-} from "../embeddings/index.js";
+} from "./EmbeddingPort.js";

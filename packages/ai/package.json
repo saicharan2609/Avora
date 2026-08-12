@@ -14,6 +14,10 @@
     "./gateway/telemetry": "./gateway/telemetry/index.ts",
     "./ports": "./ports/index.ts",
     "./adapters": "./adapters/index.ts",
+    "./embeddings": {
+  "types": "./dist/embeddings/index.d.ts",
+  "default": "./dist/embeddings/index.js"
+},
     "./adapters/antigravity": "./adapters/antigravity/index.ts",
     "./adapters/anthropic": "./adapters/anthropic/index.ts",
     "./adapters/openai": "./adapters/openai/index.ts",

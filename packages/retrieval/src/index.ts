@@ -29,3 +29,14 @@ export {
   createResourceChunker,
   ResourceChunkerError,
 } from "../chunking/index.js";
+export type {
+  IndexResourceJob,
+  IndexResourceJobPayload,
+  IndexResourceJobPriority,
+  IndexResourceJobReason,
+  RetrievalEmbeddingStrategyVersion,
+} from "../indexing/index.js";
+
+export {
+  indexResourceJobName,
+} from "../indexing/index.js";

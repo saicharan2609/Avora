@@ -34,3 +34,21 @@ export {
   createResourceChunkingWorkerHandler,
   resourceChunkingWorkerHandlerName,
 } from "./resource-chunking/index.js";
+export type {
+  ChunkEmbeddingRecord,
+  EmbeddingIndexWriter,
+  ResourceIndexingWorkerDependencies,
+  ResourceIndexingWorkerInput,
+  ResourceIndexingWorkerJob,
+  ResourceIndexingWorkerResult,
+  ResourceIndexingWorkerErrorCode,
+  ResourceIndexingWorkerHandler,
+  WriteChunkEmbeddingsInput,
+  WriteChunkEmbeddingsResult,
+} from "./resource-indexing/index.js";
+
+export {
+  ResourceIndexingWorkerError,
+  createResourceIndexingWorkerHandler,
+  resourceIndexingWorkerHandlerName,
+} from "./resource-indexing/index.js";

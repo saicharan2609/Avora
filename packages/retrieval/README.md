@@ -121,3 +121,16 @@ Chunk boundaries are structure-aware:
 The chunk locator is copied from the first included extracted content block. Source block ids preserve source order.
 
 This group does not add database migrations, RLS policies, repositories, embeddings, vector indexes, AI Gateway logic, web APIs, mobile APIs, evals, or e2e flows.
+## Stage 11 Group 4 — Embedding index job contract
+
+Stage 11 Group 4 adds the retrieval-owned resource indexing job contract.
+
+Public surface:
+
+- `@avora/retrieval/indexing`
+- `IndexResourceJob`
+- `indexResourceJobName`
+
+This contract represents the worker request to embed ready retrieval chunks for a resource.
+
+This group does not implement vector search, scoped retrieval search, keyword search, hybrid search, retrieval insufficiency, AI Tutor contracts, tutor orchestration, web APIs, mobile APIs, evals, or e2e flows.

@@ -8,6 +8,7 @@
     "src/**/*.ts",
     "gateway/**/*.ts",
     "ports/**/*.ts",
+    "embeddings/**/*.ts",
     "adapters/**/*.ts"
   ],
   "references": [

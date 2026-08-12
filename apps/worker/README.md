@@ -115,3 +115,14 @@ resource extraction document
 → @avora/retrieval/chunking
 → worker-local chunk mapper
 → retrieval chunk repository
+## Stage 11 Group 4 — Resource indexing handler
+
+Stage 11 Group 4 adds the worker-local resource indexing handler.
+
+New module:
+
+- `src/resource-indexing/`
+
+The handler reads ready retrieval chunks, requests embeddings through `@avora/ai/embeddings`, and delegates embedding persistence to an injected embedding index writer seam.
+
+This group does not add a claim loop, queue infrastructure, database schema, RLS policy, repository implementation, vector search, scoped retrieval search, hybrid search, AI Tutor orchestration, web APIs, mobile APIs, evals, or e2e flows.
