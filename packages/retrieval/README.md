@@ -134,3 +134,27 @@ Public surface:
 This contract represents the worker request to embed ready retrieval chunks for a resource.
 
 This group does not implement vector search, scoped retrieval search, keyword search, hybrid search, retrieval insufficiency, AI Tutor contracts, tutor orchestration, web APIs, mobile APIs, evals, or e2e flows.
+## Stage 11 Group 5 — Scoped retrieval search
+
+Stage 11 Group 5 establishes scoped retrieval search over ready retrieval chunks.
+
+Public surface:
+
+- `@avora/retrieval/scope`
+- `@avora/retrieval/search`
+- `@avora/retrieval/insufficiency`
+- `ScopedSearchInput`
+- `RetrievalSearchPort`
+- `RetrievalInsufficiency`
+- `createScopedRetrievalSearch`
+
+The search flow resolves the requested student and academic scope into the existing `RetrievalChunkRepository.listRetrievalChunksByScope` input. This ensures retrieval is pre-filtered by student and scope before results are returned.
+
+Data flow:
+
+```text
+ScopedSearchInput
+→ resolveScopedSearchPredicate
+→ RetrievalChunkRepository.listRetrievalChunksByScope
+→ RetrievalSearchResult[]
+→ RetrievalInsufficiency | RetrievalSufficiency

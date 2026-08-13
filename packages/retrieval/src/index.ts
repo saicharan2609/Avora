@@ -40,3 +40,16 @@ export type {
 export {
   indexResourceJobName,
 } from "../indexing/index.js";
+export {
+  createRetrievalInsufficiency,
+  createRetrievalSufficiency,
+} from "../insufficiency/index.js";
+
+export {
+  resolveScopedSearchPredicate,
+} from "../scope/index.js";
+
+export {
+  RetrievalSearchError,
+  createScopedRetrievalSearch,
+} from "../search/index.js";
