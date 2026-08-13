@@ -102,3 +102,20 @@ Public surface:
 The port accepts chunk text and returns embedding vectors. It does not embed through a concrete provider in this group.
 
 Provider SDKs, provider keys, model names, routing policy, vector search, tutor orchestration, web APIs, mobile APIs, evals, and e2e flows are intentionally out of scope.
+## Stage 11 Group 6 — AI Gateway tutor contracts
+
+Stage 11 Group 6 establishes grounded tutor contracts inside the AI Gateway.
+
+Public surface:
+
+- `@avora/ai/gateway/tutor`
+- `TutorQuery`
+- `GroundedContextEnvelope`
+- `Citation`
+- `GroundedAnswer`
+- `AIInsufficiencyResponse`
+- `validateGroundedAnswer`
+
+The contracts define the typed boundary for grounded tutor answers. The context envelope carries the exact chunk ids supplied to the model-facing path, and citation validation checks citations against that supplied chunk set.
+
+This group does not implement provider invocation, prompt files, routing policy, tutor orchestration, retrieval execution, vector search, web APIs, mobile APIs, evals, or e2e flows.

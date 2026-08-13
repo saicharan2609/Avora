@@ -6,3 +6,15 @@ export type DataClassification =
   | "derived_artifact"
   | "behavioural"
   | "operational";
+
+export type {
+  TutorAnswerFormat,
+  TutorAnswerLanguage,
+  TutorExplanationDepth,
+} from "./tutor/index.js";
+
+export {
+  tutorAnswerFormats,
+  tutorAnswerLanguages,
+  tutorExplanationDepths,
+} from "./tutor/index.js";

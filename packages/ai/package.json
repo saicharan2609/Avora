@@ -10,6 +10,7 @@
     "./gateway/envelope": "./gateway/envelope/index.ts",
     "./gateway/invocation": "./gateway/invocation/index.ts",
     "./gateway/validation": "./gateway/validation/index.ts",
+    "./gateway/tutor": "./gateway/tutor/index.ts",
     "./gateway/citations": "./gateway/citations/index.ts",
     "./gateway/telemetry": "./gateway/telemetry/index.ts",
     "./ports": "./ports/index.ts",
