@@ -119,3 +119,22 @@ Public surface:
 The contracts define the typed boundary for grounded tutor answers. The context envelope carries the exact chunk ids supplied to the model-facing path, and citation validation checks citations against that supplied chunk set.
 
 This group does not implement provider invocation, prompt files, routing policy, tutor orchestration, retrieval execution, vector search, web APIs, mobile APIs, evals, or e2e flows.
+## Stage 11 Group 7 — Tutor orchestration adapter
+
+Stage 11 Group 7 adds the AI Gateway tutor orchestration adapter.
+
+Public surface:
+
+- `createTutorGateway`
+- `TutorGatewayPort`
+- `TutorAnswerInvocationPort`
+
+The gateway flow is:
+
+```text
+TutorQuery
+→ RetrievalSearchPort.search
+→ createGroundedContextEnvelope
+→ TutorAnswerInvocationPort.invokeTutorAnswer
+→ validateGroundedAnswer
+→ TutorGatewayResponse

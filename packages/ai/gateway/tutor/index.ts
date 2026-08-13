@@ -66,3 +66,20 @@ export {
   TutorQueryError,
   createScopedSearchInputFromTutorQuery,
 } from "./TutorQuery.js";
+export type {
+  CreateTutorGatewayInput,
+  TutorGatewayDefaults,
+  TutorGatewayPort,
+} from "./TutorGateway.js";
+
+export type {
+  TutorGatewayErrorCode,
+} from "./TutorGatewayError.js";
+
+export {
+  createTutorGateway,
+} from "./TutorGateway.js";
+
+export {
+  TutorGatewayError,
+} from "./TutorGatewayError.js";

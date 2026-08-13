@@ -12,4 +12,8 @@ export {
   groundedContextEnvelopeVersion,
   validateCitations,
   validateGroundedAnswer,
+   createTutorGateway,
+  TutorGatewayError,
+  tutorAnswerQualityTiers,
+  tutorAnswerTask,
 } from "../gateway/index.js";
