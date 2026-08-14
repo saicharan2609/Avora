@@ -1,0 +1,264 @@
+{
+  "id": "resource-placement-stage-9-synthetic-fixture",
+  "owner": "@avora/qa",
+  "fixtureType": "synthetic",
+  "containsProductionData": false,
+  "containsStudentContent": false,
+  "containsRealAcademicMaterial": false,
+  "containsModelOutput": false,
+  "students": [
+    {
+      "alias": "student_a",
+      "studentId": "00000000-0000-4000-8000-0000000094a1"
+    },
+    {
+      "alias": "student_b",
+      "studentId": "00000000-0000-4000-8000-0000000094b1"
+    }
+  ],
+  "academicGraph": {
+    "terms": [
+      {
+        "alias": "term_fall_2026",
+        "studentAlias": "student_a",
+        "termId": "00000000-0000-4000-8000-000000009401",
+        "label": "Fall 2026"
+      }
+    ],
+    "subjects": [
+      {
+        "alias": "subject_data_structures",
+        "studentAlias": "student_a",
+        "termAlias": "term_fall_2026",
+        "subjectId": "00000000-0000-4000-8000-000000009402",
+        "displayName": "Data Structures",
+        "subjectCode": "CS-201"
+      }
+    ],
+    "structureUnits": [
+      {
+        "alias": "unit_graphs",
+        "studentAlias": "student_a",
+        "termAlias": "term_fall_2026",
+        "subjectAlias": "subject_data_structures",
+        "structureUnitId": "00000000-0000-4000-8000-000000009403",
+        "parentUnitAlias": null,
+        "title": "Graphs",
+        "unitKind": "module",
+        "source": "student_declared"
+      },
+      {
+        "alias": "unit_graph_traversal",
+        "studentAlias": "student_a",
+        "termAlias": "term_fall_2026",
+        "subjectAlias": "subject_data_structures",
+        "structureUnitId": "00000000-0000-4000-8000-000000009404",
+        "parentUnitAlias": "unit_graphs",
+        "title": "Graph Traversal",
+        "unitKind": "topic",
+        "source": "student_declared"
+      }
+    ]
+  },
+  "resources": [
+    {
+      "alias": "resource_graph_summary_pdf",
+      "studentAlias": "student_a",
+      "resourceId": "00000000-0000-4000-8000-000000009501",
+      "kind": "document",
+      "originalFilename": "stage-9-resource-placement-graph-summary.pdf",
+      "declaredMimeType": "application/pdf",
+      "byteSize": 3072,
+      "contentHash": "sha256:stage9resourceplacementgraphsummary000000000000000000000000000001",
+      "storage": {
+        "bucket": "quarantine",
+        "objectPath": "00000000-0000-4000-8000-0000000094a1/resources/00000000-0000-4000-8000-000000009501/stage-9-resource-placement-graph-summary.pdf",
+        "version": 1
+      },
+      "expectedUploadState": "uploaded",
+      "expectedValidatedState": "processing"
+    }
+  ],
+  "uploadRequests": [
+    {
+      "alias": "upload_request_graph_summary",
+      "resourceAlias": "resource_graph_summary_pdf",
+      "requestBody": {
+        "kind": "document",
+        "originalFilename": "stage-9-resource-placement-graph-summary.pdf",
+        "declaredMimeType": "application/pdf",
+        "byteSize": 3072
+      },
+      "expectedResponse": {
+        "status": 201,
+        "resourceLifecycleState": "pending_upload",
+        "ticketReturned": true
+      }
+    },
+    {
+      "alias": "upload_completion_graph_summary",
+      "resourceAlias": "resource_graph_summary_pdf",
+      "requestBody": {
+        "contentHash": "sha256:stage9resourceplacementgraphsummary000000000000000000000000000001"
+      },
+      "expectedResponse": {
+        "status": 200,
+        "resourceLifecycleState": "uploaded"
+      }
+    }
+  ],
+  "ingestion": {
+    "alias": "validated_ingestion_graph_summary",
+    "resourceAlias": "resource_graph_summary_pdf",
+    "jobName": "resources.ingestion.requested",
+    "reason": "upload_completed",
+    "priority": "normal",
+    "expectedInitialStatus": "queued",
+    "expectedValidatedResourceState": "processing",
+    "expectedTerminalStatus": "succeeded"
+  },
+  "classification": {
+    "alias": "classification_job_graph_summary",
+    "resourceAlias": "resource_graph_summary_pdf",
+    "jobId": "00000000-0000-4000-8000-000000009701",
+    "jobName": "resource.classification.requested",
+    "reason": "resource_ingestion_validated",
+    "priority": "normal",
+    "payload": {
+      "studentAlias": "student_a",
+      "resourceAlias": "resource_graph_summary_pdf",
+      "classificationStrategyVersion": "classification.v1",
+      "placementPolicyVersion": "placement-policy.v1",
+      "requestedAt": "2026-08-14T17:30:00.000Z"
+    },
+    "expected": {
+      "payloadContainsPlacementCandidate": false,
+      "payloadContainsRawBytes": false,
+      "payloadContainsSignedUrls": false,
+      "payloadContainsCredentials": false
+    }
+  },
+  "placementCandidates": [
+    {
+      "alias": "candidate_graph_summary_primary",
+      "candidateId": "00000000-0000-4000-8000-000000009601",
+      "studentAlias": "student_a",
+      "resourceAlias": "resource_graph_summary_pdf",
+      "target": {
+        "termAlias": "term_fall_2026",
+        "termId": "00000000-0000-4000-8000-000000009401",
+        "subjectAlias": "subject_data_structures",
+        "subjectId": "00000000-0000-4000-8000-000000009402",
+        "structureUnitAlias": "unit_graphs",
+        "structureUnitId": "00000000-0000-4000-8000-000000009403"
+      },
+      "confidence": {
+        "level": "high",
+        "source": "system_suggested",
+        "reason": "Synthetic classifier matched graph terminology to the Graphs module."
+      },
+      "provenance": "resource_content",
+      "reason": "Synthetic resource text references vertices, edges, and graph notes.",
+      "createdAt": "2026-08-14T17:31:00.000Z",
+      "expectedApiResponse": {
+        "candidateVisibleToOwner": true,
+        "candidateVisibleToOtherStudent": false,
+        "studentIdOmittedFromResponse": true
+      }
+    }
+  ],
+  "placements": [
+    {
+      "alias": "placement_graph_summary_primary",
+      "placementId": "00000000-0000-4000-8000-000000009801",
+      "studentAlias": "student_a",
+      "resourceAlias": "resource_graph_summary_pdf",
+      "candidateAlias": "candidate_graph_summary_primary",
+      "target": {
+        "termAlias": "term_fall_2026",
+        "termId": "00000000-0000-4000-8000-000000009401",
+        "subjectAlias": "subject_data_structures",
+        "subjectId": "00000000-0000-4000-8000-000000009402",
+        "structureUnitAlias": "unit_graphs",
+        "structureUnitId": "00000000-0000-4000-8000-000000009403"
+      },
+      "confidence": {
+        "level": "high",
+        "source": "system_suggested",
+        "reason": "Synthetic classifier matched graph terminology to the Graphs module."
+      },
+      "status": "accepted",
+      "createdAt": "2026-08-14T17:32:00.000Z",
+      "updatedAt": "2026-08-14T17:32:00.000Z",
+      "expectedAcceptResponse": {
+        "outcome": "placed",
+        "decision": "accepted",
+        "candidateAcceptedByIdOnly": true,
+        "targetMatchesCandidate": true,
+        "confidenceMatchesCandidate": true
+      }
+    }
+  ],
+  "corrections": [
+    {
+      "alias": "correction_graph_summary_to_traversal",
+      "correctionId": "00000000-0000-4000-8000-000000009901",
+      "studentAlias": "student_a",
+      "resourceAlias": "resource_graph_summary_pdf",
+      "previousTarget": {
+        "termAlias": "term_fall_2026",
+        "termId": "00000000-0000-4000-8000-000000009401",
+        "subjectAlias": "subject_data_structures",
+        "subjectId": "00000000-0000-4000-8000-000000009402",
+        "structureUnitAlias": "unit_graphs",
+        "structureUnitId": "00000000-0000-4000-8000-000000009403"
+      },
+      "correctedTarget": {
+        "termAlias": "term_fall_2026",
+        "termId": "00000000-0000-4000-8000-000000009401",
+        "subjectAlias": "subject_data_structures",
+        "subjectId": "00000000-0000-4000-8000-000000009402",
+        "structureUnitAlias": "unit_graph_traversal",
+        "structureUnitId": "00000000-0000-4000-8000-000000009404"
+      },
+      "reason": "Synthetic student correction places this resource at the Graph Traversal topic.",
+      "correctedAt": "2026-08-14T17:33:00.000Z",
+      "expectedApiResponse": {
+        "status": 201,
+        "previousTargetPreserved": true,
+        "correctedTargetPreserved": true,
+        "reasonPreserved": true,
+        "studentIdOmittedFromResponse": true
+      }
+    }
+  ],
+  "academicUnitListing": {
+    "alias": "graph_unit_listing",
+    "query": {
+      "termAlias": "term_fall_2026",
+      "termId": "00000000-0000-4000-8000-000000009401",
+      "subjectAlias": "subject_data_structures",
+      "subjectId": "00000000-0000-4000-8000-000000009402",
+      "structureUnitAlias": "unit_graphs",
+      "structureUnitId": "00000000-0000-4000-8000-000000009403"
+    },
+    "expected": {
+      "placementAliases": [
+        "placement_graph_summary_primary"
+      ],
+      "resourceAliases": [
+        "resource_graph_summary_pdf"
+      ],
+      "studentIdOmittedFromResponse": true
+    }
+  },
+  "expectedAuthorization": {
+    "studentBCannotReadStudentAPlacementCandidates": true,
+    "studentBCannotAcceptStudentACandidate": true,
+    "studentBCannotRecordCorrectionForStudentAResource": true,
+    "studentBCannotListStudentAPlacementsByAcademicUnit": true,
+    "authenticatedStudentCannotInsertPlacementCandidates": true,
+    "authenticatedStudentCannotUpdatePlacementCandidates": true,
+    "authenticatedStudentCannotDeletePlacementCandidates": true
+  }
+}

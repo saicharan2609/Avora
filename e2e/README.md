@@ -79,6 +79,18 @@ The flow covers authenticated setup progress reads, academic term creation, subj
 This flow uses synthetic fixtures only.
 
 This flow must not use production data, service-role credentials, direct database repository imports, UI behavior, mobile behavior, worker behavior, AI behavior, or retrieval behavior.
+## Stage 9 Group 6 — Resource placement correction flow
+
+Stage 9 Group 6 adds the resource placement correction flow plan under:
+
+- `flows/resource-placement/`
+- `fixtures/resource-placement.fixture.json`
+
+The flow covers resource upload, upload completion, validated ingestion, classification request handoff, persisted placement candidate reads, accepting an existing placement candidate by `candidateId`, placement correction, academic-unit placement listing, and cross-student denial.
+
+This flow uses synthetic fixtures only.
+
+This flow must not use production data, real student content, real academic material, service-role credentials, direct runtime imports, direct database repository imports, runtime classifier execution, worker execution, AI behavior, retrieval behavior, UI behavior, or mobile behavior.
 ## Stage 9 Group 7 — Resource extraction flow
 
 Stage 9 Group 7 adds the resource extraction completion flow under:

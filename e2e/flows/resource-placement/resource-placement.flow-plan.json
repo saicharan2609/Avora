@@ -1,0 +1,319 @@
+{
+  "id": "stage-9-resource-placement-flow",
+  "owner": "@avora/qa",
+  "stage": "Stage 9 Group 6",
+  "title": "Resource placement correction flow",
+  "description": "Validates the completed Stage 9 resource classification and placement foundation from resource upload through validated ingestion, classification handoff, persisted placement candidate read, candidate acceptance, placement correction, academic-unit listing, and student-scoped authorization expectations.",
+  "fixture": "../../fixtures/resource-placement.fixture.json",
+  "scope": {
+    "includes": [
+      "declare resource upload intent",
+      "complete resource upload",
+      "validate resource ingestion",
+      "enqueue resource classification request",
+      "observe persisted placement candidate",
+      "read placement candidate through resource placement API",
+      "accept existing placement candidate by candidateId",
+      "record placement correction",
+      "list placed resources by academic unit",
+      "deny cross-student placement candidate access",
+      "deny cross-student placement correction mutation",
+      "deny cross-student academic-unit placement listing"
+    ],
+    "excludes": [
+      "runtime classifier execution",
+      "worker execution",
+      "AI provider calls",
+      "model calls",
+      "OCR",
+      "file parsing",
+      "text extraction",
+      "embeddings",
+      "retrieval indexing",
+      "summaries",
+      "notes",
+      "flashcards",
+      "quizzes",
+      "new database migrations",
+      "new repositories",
+      "new domain services",
+      "new API routes",
+      "UI rendering",
+      "mobile flows",
+      "real uploaded files",
+      "real student content",
+      "production credentials"
+    ]
+  },
+  "actors": [
+    {
+      "name": "student_a",
+      "role": "authenticated_student"
+    },
+    {
+      "name": "student_b",
+      "role": "authenticated_student"
+    },
+    {
+      "name": "trusted_classifier",
+      "role": "trusted_server_side_classification_infrastructure"
+    }
+  ],
+  "success_path": [
+    {
+      "step": 1,
+      "actor": "student_a",
+      "method": "POST",
+      "route": "/api/resources/uploads",
+      "action": "declare_upload",
+      "requestFixture": "upload_request_graph_summary",
+      "expected": {
+        "responseStatus": 201,
+        "resourceLifecycleState": "pending_upload",
+        "resourceReturned": true,
+        "uploadTicketReturned": true,
+        "responseDoesNotExposeStudentId": true
+      }
+    },
+    {
+      "step": 2,
+      "actor": "student_a",
+      "method": "POST",
+      "route": "/api/resources/uploads/{resourceId}/complete",
+      "action": "complete_upload",
+      "requestFixture": "upload_completion_graph_summary",
+      "expected": {
+        "responseStatus": 200,
+        "resourceLifecycleState": "uploaded",
+        "contentHashPersisted": true,
+        "resourceIdMatchesUploadIntent": true,
+        "responseDoesNotExposeStudentId": true
+      }
+    },
+    {
+      "step": 3,
+      "actor": "student_a",
+      "action": "observe_validated_ingestion",
+      "requestFixture": "validated_ingestion_graph_summary",
+      "expected": {
+        "resourceLifecycleState": "processing",
+        "validatedIngestionAccepted": true,
+        "resourceIdMatchesUploadedResource": true,
+        "studentScoped": true
+      }
+    },
+    {
+      "step": 4,
+      "actor": "trusted_classifier",
+      "action": "enqueue_resource_classification_request",
+      "contract": "ResourceClassificationJobEnvelope",
+      "requestFixture": "classification_job_graph_summary",
+      "expected": {
+        "jobName": "resource.classification.requested",
+        "reason": "resource_ingestion_validated",
+        "priority": "normal",
+        "payloadContainsStudentId": true,
+        "payloadContainsResourceId": true,
+        "payloadContainsClassificationStrategyVersion": true,
+        "payloadContainsPlacementPolicyVersion": true,
+        "payloadDoesNotContainCandidate": true,
+        "payloadDoesNotContainRawBytes": true,
+        "payloadDoesNotContainSignedUrls": true,
+        "payloadDoesNotContainCredentials": true
+      }
+    },
+    {
+      "step": 5,
+      "actor": "trusted_classifier",
+      "action": "observe_persisted_placement_candidate",
+      "table": "public.resource_placement_candidates",
+      "requestFixture": "candidate_graph_summary_primary",
+      "expected": {
+        "candidatePersisted": true,
+        "studentIdMatchesResourceOwner": true,
+        "resourceIdMatchesUploadedResource": true,
+        "termIdPresent": true,
+        "subjectIdPresent": true,
+        "structureUnitIdPresent": true,
+        "confidencePreserved": true,
+        "provenancePreserved": true
+      }
+    },
+    {
+      "step": 6,
+      "actor": "student_a",
+      "method": "GET",
+      "route": "/api/resources/placement/candidates?resourceId={resourceId}",
+      "action": "read_placement_candidates",
+      "expected": {
+        "responseStatus": 200,
+        "candidateCount": 1,
+        "candidateId": "00000000-0000-4000-8000-000000009601",
+        "resourceIdMatchesUploadedResource": true,
+        "targetReturned": true,
+        "confidenceReturned": true,
+        "provenanceReturned": true,
+        "responseDoesNotExposeStudentId": true
+      }
+    },
+    {
+      "step": 7,
+      "actor": "student_a",
+      "method": "POST",
+      "route": "/api/resources/placement/candidates/{candidateId}/accept",
+      "action": "accept_existing_placement_candidate",
+      "requestFixture": "candidate_graph_summary_primary",
+      "expected": {
+        "responseStatus": 200,
+        "outcome": "placed",
+        "decision": "accepted",
+        "placementReturned": true,
+        "placementStatus": "accepted",
+        "placementTargetMatchesCandidateTarget": true,
+        "placementConfidenceMatchesCandidateConfidence": true,
+        "clientDidNotSubmitFullCandidate": true,
+        "responseDoesNotExposeStudentId": true
+      }
+    },
+    {
+      "step": 8,
+      "actor": "student_a",
+      "method": "POST",
+      "route": "/api/resources/placement/corrections",
+      "action": "record_placement_correction",
+      "requestFixture": "correction_graph_summary_to_traversal",
+      "expected": {
+        "responseStatus": 201,
+        "correctionReturned": true,
+        "previousTargetMatchesAcceptedPlacement": true,
+        "correctedTargetMatchesRequest": true,
+        "reasonPreserved": true,
+        "responseDoesNotExposeStudentId": true
+      }
+    },
+    {
+      "step": 9,
+      "actor": "student_a",
+      "method": "GET",
+      "route": "/api/resources/placement?termId={termId}&subjectId={subjectId}&structureUnitId={structureUnitId}",
+      "action": "list_placements_by_academic_unit",
+      "expected": {
+        "responseStatus": 200,
+        "placementsReturned": true,
+        "resourceIdPresent": "00000000-0000-4000-8000-000000009501",
+        "termIdMatchesQuery": true,
+        "subjectIdMatchesQuery": true,
+        "structureUnitIdMatchesQuery": true,
+        "responseDoesNotExposeStudentId": true
+      }
+    }
+  ],
+  "authorization_path": [
+    {
+      "step": 1,
+      "actor": "student_b",
+      "method": "GET",
+      "route": "/api/resources/placement/candidates?resourceId={studentAResourceId}",
+      "action": "read_other_student_placement_candidates",
+      "expected": {
+        "access": "denied_or_empty",
+        "studentADataVisible": false
+      }
+    },
+    {
+      "step": 2,
+      "actor": "student_b",
+      "method": "POST",
+      "route": "/api/resources/placement/candidates/{studentACandidateId}/accept",
+      "action": "accept_other_student_candidate",
+      "expected": {
+        "access": "denied",
+        "studentAPlacementMutated": false
+      }
+    },
+    {
+      "step": 3,
+      "actor": "student_b",
+      "method": "POST",
+      "route": "/api/resources/placement/corrections",
+      "action": "correct_other_student_placement",
+      "expected": {
+        "access": "denied",
+        "studentACorrectionCreated": false,
+        "studentAPlacementMutated": false
+      }
+    },
+    {
+      "step": 4,
+      "actor": "student_b",
+      "method": "GET",
+      "route": "/api/resources/placement?termId={studentATermId}&subjectId={studentASubjectId}&structureUnitId={studentAStructureUnitId}",
+      "action": "list_other_student_academic_unit_placements",
+      "expected": {
+        "access": "denied_or_empty",
+        "studentADataVisible": false
+      }
+    },
+    {
+      "step": 5,
+      "actor": "student_a",
+      "action": "insert_own_placement_candidate_as_authenticated_client",
+      "table": "public.resource_placement_candidates",
+      "expected": {
+        "access": "denied",
+        "mutationAllowed": false
+      }
+    },
+    {
+      "step": 6,
+      "actor": "student_a",
+      "action": "update_own_placement_candidate_as_authenticated_client",
+      "table": "public.resource_placement_candidates",
+      "expected": {
+        "access": "denied",
+        "mutationAllowed": false
+      }
+    },
+    {
+      "step": 7,
+      "actor": "student_a",
+      "action": "delete_own_placement_candidate_as_authenticated_client",
+      "table": "public.resource_placement_candidates",
+      "expected": {
+        "access": "denied",
+        "mutationAllowed": false
+      }
+    }
+  ],
+  "assertions": [
+    "resource placement flow uses existing resource upload API routes",
+    "resource placement flow uses existing resource ingestion validation boundary",
+    "classification handoff uses resource.classification.requested",
+    "classification job payload does not contain PlacementCandidate",
+    "placement candidate is persisted before API read",
+    "candidate read route uses authenticated student scope",
+    "candidate accept route receives candidateId only",
+    "candidate accept route does not accept a client-supplied candidate target",
+    "candidate accept route does not accept client-supplied confidence",
+    "candidate accept route does not accept client-supplied provenance",
+    "candidate accept route does not accept studentId",
+    "placement service applies existing placement policy during acceptance",
+    "placement correction records previous and corrected targets",
+    "academic-unit listing reads from the placement index",
+    "student cannot read another student's placement candidates",
+    "student cannot accept another student's placement candidate",
+    "student cannot correct another student's placement",
+    "student cannot list another student's placement index entries",
+    "authenticated clients cannot insert placement candidates",
+    "authenticated clients cannot update placement candidates",
+    "authenticated clients cannot delete placement candidates",
+    "no runtime classifier is implemented by this harness",
+    "no worker behavior is implemented by this harness",
+    "no DB migration is introduced by this harness",
+    "no web route is introduced by this harness",
+    "no AI behavior is introduced by this harness",
+    "no retrieval behavior is introduced by this harness",
+    "no UI behavior is introduced by this harness",
+    "no mobile behavior is introduced by this harness"
+  ]
+}
