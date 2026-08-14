@@ -50,3 +50,12 @@ The service validates `ResourceExtractionRequest` inputs, invokes a provided `Re
 The service does not persist extraction output.
 
 The service does not parse files, inspect storage, call OCR adapters, call AI adapters, create embeddings, index retrieval chunks, or expose web routes.
+## Completion Group D — Resource placement service
+
+Completion Group D maps to authoritative Stage 9 Group 4: Placement service.
+
+This group adds `ResourcePlacementService`, which applies the existing deterministic placement policy to an existing `PlacementCandidate` and persists only accepted or tentative `ResourcePlacement` records through `ResourcePlacementRepositoryPort`.
+
+The service also exposes student-scoped placement read and correction-history pass-through methods over the existing repository port.
+
+This service does not classify resources, infer candidates, call AI/provider SDKs, execute workers, enqueue jobs, create APIs, change retrieval, modify database schema, update UI, implement mobile code, or change Stage 11 tutor behavior.

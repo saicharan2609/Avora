@@ -11,6 +11,8 @@ export {
   createResourceIngestionValidationService,
   ResourceExtractionServiceError,
   createResourceExtractionService,
+  ResourcePlacementServiceError,
+  createResourcePlacementService,
 } from "./services/index.js";
 
 export {

@@ -32,3 +32,17 @@ export {
   ResourceExtractionServiceError,
   createResourceExtractionService,
 } from "./ResourceExtractionService.js";
+export type {
+  PlaceResourceCandidateInput,
+  PlaceResourceCandidateResult,
+  ResourcePlacementNeedsReviewResult,
+  ResourcePlacementPlacedResult,
+  ResourcePlacementService,
+  ResourcePlacementServiceDependencies,
+  ResourcePlacementServiceErrorCode,
+} from "./ResourcePlacementService.js";
+
+export {
+  ResourcePlacementServiceError,
+  createResourcePlacementService,
+} from "./ResourcePlacementService.js";
