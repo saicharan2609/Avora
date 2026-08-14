@@ -16,11 +16,16 @@ Stage 7 Group 6 established the resource upload API boundary:
 Stage 7 Group 7 added the typed resource ingestion job handoff after successful upload completion.
 
 Stage 7 Group 8 persists resource ingestion jobs durably after successful upload completion. The route creates and enqueues a typed ingestion request through a student-scoped repository-backed queue seam after the resource row is marked uploaded.
+Stage 9 Group 5 adds resource placement API routes for reading persisted placement candidates, accepting an existing placement candidate, recording placement correction, and listing placed resources by academic unit.
 
 ## Public routes
 
 - `POST /api/resources/uploads`
 - `POST /api/resources/uploads/[resourceId]/complete`
+- `GET /api/resources/placement/candidates?resourceId=...`
+- `POST /api/resources/placement/candidates/[candidateId]/accept`
+- `POST /api/resources/placement/corrections`
+- `GET /api/resources/placement?termId=...&subjectId=...&structureUnitId=...`
 
 ## Requirement trace
 

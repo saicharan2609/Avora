@@ -8,6 +8,7 @@
     "./contracts": "./dist/contracts/index.js",
     "./api/academic": "./dist/api/academic/index.js",
     "./contracts/resources": "./dist/contracts/resources/index.js",
+    "./contracts/resources/placement": "./dist/contracts/resources/placement/index.js",
     "./domain-types": "./dist/domain-types/index.js",
     "./events": "./dist/events/index.js",
     "./errors": "./dist/errors/index.js",
