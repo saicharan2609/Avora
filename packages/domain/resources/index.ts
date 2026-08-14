@@ -3,7 +3,7 @@ export type * from "./ports/index.js";
 export type * from "./repositories/index.js";
 export type * from "./services/index.js";
 export type * from "./jobs/index.js";
-
+export type * from "./policies/index.js";
 export {
   createResourceUploadService,
   ResourceUploadServiceError,
@@ -25,3 +25,14 @@ export {
   resourceIngestionJobPriorities,
   resourceIngestionJobReasons,
 } from "./jobs/index.js";
+export {
+  placementCandidateProvenances,
+  resourcePlacementStatuses,
+} from "./contracts/index.js";
+export {
+  createPlacementPolicy,
+  decidePlacementCandidate,
+  defaultPlacementPolicy,
+  defaultPlacementPolicyDecisionMap,
+  placementPolicyDecisionKinds,
+} from "./policies/index.js";

@@ -138,3 +138,28 @@ Stage 9 Group 7 adds final completion traceability for the resource extraction p
 The completion harness validates that the contracts and service added in the resources domain module are connected through the worker handler, job handoff, DB repository, persistence schema, and RLS plans.
 
 No domain runtime behavior is changed in this group.
+## Completion Group A — Resource placement contracts and policy
+
+Completion Group A maps to authoritative Stage 9 Group 1: Placement contracts and policies.
+
+New public contracts:
+
+- `ResourcePlacement`
+- `PlacementCandidate`
+- `PlacementCorrection`
+
+New policy surface:
+
+- `PlacementPolicy`
+- `createPlacementPolicy`
+- `decidePlacementCandidate`
+- `defaultPlacementPolicy`
+
+The placement model supports the later pipeline:
+
+```text
+resource
+→ classification candidate
+→ placement policy
+→ accepted or tentative placement
+→ possible student correction

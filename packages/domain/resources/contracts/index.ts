@@ -52,3 +52,18 @@ export {
   resourceExtractionFailureCodes,
   resourceSourceLocatorKinds,
 } from "./extraction/index.js";
+export type {
+  PlacementCandidate,
+  PlacementCandidateId,
+  PlacementCandidateProvenance,
+  PlacementCorrection,
+  PlacementCorrectionId,
+  ResourcePlacement,
+  ResourcePlacementId,
+  ResourcePlacementStatus,
+  ResourcePlacementTarget,
+} from "./placement/index.js";
+export {
+  placementCandidateProvenances,
+  resourcePlacementStatuses,
+} from "./placement/index.js";
