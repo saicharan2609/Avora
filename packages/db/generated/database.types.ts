@@ -710,7 +710,123 @@ structure_units: {
           },
         ];
       };
-
+            resource_placement_candidates: {
+        Row: {
+          candidate_id: string;
+          student_id: string;
+          resource_id: string;
+          term_id: string;
+          subject_id: string;
+          structure_unit_id: string | null;
+          confidence_level:
+            | "student_confirmed"
+            | "high"
+            | "medium"
+            | "low"
+            | "unknown";
+          confidence_source:
+            | "student"
+            | "imported"
+            | "system_suggested";
+          confidence_reason: string | null;
+          provenance:
+            | "resource_metadata"
+            | "resource_content"
+            | "student_declared"
+            | "imported";
+          reason: string | null;
+          created_at: string;
+        };
+        Insert: {
+          candidate_id?: string;
+          student_id: string;
+          resource_id: string;
+          term_id: string;
+          subject_id: string;
+          structure_unit_id?: string | null;
+          confidence_level:
+            | "student_confirmed"
+            | "high"
+            | "medium"
+            | "low"
+            | "unknown";
+          confidence_source:
+            | "student"
+            | "imported"
+            | "system_suggested";
+          confidence_reason?: string | null;
+          provenance:
+            | "resource_metadata"
+            | "resource_content"
+            | "student_declared"
+            | "imported";
+          reason?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          candidate_id?: string;
+          student_id?: string;
+          resource_id?: string;
+          term_id?: string;
+          subject_id?: string;
+          structure_unit_id?: string | null;
+          confidence_level?:
+            | "student_confirmed"
+            | "high"
+            | "medium"
+            | "low"
+            | "unknown";
+          confidence_source?:
+            | "student"
+            | "imported"
+            | "system_suggested";
+          confidence_reason?: string | null;
+          provenance?:
+            | "resource_metadata"
+            | "resource_content"
+            | "student_declared"
+            | "imported";
+          reason?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "resource_placement_candidates_student_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["student_id"];
+          },
+          {
+            foreignKeyName: "resource_placement_candidates_resource_fkey";
+            columns: ["student_id", "resource_id"];
+            isOneToOne: false;
+            referencedRelation: "resources";
+            referencedColumns: ["student_id", "resource_id"];
+          },
+          {
+            foreignKeyName: "resource_placement_candidates_term_fkey";
+            columns: ["student_id", "term_id"];
+            isOneToOne: false;
+            referencedRelation: "academic_terms";
+            referencedColumns: ["student_id", "term_id"];
+          },
+          {
+            foreignKeyName: "resource_placement_candidates_subject_fkey";
+            columns: ["student_id", "term_id", "subject_id"];
+            isOneToOne: false;
+            referencedRelation: "subjects";
+            referencedColumns: ["student_id", "term_id", "subject_id"];
+          },
+          {
+            foreignKeyName: "resource_placement_candidates_structure_unit_fkey";
+            columns: ["student_id", "structure_unit_id"];
+            isOneToOne: false;
+            referencedRelation: "structure_units";
+            referencedColumns: ["student_id", "structure_unit_id"];
+          },
+        ];
+      };
       resource_placement_corrections: {
         Row: {
           correction_id: string;

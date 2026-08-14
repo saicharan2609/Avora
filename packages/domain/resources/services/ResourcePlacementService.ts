@@ -11,9 +11,12 @@ import type {
   ResourcePlacementId,
 } from "../contracts/index.js";
 import type {
+  GetPlacementCandidateByIdInput,
   GetResourcePlacementByIdInput,
   GetResourcePlacementByResourceInput,
+  ListPlacementCandidatesByResourceInput,
   ListPlacementCorrectionsByResourceInput,
+  ListResourcePlacementsByAcademicUnitInput,
   RecordPlacementCorrectionInput,
   ResourcePlacementRepositoryPort,
 } from "../repositories/index.js";
@@ -26,6 +29,7 @@ import {
 
 export type ResourcePlacementServiceErrorCode =
   | "resource_placement_invalid_candidate"
+  | "resource_placement_candidate_not_found"
   | "resource_placement_inconsistent_policy_decision";
 
 export class ResourcePlacementServiceError extends Error {
@@ -44,6 +48,14 @@ export class ResourcePlacementServiceError extends Error {
 export type PlaceResourceCandidateInput = Readonly<{
   candidate: PlacementCandidate;
 }>;
+
+export type AcceptPlacementCandidateInput = GetPlacementCandidateByIdInput;
+
+export type ListPlacementCandidatesForResourceInput =
+  ListPlacementCandidatesByResourceInput;
+
+export type ListResourcePlacementsForAcademicUnitInput =
+  ListResourcePlacementsByAcademicUnitInput;
 
 export type ResourcePlacementPlacedResult = Readonly<{
   outcome: "placed";
@@ -67,6 +79,15 @@ export type ResourcePlacementService = Readonly<{
   placeResourceCandidate: (
     input: PlaceResourceCandidateInput,
   ) => Promise<PlaceResourceCandidateResult>;
+  getPlacementCandidateById: (
+    input: GetPlacementCandidateByIdInput,
+  ) => Promise<PlacementCandidate | null>;
+  listPlacementCandidatesByResource: (
+    input: ListPlacementCandidatesForResourceInput,
+  ) => Promise<readonly PlacementCandidate[]>;
+  acceptPlacementCandidate: (
+    input: AcceptPlacementCandidateInput,
+  ) => Promise<PlaceResourceCandidateResult>;
   getPlacementByResource: (
     input: GetResourcePlacementByResourceInput,
   ) => Promise<ResourcePlacement | null>;
@@ -79,6 +100,9 @@ export type ResourcePlacementService = Readonly<{
   listPlacementCorrectionsByResource: (
     input: ListPlacementCorrectionsByResourceInput,
   ) => Promise<readonly PlacementCorrection[]>;
+  listResourcePlacementsByAcademicUnit: (
+    input: ListResourcePlacementsForAcademicUnitInput,
+  ) => Promise<readonly ResourcePlacement[]>;
 }>;
 
 export type ResourcePlacementServiceDependencies = Readonly<{
@@ -99,47 +123,44 @@ export function createResourcePlacementService(
   return {
     placeResourceCandidate: async (
       input: PlaceResourceCandidateInput,
+    ): Promise<PlaceResourceCandidateResult> =>
+      placeCandidate({
+        candidate: input.candidate,
+        repository: dependencies.repository,
+        policy,
+        createPlacementId,
+        now,
+      }),
+
+    getPlacementCandidateById: async (
+      input: GetPlacementCandidateByIdInput,
+    ): Promise<PlacementCandidate | null> =>
+      dependencies.repository.getPlacementCandidateById(input),
+
+    listPlacementCandidatesByResource: async (
+      input: ListPlacementCandidatesForResourceInput,
+    ): Promise<readonly PlacementCandidate[]> =>
+      dependencies.repository.listPlacementCandidatesByResource(input),
+
+    acceptPlacementCandidate: async (
+      input: AcceptPlacementCandidateInput,
     ): Promise<PlaceResourceCandidateResult> => {
-      assertValidPlacementCandidate(input.candidate);
+      const candidate = await dependencies.repository.getPlacementCandidateById(input);
 
-      const decision = policy.decidePlacementCandidate(input.candidate);
-
-      assertPolicyDecisionMatchesCandidate(input.candidate, decision);
-
-      if (decision.decision === "needs_review") {
-        return {
-          outcome: "needs_review",
-          decision: "needs_review",
-          candidate: input.candidate,
-          reason: decision.reason,
-        };
+      if (candidate === null) {
+        throw new ResourcePlacementServiceError(
+          "resource_placement_candidate_not_found",
+          "No placement candidate matched the requested candidate id.",
+        );
       }
 
-      const timestamp = now();
-
-      const placement: ResourcePlacement = {
-        placementId: createPlacementId(),
-        studentId: input.candidate.studentId,
-        resourceId: input.candidate.resourceId,
-        target: decision.target,
-        confidence: decision.confidence,
-        status: decision.decision,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-      };
-
-      const savedPlacement = await dependencies.repository.savePlacement({
-        placement,
-        candidate: input.candidate,
-        placementReason: decision.reason,
+      return placeCandidate({
+        candidate,
+        repository: dependencies.repository,
+        policy,
+        createPlacementId,
+        now,
       });
-
-      return {
-        outcome: "placed",
-        decision: decision.decision,
-        placement: savedPlacement,
-        reason: decision.reason,
-      };
     },
 
     getPlacementByResource: async (
@@ -161,6 +182,60 @@ export function createResourcePlacementService(
       input: ListPlacementCorrectionsByResourceInput,
     ): Promise<readonly PlacementCorrection[]> =>
       dependencies.repository.listCorrectionsByResource(input),
+
+    listResourcePlacementsByAcademicUnit: async (
+      input: ListResourcePlacementsForAcademicUnitInput,
+    ): Promise<readonly ResourcePlacement[]> =>
+      dependencies.repository.listResourcePlacementsByAcademicUnit(input),
+  };
+}
+
+async function placeCandidate(input: Readonly<{
+  candidate: PlacementCandidate;
+  repository: ResourcePlacementRepositoryPort;
+  policy: PlacementPolicy;
+  createPlacementId: () => ResourcePlacementId;
+  now: () => IsoDateTimeString;
+}>): Promise<PlaceResourceCandidateResult> {
+  assertValidPlacementCandidate(input.candidate);
+
+  const decision = input.policy.decidePlacementCandidate(input.candidate);
+
+  assertPolicyDecisionMatchesCandidate(input.candidate, decision);
+
+  if (decision.decision === "needs_review") {
+    return {
+      outcome: "needs_review",
+      decision: "needs_review",
+      candidate: input.candidate,
+      reason: decision.reason,
+    };
+  }
+
+  const timestamp = input.now();
+
+  const placement: ResourcePlacement = {
+    placementId: input.createPlacementId(),
+    studentId: input.candidate.studentId,
+    resourceId: input.candidate.resourceId,
+    target: decision.target,
+    confidence: decision.confidence,
+    status: decision.decision,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  };
+
+  const savedPlacement = await input.repository.savePlacement({
+    placement,
+    candidate: input.candidate,
+    placementReason: decision.reason,
+  });
+
+  return {
+    outcome: "placed",
+    decision: decision.decision,
+    placement: savedPlacement,
+    reason: decision.reason,
   };
 }
 

@@ -11,13 +11,20 @@ import type {
   CreatePlacementCorrectionInput,
   DbAcademicTermId,
   DbPlacementCandidateId,
+  DbPlacementCandidateProvenance,
+  DbPlacementCandidateRecord,
+  DbPlacementConfidenceLevel,
+  DbPlacementConfidenceSource,
   DbPlacementCorrectionId,
   DbPlacementCorrectionRecord,
   DbResourcePlacementId,
   DbResourcePlacementRecord,
+  DbResourcePlacementStatus,
   DbResourcePlacementTarget,
   DbStructureUnitId,
   DbSubjectId,
+  ListResourcePlacementsByAcademicUnitInput,
+  UpsertPlacementCandidateInput,
   UpsertResourcePlacementInput,
 } from "./contracts.js";
 import {
@@ -39,11 +46,55 @@ type PlacementCorrectionRow =
 type PlacementCorrectionInsert =
   Database["public"]["Tables"]["resource_placement_corrections"]["Insert"];
 
+type PlacementCandidateRow =
+  Database["public"]["Tables"]["resource_placement_candidates"]["Row"];
+
+type PlacementCandidateInsert =
+  Database["public"]["Tables"]["resource_placement_candidates"]["Insert"];
+
+type PlacementCandidateUpdate =
+  Database["public"]["Tables"]["resource_placement_candidates"]["Update"];
+
+export const placementCandidateSelectColumns =
+  "candidate_id,student_id,resource_id,term_id,subject_id,structure_unit_id,confidence_level,confidence_source,confidence_reason,provenance,reason,created_at" as const;
+
 export const resourcePlacementSelectColumns =
   "placement_id,student_id,resource_id,term_id,subject_id,structure_unit_id,confidence_level,confidence_source,confidence_reason,status,candidate_id,candidate_provenance,placement_reason,created_at,updated_at" as const;
 
 export const placementCorrectionSelectColumns =
   "correction_id,student_id,resource_id,previous_term_id,previous_subject_id,previous_structure_unit_id,corrected_term_id,corrected_subject_id,corrected_structure_unit_id,reason,corrected_at" as const;
+
+export function mapPlacementCandidateRow(
+  row: PlacementCandidateRow,
+): DbPlacementCandidateRecord {
+  assertNonEmpty(row.candidate_id, "Placement candidate row must include candidate_id.");
+  assertNonEmpty(row.student_id, "Placement candidate row must include student_id.");
+  assertNonEmpty(row.resource_id, "Placement candidate row must include resource_id.");
+  assertNonEmpty(row.term_id, "Placement candidate row must include term_id.");
+  assertNonEmpty(row.subject_id, "Placement candidate row must include subject_id.");
+
+  return {
+    candidateId: row.candidate_id as DbPlacementCandidateId,
+    studentId: row.student_id as StudentId,
+    resourceId: row.resource_id as ResourceId,
+    target: {
+      termId: row.term_id as DbAcademicTermId,
+      subjectId: row.subject_id as DbSubjectId,
+      structureUnitId:
+        row.structure_unit_id === null
+          ? null
+          : row.structure_unit_id as DbStructureUnitId,
+    },
+    confidence: {
+      level: row.confidence_level as DbPlacementConfidenceLevel,
+      source: row.confidence_source as DbPlacementConfidenceSource,
+      reason: row.confidence_reason,
+    },
+    provenance: row.provenance as DbPlacementCandidateProvenance,
+    reason: row.reason,
+    createdAt: row.created_at as IsoDateTimeString,
+  };
+}
 
 export function mapResourcePlacementRow(
   row: ResourcePlacementRow,
@@ -67,16 +118,19 @@ export function mapResourcePlacementRow(
           : row.structure_unit_id as DbStructureUnitId,
     },
     confidence: {
-      level: row.confidence_level,
-      source: row.confidence_source,
+      level: row.confidence_level as DbPlacementConfidenceLevel,
+      source: row.confidence_source as DbPlacementConfidenceSource,
       reason: row.confidence_reason,
     },
-    status: row.status,
+    status: row.status as DbResourcePlacementStatus,
     candidateId:
       row.candidate_id === null
         ? null
         : row.candidate_id as DbPlacementCandidateId,
-    candidateProvenance: row.candidate_provenance,
+    candidateProvenance:
+      row.candidate_provenance === null
+        ? null
+        : row.candidate_provenance as DbPlacementCandidateProvenance,
     placementReason: row.placement_reason,
     createdAt: row.created_at as IsoDateTimeString,
     updatedAt: row.updated_at as IsoDateTimeString,
@@ -117,6 +171,44 @@ export function mapPlacementCorrectionRow(
     },
     reason: row.reason,
     correctedAt: row.corrected_at as IsoDateTimeString,
+  };
+}
+
+export function mapUpsertPlacementCandidateInputToInsert(
+  input: UpsertPlacementCandidateInput,
+): PlacementCandidateInsert {
+  assertValidPlacementCandidateInput(input);
+
+  return {
+    candidate_id: input.candidateId,
+    student_id: input.studentId,
+    resource_id: input.resourceId,
+    term_id: input.target.termId,
+    subject_id: input.target.subjectId,
+    structure_unit_id: input.target.structureUnitId,
+    confidence_level: input.confidence.level,
+    confidence_source: input.confidence.source,
+    confidence_reason: input.confidence.reason,
+    provenance: input.provenance,
+    reason: input.reason,
+    created_at: input.createdAt,
+  };
+}
+
+export function mapUpsertPlacementCandidateInputToUpdate(
+  input: UpsertPlacementCandidateInput,
+): PlacementCandidateUpdate {
+  assertValidPlacementCandidateInput(input);
+
+  return {
+    term_id: input.target.termId,
+    subject_id: input.target.subjectId,
+    structure_unit_id: input.target.structureUnitId,
+    confidence_level: input.confidence.level,
+    confidence_source: input.confidence.source,
+    confidence_reason: input.confidence.reason,
+    provenance: input.provenance,
+    reason: input.reason,
   };
 }
 
@@ -182,6 +274,42 @@ export function mapCreatePlacementCorrectionInputToInsert(
     reason: input.reason,
     corrected_at: input.correctedAt,
   };
+}
+
+export function assertValidAcademicUnitListInput(
+  input: ListResourcePlacementsByAcademicUnitInput,
+): void {
+  assertNonEmpty(input.studentId, "Academic unit placement list requires a student id.");
+  assertNonEmpty(input.target.termId, "Academic unit placement list requires a term id.");
+}
+
+function assertValidPlacementCandidateInput(
+  input: UpsertPlacementCandidateInput,
+): void {
+  assertNonEmpty(input.candidateId, "Placement candidate requires a candidate id.");
+  assertNonEmpty(input.studentId, "Placement candidate requires a student id.");
+  assertNonEmpty(input.resourceId, "Placement candidate requires a resource id.");
+  assertNonEmpty(input.target.termId, "Placement candidate requires a term id.");
+  assertNonEmpty(input.target.subjectId, "Placement candidate requires a subject id.");
+
+  if (input.confidence.reason !== null) {
+    assertNonEmpty(
+      input.confidence.reason,
+      "Placement candidate confidence reason must not be blank.",
+    );
+  }
+
+  if (input.reason !== null) {
+    assertNonEmpty(
+      input.reason,
+      "Placement candidate reason must not be blank.",
+    );
+  }
+
+  assertNonEmpty(
+    input.createdAt,
+    "Placement candidate requires a created-at timestamp.",
+  );
 }
 
 function assertValidPlacementInput(input: UpsertResourcePlacementInput): void {

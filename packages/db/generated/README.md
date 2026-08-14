@@ -62,3 +62,12 @@ Completion Group B adds generated database type sections for:
 The generated shape must remain compatible with `@supabase/supabase-js` typed PostgREST generics.
 
 Do not wrap the generated shape in deep readonly types.
+## Compatibility correction — resource placement candidate generated types
+
+This correction adds the generated database type section for:
+
+- `public.resource_placement_candidates`
+
+The generated shape must remain compatible with `@supabase/supabase-js` typed PostgREST generics.
+
+The candidate confidence and provenance columns are SQL `text` columns constrained by `CHECK` constraints. Do not add PostgreSQL enum entries for them.

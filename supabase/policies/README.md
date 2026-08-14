@@ -71,3 +71,14 @@ Completion Group B adds policy artifacts for:
 Placement rows are student-scoped. Authenticated students may select, insert, and update their own placement rows. Correction rows are append-only from the application perspective: authenticated students may select and insert their own correction rows.
 
 No authenticated delete policy is introduced.
+## Compatibility correction — resource placement candidate policy artifact
+
+Adds reviewed policy artifact:
+
+- `resource_placement_candidates.policy.sql`
+
+The authoritative executable policy creation lives in the migration:
+
+- `20260814131500_resource_placement_candidates.sql`
+
+Authenticated students may select their own placement candidates. No authenticated insert, update, or delete policy is introduced.

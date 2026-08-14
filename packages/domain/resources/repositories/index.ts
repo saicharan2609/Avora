@@ -11,6 +11,9 @@ export type {
   ListPlacementCorrectionsByResourceInput,
   RecordPlacementCorrectionInput,
   ReplaceResourcePlacementInput,
+  GetPlacementCandidateByIdInput,
+  ListPlacementCandidatesByResourceInput,
+  ListResourcePlacementsByAcademicUnitInput,
   ResourcePlacementRepositoryPort,
   SaveResourcePlacementInput,
 } from "./ResourcePlacementRepositoryPort.js";

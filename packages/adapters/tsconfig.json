@@ -16,6 +16,7 @@
     "psp/**/*.ts",
     "resend/**/*.ts",
     "sentry/**/*.ts",
+    "resource-placement/**/*.ts",
     "posthog/**/*.ts",
     "otel/**/*.ts"
   ],
@@ -25,6 +26,12 @@
     },
     {
       "path": "../core"
-    }
+    },
+    {
+  "path": "../db"
+},
+{
+  "path": "../domain"
+}
   ]
 }

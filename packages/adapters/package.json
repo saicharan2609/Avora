@@ -11,6 +11,7 @@
     "./psp": "./dist/psp/index.js",
     "./resend": "./dist/resend/index.js",
     "./sentry": "./dist/sentry/index.js",
+    "./resource-placement": "./dist/resource-placement/index.js",
     "./posthog": "./dist/posthog/index.js",
     "./otel": "./dist/otel/index.js"
   },
@@ -22,6 +23,8 @@
   },
   "dependencies": {
     "@avora/core": "workspace:*",
+    "@avora/db": "workspace:*",
+"@avora/domain": "workspace:*",
     "@supabase/supabase-js": "2.110.8"
   },
   "devDependencies": {

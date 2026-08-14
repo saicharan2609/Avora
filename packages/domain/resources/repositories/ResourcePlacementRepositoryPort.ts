@@ -7,7 +7,9 @@ import type {
   PlacementCandidate,
   PlacementCorrection,
   ResourcePlacement,
+    PlacementCandidateId,
   ResourcePlacementId,
+  ResourcePlacementTarget,
 } from "../contracts/index.js";
 
 export type SaveResourcePlacementInput = Readonly<{
@@ -27,7 +29,15 @@ export type GetResourcePlacementByIdInput = Readonly<{
 }>;
 
 export type ReplaceResourcePlacementInput = SaveResourcePlacementInput;
+export type GetPlacementCandidateByIdInput = Readonly<{
+  studentId: StudentId;
+  candidateId: PlacementCandidateId;
+}>;
 
+export type ListPlacementCandidatesByResourceInput = Readonly<{
+  studentId: StudentId;
+  resourceId: ResourceId;
+}>;
 export type RecordPlacementCorrectionInput = Readonly<{
   correction: PlacementCorrection;
 }>;
@@ -36,7 +46,14 @@ export type ListPlacementCorrectionsByResourceInput = Readonly<{
   studentId: StudentId;
   resourceId: ResourceId;
 }>;
-
+export type ListResourcePlacementsByAcademicUnitInput = Readonly<{
+  studentId: StudentId;
+  target: Readonly<{
+    termId: ResourcePlacementTarget["termId"];
+    subjectId: ResourcePlacementTarget["subjectId"] | null;
+    structureUnitId: ResourcePlacementTarget["structureUnitId"];
+  }>;
+}>;
 export type ResourcePlacementRepositoryPort = Readonly<{
   savePlacement: (
     input: SaveResourcePlacementInput,
@@ -50,10 +67,19 @@ export type ResourcePlacementRepositoryPort = Readonly<{
   replacePlacement: (
     input: ReplaceResourcePlacementInput,
   ) => Promise<ResourcePlacement>;
+    getPlacementCandidateById: (
+    input: GetPlacementCandidateByIdInput,
+  ) => Promise<PlacementCandidate | null>;
+  listPlacementCandidatesByResource: (
+    input: ListPlacementCandidatesByResourceInput,
+  ) => Promise<readonly PlacementCandidate[]>;
   recordCorrection: (
     input: RecordPlacementCorrectionInput,
   ) => Promise<PlacementCorrection>;
   listCorrectionsByResource: (
     input: ListPlacementCorrectionsByResourceInput,
   ) => Promise<readonly PlacementCorrection[]>;
+    listResourcePlacementsByAcademicUnit: (
+    input: ListResourcePlacementsByAcademicUnitInput,
+  ) => Promise<readonly ResourcePlacement[]>;
 }>;

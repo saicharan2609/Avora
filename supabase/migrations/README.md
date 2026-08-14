@@ -69,3 +69,12 @@ The second migration creates student-scoped resource placement persistence:
 The migration preserves resource ownership, academic scope, placement confidence, candidate provenance, placement reason, accepted/tentative status, and correction history.
 
 This group does not implement classification workers, placement services, placement APIs, correction e2e, extraction work, retrieval behavior, AI/provider behavior, UI, or mobile code.
+## Compatibility correction — resource placement candidates
+
+Adds:
+
+- `20260814131500_resource_placement_candidates.sql`
+
+This migration persists server-generated placement candidates for later API candidate reads and candidate acceptance.
+
+It does not add web routes, API contracts, worker execution, AI/provider behavior, retrieval behavior, UI, mobile code, or Stage 11 behavior.

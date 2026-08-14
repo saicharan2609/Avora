@@ -38,6 +38,9 @@ export type {
   ResourcePlacementNeedsReviewResult,
   ResourcePlacementPlacedResult,
   ResourcePlacementService,
+    AcceptPlacementCandidateInput,
+  ListPlacementCandidatesForResourceInput,
+  ListResourcePlacementsForAcademicUnitInput,
   ResourcePlacementServiceDependencies,
   ResourcePlacementServiceErrorCode,
 } from "./ResourcePlacementService.js";

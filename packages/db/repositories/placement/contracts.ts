@@ -63,7 +63,16 @@ export type DbResourcePlacementTarget = Readonly<{
   subjectId: DbSubjectId;
   structureUnitId: DbStructureUnitId | null;
 }>;
-
+export type DbPlacementCandidateRecord = Readonly<{
+  candidateId: DbPlacementCandidateId;
+  studentId: StudentId;
+  resourceId: ResourceId;
+  target: DbResourcePlacementTarget;
+  confidence: DbPlacementConfidence;
+  provenance: DbPlacementCandidateProvenance;
+  reason: string | null;
+  createdAt: IsoDateTimeString;
+}>;
 export type DbResourcePlacementRecord = Readonly<{
   placementId: DbResourcePlacementId;
   studentId: StudentId;
@@ -87,7 +96,7 @@ export type DbPlacementCorrectionRecord = Readonly<{
   reason: string | null;
   correctedAt: IsoDateTimeString;
 }>;
-
+export type UpsertPlacementCandidateInput = DbPlacementCandidateRecord;
 export type UpsertResourcePlacementInput = Readonly<{
   placementId: DbResourcePlacementId;
   studentId: StudentId;
@@ -101,7 +110,15 @@ export type UpsertResourcePlacementInput = Readonly<{
   createdAt: IsoDateTimeString;
   updatedAt: IsoDateTimeString;
 }>;
+export type GetPlacementCandidateByIdInput = Readonly<{
+  studentId: StudentId;
+  candidateId: DbPlacementCandidateId;
+}>;
 
+export type ListPlacementCandidatesByResourceInput = Readonly<{
+  studentId: StudentId;
+  resourceId: ResourceId;
+}>;
 export type GetResourcePlacementByResourceInput = Readonly<{
   studentId: StudentId;
   resourceId: ResourceId;
@@ -126,8 +143,24 @@ export type ListPlacementCorrectionsByResourceInput = Readonly<{
   studentId: StudentId;
   resourceId: ResourceId;
 }>;
-
+export type ListResourcePlacementsByAcademicUnitInput = Readonly<{
+  studentId: StudentId;
+  target: Readonly<{
+    termId: DbAcademicTermId;
+    subjectId: DbSubjectId | null;
+    structureUnitId: DbStructureUnitId | null;
+  }>;
+}>;
 export type ResourcePlacementRepository = Readonly<{
+    upsertPlacementCandidate: (
+    input: UpsertPlacementCandidateInput,
+  ) => Promise<DbPlacementCandidateRecord>;
+  getPlacementCandidateById: (
+    input: GetPlacementCandidateByIdInput,
+  ) => Promise<DbPlacementCandidateRecord | null>;
+  listPlacementCandidatesByResource: (
+    input: ListPlacementCandidatesByResourceInput,
+  ) => Promise<readonly DbPlacementCandidateRecord[]>;
   upsertResourcePlacement: (
     input: UpsertResourcePlacementInput,
   ) => Promise<DbResourcePlacementRecord>;
@@ -143,4 +176,7 @@ export type ResourcePlacementRepository = Readonly<{
   listPlacementCorrectionsByResource: (
     input: ListPlacementCorrectionsByResourceInput,
   ) => Promise<readonly DbPlacementCorrectionRecord[]>;
+    listResourcePlacementsByAcademicUnit: (
+    input: ListResourcePlacementsByAcademicUnitInput,
+  ) => Promise<readonly DbResourcePlacementRecord[]>;
 }>;

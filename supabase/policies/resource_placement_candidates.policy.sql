@@ -1,0 +1,25 @@
+-- Policy artifact: public.resource_placement_candidates
+--
+-- Owner: @avora/data
+--
+-- Threat prevented:
+-- - Cross-student placement candidate access.
+-- - Client-supplied identifier authorization.
+-- - Academic placement candidate ownership bypass.
+-- - Accidental permissive table access.
+--
+-- Authoritative executable policy creation:
+-- - supabase/migrations/20260814131500_resource_placement_candidates.sql
+--
+-- Reviewed posture:
+-- - Authenticated students may read their own placement candidates.
+-- - No authenticated INSERT, UPDATE, or DELETE policy is defined.
+-- - Candidate writes are expected to be produced by trusted server-side
+--   classification execution through service-role-backed infrastructure.
+--
+-- Policy mirrored:
+-- create policy resource_placement_candidates_select_own
+--   on public.resource_placement_candidates
+--   for select
+--   to authenticated
+--   using (student_id = auth.uid());
