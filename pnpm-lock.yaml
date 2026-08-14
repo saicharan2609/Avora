@@ -151,6 +151,10 @@ importers:
         version: link:../packages/config
 
   evals:
+    dependencies:
+      '@avora/ai':
+        specifier: workspace:*
+        version: link:../packages/ai
     devDependencies:
       '@avora/config':
         specifier: workspace:*

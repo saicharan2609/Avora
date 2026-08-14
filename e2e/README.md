@@ -91,3 +91,15 @@ The flow covers resource extraction job handoff, worker handler validation, doma
 This flow uses synthetic fixtures only.
 
 This flow must not use production data, real student content, service-role credentials, direct runtime imports, OCR adapters, parser adapters, AI adapters, embeddings, retrieval indexing, API routes, UI, or mobile behavior.
+## Stage 11 Group 9 — Tutor grounding and citation flow
+
+Stage 11 Group 9 adds a plan/fixture-based tutor grounding flow under:
+
+- `flows/tutor-grounding/`
+- `fixtures/tutor-grounding.fixture.json`
+
+The flow covers authenticated tutor requests, scoped retrieval context, grounded answers with citations, insufficiency behavior, unresolved citation blocking, and citation locator preservation.
+
+This flow uses synthetic fixtures only.
+
+This group does not add browser automation, mobile automation, runtime shortcuts, provider SDK calls, model calls, production data, database migrations, repositories, UI, mobile behavior, or Stage 12 artifact behavior.

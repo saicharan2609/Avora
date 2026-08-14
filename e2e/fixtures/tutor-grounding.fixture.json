@@ -1,0 +1,112 @@
+{
+  "id": "stage-11-tutor-grounding-synthetic-fixture",
+  "owner": "@avora/qa",
+  "classification": "synthetic",
+  "containsProductionData": false,
+  "containsStudentContent": false,
+  "containsRealAcademicMaterial": false,
+  "students": [
+    {
+      "alias": "student_a",
+      "studentId": "00000000-0000-4000-8000-0000000110a1"
+    }
+  ],
+  "academicScope": {
+    "termId": "00000000-0000-4000-8000-000000011501",
+    "subjectId": "00000000-0000-4000-8000-000000011502",
+    "structureUnitId": "00000000-0000-4000-8000-000000011503",
+    "resourceId": "00000000-0000-4000-8000-000000011101"
+  },
+  "valid_grounded_tutor_request": {
+    "conversationId": null,
+    "messageId": "00000000-0000-4000-8000-000000011402",
+    "question": "What does the synthetic graph note say about graph representation?",
+    "scope": {
+      "termId": "00000000-0000-4000-8000-000000011501",
+      "subjectId": "00000000-0000-4000-8000-000000011502",
+      "structureUnitId": "00000000-0000-4000-8000-000000011503",
+      "resourceId": "00000000-0000-4000-8000-000000011101"
+    },
+    "depth": "standard",
+    "answerFormat": "explanation",
+    "language": "en"
+  },
+  "insufficient_context_tutor_request": {
+    "conversationId": null,
+    "messageId": "00000000-0000-4000-8000-000000011403",
+    "question": "What does the synthetic graph note say about a topic absent from the resource?",
+    "scope": {
+      "termId": "00000000-0000-4000-8000-000000011501",
+      "subjectId": "00000000-0000-4000-8000-000000011502",
+      "structureUnitId": "00000000-0000-4000-8000-000000011503",
+      "resourceId": "00000000-0000-4000-8000-000000011199"
+    },
+    "depth": "standard",
+    "answerFormat": "explanation",
+    "language": "en"
+  },
+  "retrievalEvidence": [
+    {
+      "chunkId": "00000000-0000-4000-8000-000000011201",
+      "resourceId": "00000000-0000-4000-8000-000000011101",
+      "extractionDocumentId": "00000000-0000-4000-8000-000000011601",
+      "sourceBlockIds": [
+        "00000000-0000-4000-8000-000000011701"
+      ],
+      "contentKind": "paragraph",
+      "text": "A graph is represented synthetically as vertices and edges for validation.",
+      "locator": {
+        "kind": "document_page",
+        "pageNumber": 2,
+        "slideNumber": null,
+        "boundingBox": {
+          "x": 0.1,
+          "y": 0.2,
+          "width": 0.8,
+          "height": 0.15,
+          "unit": "ratio"
+        },
+        "textSpan": {
+          "startOffset": 0,
+          "endOffset": 72
+        },
+        "timeRange": null,
+        "label": "Synthetic page 2 graph definition"
+      },
+      "sortOrder": 0
+    }
+  ],
+  "validGroundedResponse": {
+    "status": "answered",
+    "answerMessageId": "00000000-0000-4000-8000-000000011401",
+    "answerText": "The supplied note says a graph is represented synthetically as vertices and edges for validation.",
+    "citations": [
+      {
+        "citationId": "00000000-0000-4000-8000-000000011301",
+        "chunkId": "00000000-0000-4000-8000-000000011201",
+        "resourceId": "00000000-0000-4000-8000-000000011101",
+        "quote": "A graph is represented synthetically as vertices and edges"
+      }
+    ],
+    "expected": {
+      "allCitationsResolve": true,
+      "locatorPreserved": true,
+      "groundingGateOutcome": "pass"
+    }
+  },
+  "unresolved_citation_gateway_response": {
+    "status": "refused",
+    "reason": "citation_validation_failed",
+    "message": "I could not produce a grounded answer with valid citations from your materials.",
+    "expected": {
+      "unresolvedCitationNotShown": true,
+      "groundedAnswerNotDelivered": true
+    }
+  },
+  "unsupported_grounded_claim_eval_case": {
+    "answerText": "The supplied note says a graph is represented synthetically as vertices and edges for validation. Dijkstra always works with negative-weight edges in this synthetic note.",
+    "expected": {
+      "groundingGateOutcome": "fail"
+    }
+  }
+}

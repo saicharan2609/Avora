@@ -1,0 +1,147 @@
+{
+  "id": "stage-11-tutor-grounding-flow",
+  "owner": "@avora/qa",
+  "stage": "Stage 11 Group 9",
+  "title": "Tutor grounding and citation flow",
+  "description": "Validates the tutor API grounding and citation contract from authenticated tutor request through scoped retrieval context, grounded answer response, citation preservation, insufficiency behavior, and unresolved citation blocking.",
+  "fixture": "../../fixtures/tutor-grounding.fixture.json",
+  "scope": {
+    "includes": [
+      "authenticated tutor ask request",
+      "student-scoped request body without client-supplied studentId",
+      "scoped retrieval context preservation",
+      "grounded answer response with citations",
+      "citation ids resolving to supplied evidence chunks",
+      "locator preservation in cited response",
+      "insufficient-context response preservation",
+      "unresolved citation blocking"
+    ],
+    "excludes": [
+      "UI rendering",
+      "mobile behavior",
+      "browser automation",
+      "provider SDK calls",
+      "model calls",
+      "prompt execution",
+      "database migrations",
+      "repository implementation",
+      "embeddings",
+      "vector search",
+      "summary generation",
+      "flashcard generation",
+      "quiz generation",
+      "Stage 12 artifacts",
+      "production data",
+      "real student content",
+      "service-role credentials"
+    ]
+  },
+  "actors": [
+    {
+      "name": "student_a",
+      "role": "authenticated_student"
+    },
+    {
+      "name": "tutor_gateway",
+      "role": "ai_gateway_boundary"
+    }
+  ],
+  "success_path": [
+    {
+      "step": 1,
+      "actor": "student_a",
+      "method": "POST",
+      "route": "/api/tutor/ask",
+      "action": "ask_scoped_tutor_question",
+      "requestFixture": "valid_grounded_tutor_request",
+      "expected": {
+        "requestBodyExcludesStudentId": true,
+        "scopeIncludesSubjectId": true,
+        "scopeIncludesStructureUnitId": true,
+        "scopeIncludesResourceId": true,
+        "authenticatedStudentResolvedServerSide": true
+      }
+    },
+    {
+      "step": 2,
+      "actor": "tutor_gateway",
+      "action": "search_scoped_retrieval_context",
+      "expected": {
+        "retrievalScopeMatchesAuthenticatedStudent": true,
+        "retrievalScopeMatchesRequestScope": true,
+        "groundedContextEnvelopeCreated": true,
+        "allowedChunkIdsNonEmpty": true
+      }
+    },
+    {
+      "step": 3,
+      "actor": "tutor_gateway",
+      "action": "return_grounded_answer",
+      "expected": {
+        "responseStatus": 200,
+        "bodyStatus": "answered",
+        "answerTextPresent": true,
+        "citationsPresent": true,
+        "allCitationsResolveToAllowedChunkIds": true,
+        "locatorMetadataPreserved": true,
+        "noUnresolvedCitationsShown": true
+      }
+    }
+  ],
+  "insufficiency_path": [
+    {
+      "step": 1,
+      "actor": "student_a",
+      "method": "POST",
+      "route": "/api/tutor/ask",
+      "action": "ask_question_without_scoped_context",
+      "requestFixture": "insufficient_context_tutor_request",
+      "expected": {
+        "responseStatus": 200,
+        "bodyStatus": "insufficient_context",
+        "answerTextAbsent": true,
+        "citationsAbsent": true,
+        "providerInvocationSkipped": true,
+        "honestInsufficiencyMessagePresent": true
+      }
+    }
+  ],
+  "failure_path": [
+    {
+      "step": 1,
+      "actor": "tutor_gateway",
+      "action": "block_unresolved_citation",
+      "responseFixture": "unresolved_citation_gateway_response",
+      "expected": {
+        "bodyStatus": "refused",
+        "reason": "citation_validation_failed",
+        "unresolvedCitationNotShown": true,
+        "groundedAnswerNotDelivered": true
+      }
+    },
+    {
+      "step": 2,
+      "actor": "tutor_gateway",
+      "action": "block_unsupported_grounded_claim",
+      "responseFixture": "unsupported_grounded_claim_eval_case",
+      "expected": {
+        "groundingGateOutcome": "fail",
+        "unsupportedContentDeliveredAsGrounded": false
+      }
+    }
+  ],
+  "assertions": [
+    "tutor request bodies do not accept studentId",
+    "authenticated student scope is resolved server-side",
+    "scoped retrieval context is preserved in the tutor response",
+    "grounded answers include citations",
+    "citations resolve to supplied evidence chunks",
+    "locator metadata is preserved in citation responses",
+    "insufficient context returns insufficiency or refusal, not a fabricated answer",
+    "unresolved citations are not shown as grounded answers",
+    "citation validity is a behavioral gate, not a lint-only check",
+    "no provider SDK calls are made",
+    "no production data is used",
+    "no UI or mobile behavior is introduced"
+  ]
+}

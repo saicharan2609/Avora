@@ -53,3 +53,28 @@ Stage 4 Group 6 wires the first fail-closed citation-validity gate. It does not 
 This package must not contain AI implementation, prompt implementation, provider SDK usage, model names, application features, business logic, API handlers, database schema, Supabase configuration, authentication implementation, React components, React Native components, pages, or screens.
 
 Consented corpora and full AI evaluation suites remain later-stage work.
+## Stage 11 Group 9 — Grounding and citation eval gate
+
+Stage 11 Group 9 extends the AI evaluation gate with deterministic tutor grounding cases.
+
+New suite files:
+
+- `suites/tutor-grounding.fixture.ts`
+- `suites/tutor-grounding.gate.ts`
+
+The gate covers:
+
+- grounded answer with valid citations;
+- unsupported content in a grounded-looking answer;
+- citation validity through Avora's existing `validateGroundedAnswer` contract;
+- unresolved citation failure;
+- honest insufficiency when retrieval context is insufficient;
+- failure when insufficient context is represented as a grounded answer;
+- unresolved citation prevention for tutor API-shaped responses.
+
+The suite uses synthetic fixtures only and does not call model providers, provider SDKs, production credentials, network services, databases, web routes, mobile routes, UI, or retrieval infrastructure.
+
+Run:
+
+```text
+pnpm --filter @avora/evals eval:ai

@@ -13,7 +13,9 @@
     "lint:arch": "eslint .",
     "eval:ai": "pnpm run build && node dist/suites/run-ai-eval-gates.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@avora/ai": "workspace:*"
+  },
   "devDependencies": {
     "@avora/config": "workspace:*"
   }
