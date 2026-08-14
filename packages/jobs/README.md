@@ -104,3 +104,17 @@ Stage 9 Group 7 adds final completion traceability for the resource extraction j
 The completion harness validates that `ResourceExtractionJobRequest`, `resourceExtractionJobName`, and the job payload contract are consumed by the worker handler validation plan.
 
 No jobs package runtime behavior is changed in this group.
+## Completion Group C — Resource classification handoff
+
+Completion Group C maps to authoritative Stage 9 Group 3: Classification job contract.
+
+Public surface:
+
+- `@avora/jobs/resource-classification`
+- `ResourceClassificationJobEnvelope`
+- `createResourceClassificationJobEnvelope`
+- `ResourceClassificationQueuePort`
+
+The classification job handoff is created after ingestion validation and before later placement classification execution.
+
+This group does not implement classification execution, AI/provider logic, placement services, placement APIs, web routes, workers, UI, mobile, retrieval, Stage 10, Stage 11, or future groups.

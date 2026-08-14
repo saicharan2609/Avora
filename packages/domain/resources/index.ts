@@ -4,17 +4,18 @@ export type * from "./repositories/index.js";
 export type * from "./services/index.js";
 export type * from "./jobs/index.js";
 export type * from "./policies/index.js";
+
 export {
   createResourceUploadService,
   ResourceUploadServiceError,
   createResourceIngestionValidationService,
-   ResourceExtractionServiceError,
+  ResourceExtractionServiceError,
   createResourceExtractionService,
 } from "./services/index.js";
 
 export {
   resourceIngestionValidationIssueCodes,
-   resourceExtractedContentBlockKinds,
+  resourceExtractedContentBlockKinds,
   resourceExtractionDocumentStatuses,
   resourceExtractionFailureCodes,
   resourceSourceLocatorKinds,
@@ -24,11 +25,16 @@ export {
   resourceIngestionJobName,
   resourceIngestionJobPriorities,
   resourceIngestionJobReasons,
+  resourceClassificationJobName,
+  resourceClassificationJobPriorities,
+  resourceClassificationJobReasons,
 } from "./jobs/index.js";
+
 export {
   placementCandidateProvenances,
   resourcePlacementStatuses,
 } from "./contracts/index.js";
+
 export {
   createPlacementPolicy,
   decidePlacementCandidate,

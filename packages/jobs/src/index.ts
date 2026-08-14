@@ -15,6 +15,7 @@ export {
   resourceIngestionJobStatuses,
   resourceIngestionJobStorageBuckets,
 } from "../queue/index.js";
+
 export type * from "../resource-extraction/index.js";
 
 export {
@@ -24,3 +25,12 @@ export {
   resourceExtractionJobReasons,
   resourceExtractionStorageBuckets,
 } from "../resource-extraction/index.js";
+
+export type * from "../resource-classification/index.js";
+
+export {
+  createResourceClassificationJobEnvelope,
+  resourceClassificationJobName,
+  resourceClassificationJobPriorities,
+  resourceClassificationJobReasons,
+} from "../resource-classification/index.js";

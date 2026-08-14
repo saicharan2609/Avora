@@ -1,40 +1,25 @@
-# jobs
+# resource jobs
 
-Owner: @avora/data
+Owner: @avora/resources
+Runtime owner: @avora/worker
 
 ## Purpose
 
-The `jobs` directory owns resource-domain job contracts.
+This directory owns domain-visible resource job contracts.
 
-Stage 7 Group 7 introduces the resource ingestion job handoff contract. This contract describes the request created after a resource upload has been completed and before worker-side ingestion begins.
+The contracts describe resource job requests and accepted job acknowledgements without binding the domain layer to a queue implementation, database repository, worker runtime, AI provider, retrieval package, web route, UI, or mobile code.
 
 ## Public surface
 
-- `@avora/domain/resources`
+- `ResourceIngestionJobRequest`
+- `ResourceIngestionJobAccepted`
+- `ResourceClassificationJobRequest`
+- `ResourceClassificationJobAccepted`
 
-## Requirement trace
+## Completion Group C — Resource classification handoff
 
-- ENG-011
-- ENG-015
-- ENG-016
-- ENG-018
-- ENG-176
-- FR-032
-- FR-035
-- FR-036
-- FR-037
-- FR-039
-- FR-042
-- NFR-004
-- NFR-034
-- NN-04
-- NN-05
-- NN-10
+Completion Group C maps to authoritative Stage 9 Group 3: Classification job contract.
 
-## Boundaries
+It adds domain-visible resource classification job contracts for handing a validated resource into later placement classification execution.
 
-Job contracts in this directory must not import vendor SDKs.
-
-Job contracts in this directory must not contain queue infrastructure, queue persistence, worker execution, OCR, malware scanning, file parsing, AI processing, embeddings, retrieval indexing, route handlers, database clients, storage SDK calls, React components, React Native components, pages, screens, or tests.
-
-Resource ingestion execution belongs to a later worker-plane group.
+This group intentionally does not implement classification execution, AI/provider logic, placement services, placement APIs, workers, UI, mobile, retrieval, Stage 10, Stage 11, or later completion groups.
