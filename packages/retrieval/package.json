@@ -8,7 +8,7 @@
     "./chunking": "./chunking/index.ts",
     "./strategies": "./strategies/index.ts",
     "./scope": "./scope/index.ts",
-    "./search": "./search/index.ts",
+    "./search": "./dist/search/index.js",
     "./indexing": "./indexing/index.js",
     "./insufficiency": "./insufficiency/index.ts"
   },

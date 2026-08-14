@@ -84,6 +84,9 @@ importers:
       '@avora/jobs':
         specifier: workspace:*
         version: link:../../packages/jobs
+      '@avora/retrieval':
+        specifier: workspace:*
+        version: link:../../packages/retrieval
       '@avora/ui-web':
         specifier: workspace:*
         version: link:../../packages/ui-web
@@ -137,6 +140,9 @@ importers:
       '@avora/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@types/node':
+        specifier: 24.10.4
+        version: 24.10.4
 
   e2e:
     devDependencies:
@@ -265,9 +271,6 @@ importers:
       '@avora/core':
         specifier: workspace:*
         version: link:../core
-      '@avora/db':
-        specifier: workspace:*
-        version: link:../db
     devDependencies:
       '@avora/config':
         specifier: workspace:*

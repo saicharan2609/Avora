@@ -13,6 +13,7 @@
     "./errors": "./dist/errors/index.js",
     "./query-keys": "./dist/query-keys/index.js",
     "./observability": "./dist/observability/index.js",
+    "./contracts/tutor": "./dist/contracts/tutor/index.js",
     "./text": "./dist/text/index.js",
     "./time": "./dist/time/index.js",
     "./validation": "./dist/validation/index.js"

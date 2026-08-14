@@ -17,6 +17,7 @@
     "@avora/ai": "workspace:*",
     "@avora/core": "workspace:*",
     "@avora/db": "workspace:*",
+    "@avora/retrieval": "workspace:*",
     "@avora/domain": "workspace:*",
     "@avora/jobs": "workspace:*",
     "@avora/ui-web": "workspace:*",

@@ -102,3 +102,17 @@ Contract coverage:
 - read academic structure tree.
 
 This group does not add web route handlers, database repositories, domain services, UI, mobile, worker behavior, AI behavior, retrieval behavior, or e2e flows.
+## Stage 11 Group 8 — Tutor API contracts
+
+Stage 11 Group 8 adds transport-safe tutor API contracts.
+
+Public surface:
+
+- `@avora/core/contracts/tutor`
+- `askTutorContract`
+- `askTutorRequestBodySchema`
+- `askTutorResponseBodySchema`
+
+The request contract intentionally excludes `studentId`. Student ownership is resolved by the authenticated web route.
+
+This group does not implement AI Gateway orchestration, retrieval logic, provider calls, UI, mobile behavior, database schema, repositories, evals, or e2e flows.
