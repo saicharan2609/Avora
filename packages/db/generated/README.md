@@ -52,3 +52,13 @@ The generated shape must remain compatible with `@supabase/supabase-js` typed Po
 Do not wrap the generated shape in deep readonly types.
 
 Chunk rows are student-scoped derived artifacts and form the persistence basis for later retrieval and citation-bearing relations.
+## Completion Group B — Resource placement generated types
+
+Completion Group B adds generated database type sections for:
+
+- `public.resource_placements`
+- `public.resource_placement_corrections`
+
+The generated shape must remain compatible with `@supabase/supabase-js` typed PostgREST generics.
+
+Do not wrap the generated shape in deep readonly types.

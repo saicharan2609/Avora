@@ -219,3 +219,21 @@ Repository coverage:
 - retrieval chunk reads by scope facets.
 
 This group does not add database migrations, RLS policies, chunking algorithms, embeddings, vector search, keyword search, hybrid retrieval, scope resolution runtime, AI Gateway citation verification, worker execution, web routes, UI, mobile behavior, or e2e flows.
+## Completion Group B — Resource placement persistence
+
+Completion Group B adds student-scoped resource placement persistence.
+
+Public surface:
+
+- `@avora/db/repositories/placement`
+- `createResourcePlacementRepository`
+- `ResourcePlacementRepository`
+
+Tables:
+
+- `public.resource_placements`
+- `public.resource_placement_corrections`
+
+All reads and writes are scoped by `student_id`.
+
+This group does not implement classification workers, placement services, placement APIs, correction e2e, extraction work, retrieval behavior, AI/provider behavior, UI, mobile code, or Stage 11 behavior.

@@ -61,3 +61,13 @@ The policy artifact mirrors RLS for:
 Authenticated users receive select-only access to their own chunks.
 
 No authenticated insert, update, or delete policy is introduced.
+## Completion Group B — Resource placement policies
+
+Completion Group B adds policy artifacts for:
+
+- `public.resource_placements`
+- `public.resource_placement_corrections`
+
+Placement rows are student-scoped. Authenticated students may select, insert, and update their own placement rows. Correction rows are append-only from the application perspective: authenticated students may select and insert their own correction rows.
+
+No authenticated delete policy is introduced.

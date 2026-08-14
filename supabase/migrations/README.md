@@ -52,3 +52,20 @@ Stage 10 Group 2 adds:
 This migration creates retrieval chunk persistence:
 
 - `public.chunks`
+## Completion Group B — Resource placement persistence
+
+Completion Group B adds:
+
+- `20260805223100_resources_student_resource_unique.sql`
+- `20260814124500_resource_placements.sql`
+
+The first migration makes the existing student-scoped resource foreign-key convention explicit by adding `resources_student_resource_unique`.
+
+The second migration creates student-scoped resource placement persistence:
+
+- `public.resource_placements`
+- `public.resource_placement_corrections`
+
+The migration preserves resource ownership, academic scope, placement confidence, candidate provenance, placement reason, accepted/tentative status, and correction history.
+
+This group does not implement classification workers, placement services, placement APIs, correction e2e, extraction work, retrieval behavior, AI/provider behavior, UI, or mobile code.

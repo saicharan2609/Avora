@@ -24,3 +24,9 @@ export {
   RetrievalChunkRepositoryError,
   createRetrievalChunkRepository,
 } from "./chunks/index.js";
+export type * from "./placement/index.js";
+
+export {
+  ResourcePlacementRepositoryError,
+  createResourcePlacementRepository,
+} from "./placement/index.js";

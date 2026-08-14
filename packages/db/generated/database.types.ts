@@ -581,6 +581,235 @@ structure_units: {
         };
         Relationships: [];
       };
+            resource_placements: {
+        Row: {
+          placement_id: string;
+          student_id: string;
+          resource_id: string;
+          term_id: string;
+          subject_id: string;
+          structure_unit_id: string | null;
+          confidence_level:
+            | "student_confirmed"
+            | "high"
+            | "medium"
+            | "low"
+            | "unknown";
+          confidence_source:
+            | "student"
+            | "imported"
+            | "system_suggested";
+          confidence_reason: string | null;
+          status: "accepted" | "tentative";
+          candidate_id: string | null;
+          candidate_provenance:
+            | "resource_metadata"
+            | "resource_content"
+            | "student_declared"
+            | "imported"
+            | null;
+          placement_reason: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          placement_id?: string;
+          student_id: string;
+          resource_id: string;
+          term_id: string;
+          subject_id: string;
+          structure_unit_id?: string | null;
+          confidence_level:
+            | "student_confirmed"
+            | "high"
+            | "medium"
+            | "low"
+            | "unknown";
+          confidence_source:
+            | "student"
+            | "imported"
+            | "system_suggested";
+          confidence_reason?: string | null;
+          status: "accepted" | "tentative";
+          candidate_id?: string | null;
+          candidate_provenance?:
+            | "resource_metadata"
+            | "resource_content"
+            | "student_declared"
+            | "imported"
+            | null;
+          placement_reason?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          placement_id?: string;
+          student_id?: string;
+          resource_id?: string;
+          term_id?: string;
+          subject_id?: string;
+          structure_unit_id?: string | null;
+          confidence_level?:
+            | "student_confirmed"
+            | "high"
+            | "medium"
+            | "low"
+            | "unknown";
+          confidence_source?:
+            | "student"
+            | "imported"
+            | "system_suggested";
+          confidence_reason?: string | null;
+          status?: "accepted" | "tentative";
+          candidate_id?: string | null;
+          candidate_provenance?:
+            | "resource_metadata"
+            | "resource_content"
+            | "student_declared"
+            | "imported"
+            | null;
+          placement_reason?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "resource_placements_student_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["student_id"];
+          },
+          {
+            foreignKeyName: "resource_placements_resource_fkey";
+            columns: ["student_id", "resource_id"];
+            isOneToOne: false;
+            referencedRelation: "resources";
+            referencedColumns: ["student_id", "resource_id"];
+          },
+          {
+            foreignKeyName: "resource_placements_term_fkey";
+            columns: ["student_id", "term_id"];
+            isOneToOne: false;
+            referencedRelation: "academic_terms";
+            referencedColumns: ["student_id", "term_id"];
+          },
+          {
+            foreignKeyName: "resource_placements_subject_fkey";
+            columns: ["student_id", "term_id", "subject_id"];
+            isOneToOne: false;
+            referencedRelation: "subjects";
+            referencedColumns: ["student_id", "term_id", "subject_id"];
+          },
+          {
+            foreignKeyName: "resource_placements_structure_unit_fkey";
+            columns: ["student_id", "structure_unit_id"];
+            isOneToOne: false;
+            referencedRelation: "structure_units";
+            referencedColumns: ["student_id", "structure_unit_id"];
+          },
+        ];
+      };
+
+      resource_placement_corrections: {
+        Row: {
+          correction_id: string;
+          student_id: string;
+          resource_id: string;
+          previous_term_id: string | null;
+          previous_subject_id: string | null;
+          previous_structure_unit_id: string | null;
+          corrected_term_id: string;
+          corrected_subject_id: string;
+          corrected_structure_unit_id: string | null;
+          reason: string | null;
+          corrected_at: string;
+        };
+        Insert: {
+          correction_id?: string;
+          student_id: string;
+          resource_id: string;
+          previous_term_id?: string | null;
+          previous_subject_id?: string | null;
+          previous_structure_unit_id?: string | null;
+          corrected_term_id: string;
+          corrected_subject_id: string;
+          corrected_structure_unit_id?: string | null;
+          reason?: string | null;
+          corrected_at?: string;
+        };
+        Update: {
+          correction_id?: string;
+          student_id?: string;
+          resource_id?: string;
+          previous_term_id?: string | null;
+          previous_subject_id?: string | null;
+          previous_structure_unit_id?: string | null;
+          corrected_term_id?: string;
+          corrected_subject_id?: string;
+          corrected_structure_unit_id?: string | null;
+          reason?: string | null;
+          corrected_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "resource_placement_corrections_student_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["student_id"];
+          },
+          {
+            foreignKeyName: "resource_placement_corrections_resource_fkey";
+            columns: ["student_id", "resource_id"];
+            isOneToOne: false;
+            referencedRelation: "resources";
+            referencedColumns: ["student_id", "resource_id"];
+          },
+          {
+            foreignKeyName: "resource_placement_corrections_previous_term_fkey";
+            columns: ["student_id", "previous_term_id"];
+            isOneToOne: false;
+            referencedRelation: "academic_terms";
+            referencedColumns: ["student_id", "term_id"];
+          },
+          {
+            foreignKeyName: "resource_placement_corrections_previous_subject_fkey";
+            columns: ["student_id", "previous_term_id", "previous_subject_id"];
+            isOneToOne: false;
+            referencedRelation: "subjects";
+            referencedColumns: ["student_id", "term_id", "subject_id"];
+          },
+          {
+            foreignKeyName: "resource_placement_corrections_previous_structure_unit_fkey";
+            columns: ["student_id", "previous_structure_unit_id"];
+            isOneToOne: false;
+            referencedRelation: "structure_units";
+            referencedColumns: ["student_id", "structure_unit_id"];
+          },
+          {
+            foreignKeyName: "resource_placement_corrections_corrected_term_fkey";
+            columns: ["student_id", "corrected_term_id"];
+            isOneToOne: false;
+            referencedRelation: "academic_terms";
+            referencedColumns: ["student_id", "term_id"];
+          },
+          {
+            foreignKeyName: "resource_placement_corrections_corrected_subject_fkey";
+            columns: ["student_id", "corrected_term_id", "corrected_subject_id"];
+            isOneToOne: false;
+            referencedRelation: "subjects";
+            referencedColumns: ["student_id", "term_id", "subject_id"];
+          },
+          {
+            foreignKeyName: "resource_placement_corrections_corrected_structure_unit_fkey";
+            columns: ["student_id", "corrected_structure_unit_id"];
+            isOneToOne: false;
+            referencedRelation: "structure_units";
+            referencedColumns: ["student_id", "structure_unit_id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

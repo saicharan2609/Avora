@@ -7,8 +7,14 @@ export {
   createStudentDatabaseClient,
 } from "../client/index.js";
 export {
+  createAcademicGraphRepository,
+  AcademicGraphRepositoryError,
+  createResourceExtractionRepository,
+  ResourceExtractionRepositoryError,
   createResourceIngestionJobsRepository,
   ResourceIngestionJobsRepositoryError,
+  createResourcePlacementRepository,
+  ResourcePlacementRepositoryError,
   createResourcesRepository,
   ResourcesRepositoryError,
 } from "../repositories/index.js";
