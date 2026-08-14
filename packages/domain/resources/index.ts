@@ -33,6 +33,7 @@ export {
 } from "./jobs/index.js";
 
 export {
+  extractionProvenanceSources,
   placementCandidateProvenances,
   resourcePlacementStatuses,
 } from "./contracts/index.js";

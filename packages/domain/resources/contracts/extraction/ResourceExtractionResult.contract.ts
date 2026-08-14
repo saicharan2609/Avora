@@ -16,6 +16,7 @@ export const resourceExtractionFailureCodes = [
   "storage_object_unavailable",
   "unsupported_mime_type",
   "unsupported_resource_kind",
+  "unsupported_page",
   "empty_extraction",
   "extractor_failed",
 ] as const;
@@ -27,6 +28,12 @@ export type ResourceExtractionFailure = Readonly<{
   code: ResourceExtractionFailureCode;
   message: string;
 }>;
+
+export type UnsupportedPageExtractionFailure = ResourceExtractionFailure &
+  Readonly<{
+    code: "unsupported_page";
+    pageNumber: number;
+  }>;
 
 export type ResourceExtractionRequest = Readonly<{
   studentId: StudentId;

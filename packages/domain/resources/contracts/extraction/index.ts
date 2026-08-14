@@ -37,7 +37,24 @@ export type {
   ResourceExtractionFailureCode,
   ResourceExtractionRequest,
   ResourceExtractionResult,
+  UnsupportedPageExtractionFailure,
 } from "./ResourceExtractionResult.contract.js";
 export {
   resourceExtractionFailureCodes,
 } from "./ResourceExtractionResult.contract.js";
+
+export type {
+  ExtractionProvenance,
+  ExtractionProvenanceSource,
+} from "./ExtractionProvenance.contract.js";
+export {
+  extractionProvenanceSources,
+} from "./ExtractionProvenance.contract.js";
+
+export type {
+  ExtractedPage,
+} from "./ExtractedPage.contract.js";
+
+export type {
+  ExtractedResourceContent,
+} from "./ExtractedResourceContent.contract.js";

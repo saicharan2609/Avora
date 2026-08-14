@@ -110,7 +110,26 @@ New port:
 This group does not add database schema, repositories, storage adapters, OCR adapters, AI adapters, worker execution, embeddings, retrieval indexing, summaries, notes, flashcards, quizzes, API routes, UI, or mobile screens.
 
 The contracts preserve locator metadata so later retrieval and citation verification can resolve content back to the original student resource.
+## Stage 10 Group 1 — Extraction contracts
 
+Stage 10 Group 1 extends the vendor-free extraction contract surface for the derived text corpus.
+
+New public contracts:
+
+- `ExtractedResourceContent`
+- `ExtractedPage`
+- `ExtractionProvenance`
+
+New provenance surface:
+
+- `extractionProvenanceSources`
+- `ExtractionProvenanceSource`
+
+The contracts define extracted text pages, extraction provenance, extraction confidence, unsupported-page failure shape, and aggregate extracted resource content.
+
+This group reuses the existing resource extraction identifiers, source locators, extracted content blocks, timestamps, resource identifiers, extraction strategy versions, and chunking strategy versions.
+
+This group does not add database schema, repositories, services, adapters, worker execution, API routes, AI behavior, retrieval indexing, summaries, notes, flashcards, quizzes, UI, or mobile screens.
 ## Stage 9 Group 4 — Resource extraction service
 
 Stage 9 Group 4 adds the domain application service for resource extraction.

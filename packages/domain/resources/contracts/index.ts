@@ -27,6 +27,10 @@ export {
   resourceIngestionValidationIssueCodes,
 } from "./validation/ResourceIngestionValidation.contract.js";
 export type {
+  ExtractedPage,
+  ExtractedResourceContent,
+  ExtractionProvenance,
+  ExtractionProvenanceSource,
   ResourceBoundingBox,
   ResourceChunkingStrategyVersion,
   ResourceExtractedContentBlock,
@@ -44,9 +48,11 @@ export type {
   ResourceSourceLocatorKind,
   ResourceTextSpan,
   ResourceTimeRange,
+  UnsupportedPageExtractionFailure,
 } from "./extraction/index.js";
 
 export {
+  extractionProvenanceSources,
   resourceExtractedContentBlockKinds,
   resourceExtractionDocumentStatuses,
   resourceExtractionFailureCodes,
