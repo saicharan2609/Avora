@@ -6,13 +6,20 @@ import {
   ResourceExtractionRepositoryError,
 } from "./errors.js";
 import type {
+  DbExtractionProvenanceSource,
   DbResourceBoundingBox,
   DbResourceExtractedContentBlockId,
   DbResourceExtractedContentBlockNode,
   DbResourceExtractedContentBlockRecord,
+  DbResourceExtractedPageId,
+  DbResourceExtractedPageRecord,
   DbResourceExtractionDocumentId,
   DbResourceExtractionDocumentRecord,
   DbResourceExtractionDocumentTree,
+  DbResourceExtractionFailureId,
+  DbResourceExtractionFailureRecord,
+  DbResourceExtractionProvenanceId,
+  DbResourceExtractionProvenanceRecord,
   DbResourceSourceLocator,
   DbResourceSourceLocatorKind,
   DbResourceTextSpan,
@@ -51,6 +58,60 @@ export function mapResourceExtractedContentBlockRow(
     confidence: row.confidence,
     createdAt: row.created_at as IsoDateTimeString,
     updatedAt: row.updated_at as IsoDateTimeString,
+  };
+}
+
+export function mapResourceExtractionProvenanceRow(
+  row: Database["public"]["Tables"]["resource_extraction_provenance"]["Row"],
+): DbResourceExtractionProvenanceRecord {
+  return {
+    provenanceId: row.provenance_id as DbResourceExtractionProvenanceId,
+    extractionDocumentId: row.extraction_document_id as DbResourceExtractionDocumentId,
+    studentId: row.student_id as StudentId,
+    resourceId: row.resource_id as ResourceId,
+    pageNumber: row.page_number,
+    source: row.source as DbExtractionProvenanceSource,
+    strategyVersion: row.strategy_version as DbResourceExtractionProvenanceRecord["strategyVersion"],
+    extractedAt: row.extracted_at as IsoDateTimeString,
+    notes: row.notes,
+    createdAt: row.created_at as IsoDateTimeString,
+  };
+}
+
+export function mapResourceExtractedPageRow(
+  row: Database["public"]["Tables"]["resource_extracted_pages"]["Row"],
+): DbResourceExtractedPageRecord {
+  return {
+    pageId: row.page_id as DbResourceExtractedPageId,
+    extractionDocumentId: row.extraction_document_id as DbResourceExtractionDocumentId,
+    studentId: row.student_id as StudentId,
+    resourceId: row.resource_id as ResourceId,
+    provenanceId: row.provenance_id as DbResourceExtractionProvenanceId,
+    pageNumber: row.page_number,
+    text: row.text,
+    locator: mapLocator(row.locator),
+    confidence: row.confidence,
+    createdAt: row.created_at as IsoDateTimeString,
+    updatedAt: row.updated_at as IsoDateTimeString,
+  };
+}
+
+export function mapResourceExtractionFailureRow(
+  row: Database["public"]["Tables"]["resource_extraction_failures"]["Row"],
+): DbResourceExtractionFailureRecord {
+  return {
+    failureId: row.failure_id as DbResourceExtractionFailureId,
+    extractionDocumentId: row.extraction_document_id as DbResourceExtractionDocumentId,
+    studentId: row.student_id as StudentId,
+    resourceId: row.resource_id as ResourceId,
+    provenanceId:
+      row.provenance_id === null
+        ? null
+        : row.provenance_id as DbResourceExtractionProvenanceId,
+    code: row.code as DbResourceExtractionFailureRecord["code"],
+    pageNumber: row.page_number,
+    message: row.message,
+    createdAt: row.created_at as IsoDateTimeString,
   };
 }
 

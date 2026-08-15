@@ -82,3 +82,12 @@ The authoritative executable policy creation lives in the migration:
 - `20260814131500_resource_placement_candidates.sql`
 
 Authenticated students may select their own placement candidates. No authenticated insert, update, or delete policy is introduced.
+## Stage 10 Group 2 — Extraction schema and repositories
+
+Stage 10 Group 2 extends extraction persistence with extracted pages, extraction failures, and extraction provenance.
+
+The repository remains DB-shaped and does not import `@avora/domain`.
+
+The persistence layer remains student-scoped through `student_id`, composite extraction-document ownership constraints, and RLS.
+
+This group does not add worker execution, storage adapters, OCR, parsing, AI behavior, retrieval indexing, API routes, UI, or mobile behavior.

@@ -1,0 +1,18 @@
+-- Resource extraction pages, failures, and provenance RLS reference.
+--
+-- Authoritative executable policies are created in:
+-- - supabase/migrations/20260815093500_resource_extraction_pages_failures_provenance.sql
+--
+-- Tables covered:
+-- - public.resource_extraction_provenance
+-- - public.resource_extracted_pages
+-- - public.resource_extraction_failures
+--
+-- RLS posture:
+-- - authenticated students may select only rows where student_id = auth.uid()
+-- - authenticated students may not insert rows
+-- - authenticated students may not update rows
+-- - authenticated students may not delete rows
+-- - trusted server-side extraction infrastructure writes through privileged runtime paths
+--
+-- This file is intentionally non-executable to avoid duplicate policy creation.

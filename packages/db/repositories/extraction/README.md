@@ -63,3 +63,12 @@ Stage 9 Group 7 adds:
 The plan records repository expectations for creating extraction documents, creating extracted content blocks, reading extraction documents, listing blocks, and building extracted content block trees.
 
 The plan also records boundary assertions that the repository must not import domain, jobs, adapters, AI, retrieval, apps, or UI packages.
+## Stage 10 Group 2 — Extraction schema and repositories
+
+Stage 10 Group 2 extends extraction persistence with extracted pages, extraction failures, and extraction provenance.
+
+The repository remains DB-shaped and does not import `@avora/domain`.
+
+The persistence layer remains student-scoped through `student_id`, composite extraction-document ownership constraints, and RLS.
+
+This group does not add worker execution, storage adapters, OCR, parsing, AI behavior, retrieval indexing, API routes, UI, or mobile behavior.

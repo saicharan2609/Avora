@@ -11,6 +11,18 @@ export type DbResourceExtractedContentBlockId = string & {
   readonly __brand: "DbResourceExtractedContentBlockId";
 };
 
+export type DbResourceExtractedPageId = string & {
+  readonly __brand: "DbResourceExtractedPageId";
+};
+
+export type DbResourceExtractionFailureId = string & {
+  readonly __brand: "DbResourceExtractionFailureId";
+};
+
+export type DbResourceExtractionProvenanceId = string & {
+  readonly __brand: "DbResourceExtractionProvenanceId";
+};
+
 export type DbResourceExtractionStrategyVersion = string & {
   readonly __brand: "DbResourceExtractionStrategyVersion";
 };
@@ -24,6 +36,23 @@ export type DbResourceExtractionDocumentStatus =
 
 export type DbResourceExtractedContentBlockKind =
   Database["public"]["Enums"]["resource_extracted_content_block_kind"];
+
+export type DbExtractionProvenanceSource =
+  | "document_text"
+  | "ocr"
+  | "scan"
+  | "handwriting"
+  | "manual"
+  | "system";
+
+export type DbResourceExtractionFailureCode =
+  | "resource_not_processable"
+  | "storage_object_unavailable"
+  | "unsupported_mime_type"
+  | "unsupported_resource_kind"
+  | "unsupported_page"
+  | "empty_extraction"
+  | "extractor_failed";
 
 export type DbResourceSourceLocatorKind =
   | "document_page"
@@ -89,6 +118,45 @@ export type DbResourceExtractedContentBlockRecord = Readonly<{
   updatedAt: IsoDateTimeString;
 }>;
 
+export type DbResourceExtractionProvenanceRecord = Readonly<{
+  provenanceId: DbResourceExtractionProvenanceId;
+  extractionDocumentId: DbResourceExtractionDocumentId;
+  studentId: StudentId;
+  resourceId: ResourceId;
+  pageNumber: number | null;
+  source: DbExtractionProvenanceSource;
+  strategyVersion: DbResourceExtractionStrategyVersion;
+  extractedAt: IsoDateTimeString;
+  notes: string | null;
+  createdAt: IsoDateTimeString;
+}>;
+
+export type DbResourceExtractedPageRecord = Readonly<{
+  pageId: DbResourceExtractedPageId;
+  extractionDocumentId: DbResourceExtractionDocumentId;
+  studentId: StudentId;
+  resourceId: ResourceId;
+  provenanceId: DbResourceExtractionProvenanceId;
+  pageNumber: number;
+  text: string;
+  locator: DbResourceSourceLocator;
+  confidence: number | null;
+  createdAt: IsoDateTimeString;
+  updatedAt: IsoDateTimeString;
+}>;
+
+export type DbResourceExtractionFailureRecord = Readonly<{
+  failureId: DbResourceExtractionFailureId;
+  extractionDocumentId: DbResourceExtractionDocumentId;
+  studentId: StudentId;
+  resourceId: ResourceId;
+  provenanceId: DbResourceExtractionProvenanceId | null;
+  code: DbResourceExtractionFailureCode;
+  pageNumber: number | null;
+  message: string;
+  createdAt: IsoDateTimeString;
+}>;
+
 export type DbResourceExtractedContentBlockNode = Readonly<{
   block: DbResourceExtractedContentBlockRecord;
   children: readonly DbResourceExtractedContentBlockNode[];
@@ -127,6 +195,41 @@ export type CreateResourceExtractedContentBlockInput = Readonly<{
   confidence: number | null;
 }>;
 
+export type CreateResourceExtractionProvenanceInput = Readonly<{
+  provenanceId: DbResourceExtractionProvenanceId;
+  extractionDocumentId: DbResourceExtractionDocumentId;
+  studentId: StudentId;
+  resourceId: ResourceId;
+  pageNumber: number | null;
+  source: DbExtractionProvenanceSource;
+  strategyVersion: DbResourceExtractionStrategyVersion;
+  extractedAt: IsoDateTimeString;
+  notes: string | null;
+}>;
+
+export type CreateResourceExtractedPageInput = Readonly<{
+  pageId: DbResourceExtractedPageId;
+  extractionDocumentId: DbResourceExtractionDocumentId;
+  studentId: StudentId;
+  resourceId: ResourceId;
+  provenanceId: DbResourceExtractionProvenanceId;
+  pageNumber: number;
+  text: string;
+  locator: DbResourceSourceLocator;
+  confidence: number | null;
+}>;
+
+export type CreateResourceExtractionFailureInput = Readonly<{
+  failureId: DbResourceExtractionFailureId;
+  extractionDocumentId: DbResourceExtractionDocumentId;
+  studentId: StudentId;
+  resourceId: ResourceId;
+  provenanceId: DbResourceExtractionProvenanceId | null;
+  code: DbResourceExtractionFailureCode;
+  pageNumber: number | null;
+  message: string;
+}>;
+
 export type CreateResourceExtractionDocumentWithBlocksInput = Readonly<{
   document: CreateResourceExtractionDocumentInput;
   blocks: readonly CreateResourceExtractedContentBlockInput[];
@@ -147,6 +250,21 @@ export type ListResourceExtractedContentBlocksInput = Readonly<{
   extractionDocumentId: DbResourceExtractionDocumentId;
 }>;
 
+export type ListResourceExtractionProvenanceInput = Readonly<{
+  studentId: StudentId;
+  extractionDocumentId: DbResourceExtractionDocumentId;
+}>;
+
+export type ListResourceExtractedPagesInput = Readonly<{
+  studentId: StudentId;
+  extractionDocumentId: DbResourceExtractionDocumentId;
+}>;
+
+export type ListResourceExtractionFailuresInput = Readonly<{
+  studentId: StudentId;
+  extractionDocumentId: DbResourceExtractionDocumentId;
+}>;
+
 export type ResourceExtractionRepository = Readonly<{
   createResourceExtractionDocument: (
     input: CreateResourceExtractionDocumentInput,
@@ -154,6 +272,15 @@ export type ResourceExtractionRepository = Readonly<{
   createResourceExtractedContentBlocks: (
     input: readonly CreateResourceExtractedContentBlockInput[],
   ) => Promise<readonly DbResourceExtractedContentBlockRecord[]>;
+  createResourceExtractionProvenance: (
+    input: CreateResourceExtractionProvenanceInput,
+  ) => Promise<DbResourceExtractionProvenanceRecord>;
+  createResourceExtractedPages: (
+    input: readonly CreateResourceExtractedPageInput[],
+  ) => Promise<readonly DbResourceExtractedPageRecord[]>;
+  createResourceExtractionFailures: (
+    input: readonly CreateResourceExtractionFailureInput[],
+  ) => Promise<readonly DbResourceExtractionFailureRecord[]>;
   createResourceExtractionDocumentWithBlocks: (
     input: CreateResourceExtractionDocumentWithBlocksInput,
   ) => Promise<DbResourceExtractionDocumentWithBlocks>;
@@ -166,6 +293,15 @@ export type ResourceExtractionRepository = Readonly<{
   listResourceExtractedContentBlocks: (
     input: ListResourceExtractedContentBlocksInput,
   ) => Promise<readonly DbResourceExtractedContentBlockRecord[]>;
+  listResourceExtractionProvenance: (
+    input: ListResourceExtractionProvenanceInput,
+  ) => Promise<readonly DbResourceExtractionProvenanceRecord[]>;
+  listResourceExtractedPages: (
+    input: ListResourceExtractedPagesInput,
+  ) => Promise<readonly DbResourceExtractedPageRecord[]>;
+  listResourceExtractionFailures: (
+    input: ListResourceExtractionFailuresInput,
+  ) => Promise<readonly DbResourceExtractionFailureRecord[]>;
   getResourceExtractionDocumentTree: (
     input: GetResourceExtractionDocumentByIdInput,
   ) => Promise<DbResourceExtractionDocumentTree | null>;
