@@ -17,6 +17,7 @@
     "resend/**/*.ts",
     "sentry/**/*.ts",
     "resource-placement/**/*.ts",
+    "extraction/**/*.ts",
     "posthog/**/*.ts",
     "otel/**/*.ts"
   ],
@@ -28,10 +29,10 @@
       "path": "../core"
     },
     {
-  "path": "../db"
-},
-{
-  "path": "../domain"
-}
+      "path": "../db"
+    },
+    {
+      "path": "../domain"
+    }
   ]
 }

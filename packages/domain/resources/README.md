@@ -130,6 +130,17 @@ The contracts define extracted text pages, extraction provenance, extraction con
 This group reuses the existing resource extraction identifiers, source locators, extracted content blocks, timestamps, resource identifiers, extraction strategy versions, and chunking strategy versions.
 
 This group does not add database schema, repositories, services, adapters, worker execution, API routes, AI behavior, retrieval indexing, summaries, notes, flashcards, quizzes, UI, or mobile screens.
+## Stage 10 Group 3 — Extraction adapter port and provider seam
+
+Stage 10 Group 3 exposes the exact extraction port name used by adapter-facing code.
+
+New public API:
+
+- `ExtractionPort`
+
+`ExtractionPort` is an alias of the existing vendor-free `ResourceExtractionPort`.
+
+This group does not duplicate extraction contracts, extraction services, extraction repositories, database schema, worker execution, OCR adapters, parser adapters, AI behavior, retrieval indexing, API routes, UI, or mobile screens.
 ## Stage 9 Group 4 — Resource extraction service
 
 Stage 9 Group 4 adds the domain application service for resource extraction.

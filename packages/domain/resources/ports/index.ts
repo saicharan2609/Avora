@@ -20,3 +20,6 @@ export type {
 export type {
   ResourceExtractionPort,
 } from "./ResourceExtractionPort.js";
+export type {
+  ExtractionPort,
+} from "./ExtractionPort.js";
