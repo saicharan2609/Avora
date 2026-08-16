@@ -31,6 +31,7 @@ export type {
   DbResourceTextSpan,
   DbResourceTimeRange,
   GetResourceExtractionDocumentByIdInput,
+  GetResourceExtractionDocumentCheckpointInput,
   ListResourceExtractedContentBlocksInput,
   ListResourceExtractedPagesInput,
   ListResourceExtractionDocumentsByResourceInput,

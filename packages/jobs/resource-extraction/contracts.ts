@@ -35,6 +35,7 @@ export type ResourceExtractionStorageObject = Readonly<{
 }>;
 
 export type ResourceExtractionJobPayload = Readonly<{
+  extractionDocumentId: string;
   studentId: StudentId;
   resourceId: ResourceId;
   storage: ResourceExtractionStorageObject;

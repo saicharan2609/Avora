@@ -1,7 +1,10 @@
 export type {
   ResourceChunkingStrategyVersion,
   ResourceExtractedContentBlockId,
+  ResourceExtractedPageId,
   ResourceExtractionDocumentId,
+  ResourceExtractionFailureId,
+  ResourceExtractionProvenanceId,
   ResourceExtractionStrategyVersion,
 } from "./ResourceExtractionIdentifiers.contract.js";
 
@@ -35,12 +38,15 @@ export {
 export type {
   ResourceExtractionFailure,
   ResourceExtractionFailureCode,
-  ResourceExtractionRequest,
-  ResourceExtractionResult,
   UnsupportedPageExtractionFailure,
-} from "./ResourceExtractionResult.contract.js";
+} from "./ResourceExtractionFailure.contract.js";
 export {
   resourceExtractionFailureCodes,
+} from "./ResourceExtractionFailure.contract.js";
+
+export type {
+  ResourceExtractionRequest,
+  ResourceExtractionResult,
 } from "./ResourceExtractionResult.contract.js";
 
 export type {

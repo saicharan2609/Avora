@@ -24,6 +24,8 @@ export function mapResourceExtractionJobPayloadToRequest(
   payload: ResourceExtractionJobPayload,
 ): ResourceExtractionRequest {
   return {
+    extractionDocumentId:
+      payload.extractionDocumentId as unknown as ResourceExtractionDocumentId,
     studentId: payload.studentId,
     resourceId: payload.resourceId,
     storage: payload.storage as unknown as ResourceStorageLocation,

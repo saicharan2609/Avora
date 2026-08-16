@@ -17,10 +17,12 @@ import type {
 } from "./ResourceExtractedContent.contract.js";
 import type {
   ResourceChunkingStrategyVersion,
+  ResourceExtractionDocumentId,
   ResourceExtractionStrategyVersion,
 } from "./ResourceExtractionIdentifiers.contract.js";
 
 export type ExtractedResourceContent = Readonly<{
+  extractionDocumentId: ResourceExtractionDocumentId;
   studentId: StudentId;
   resourceId: ResourceId;
   extractionStrategyVersion: ResourceExtractionStrategyVersion;

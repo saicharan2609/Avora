@@ -40,6 +40,8 @@
   "jobPayloads": [
     {
       "alias": "resource_extraction_job_payload_pdf",
+      "extractionDocumentAlias": "extraction_document_pdf_graph_notes",
+      "extractionDocumentId": "00000000-0000-4000-8000-000000009201",
       "studentAlias": "student_a",
       "resourceAlias": "resource_pdf_graph_notes",
       "storage": {
@@ -64,6 +66,55 @@
       "extractionStrategyVersion": "extractor.v1",
       "chunkingStrategyVersion": "chunker.v1",
       "extractedAt": "2026-08-11T09:44:00.000Z"
+    }
+  ],
+  "extractionProvenance": [
+    {
+      "alias": "provenance_document_pdf_graph_notes",
+      "provenanceId": "00000000-0000-4000-8000-000000009401",
+      "extractionDocumentAlias": "extraction_document_pdf_graph_notes",
+      "studentAlias": "student_a",
+      "resourceAlias": "resource_pdf_graph_notes",
+      "pageNumber": null,
+      "source": "document_text",
+      "strategyVersion": "extractor.v1",
+      "extractedAt": "2026-08-11T09:44:00.000Z",
+      "notes": "Synthetic document-level provenance."
+    },
+    {
+      "alias": "provenance_page_1_pdf_graph_notes",
+      "provenanceId": "00000000-0000-4000-8000-000000009402",
+      "extractionDocumentAlias": "extraction_document_pdf_graph_notes",
+      "studentAlias": "student_a",
+      "resourceAlias": "resource_pdf_graph_notes",
+      "pageNumber": 1,
+      "source": "document_text",
+      "strategyVersion": "extractor.v1",
+      "extractedAt": "2026-08-11T09:44:00.000Z",
+      "notes": "Synthetic page-level provenance."
+    }
+  ],
+  "extractedPages": [
+    {
+      "alias": "page_1_pdf_graph_notes",
+      "pageId": "00000000-0000-4000-8000-000000009501",
+      "extractionDocumentAlias": "extraction_document_pdf_graph_notes",
+      "studentAlias": "student_a",
+      "resourceAlias": "resource_pdf_graph_notes",
+      "provenanceAlias": "provenance_page_1_pdf_graph_notes",
+      "pageNumber": 1,
+      "text": "Synthetic Graph Notes\nA graph is represented synthetically as vertices and edges for validation.\nVertex; Edge; Path",
+      "locator": {
+        "kind": "document_page",
+        "pageNumber": 1,
+        "slideNumber": null,
+        "boundingBox": null,
+        "textSpan": null,
+        "timeRange": null,
+        "label": "Synthetic page 1"
+      },
+      "confidence": 0.97,
+      "failure": null
     }
   ],
   "extractedContentBlocks": [

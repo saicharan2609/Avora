@@ -243,6 +243,13 @@ export type GetResourceExtractionDocumentByIdInput = Readonly<{
   extractionDocumentId: DbResourceExtractionDocumentId;
 }>;
 
+export type GetResourceExtractionDocumentCheckpointInput = Readonly<{
+  studentId: StudentId;
+  resourceId: ResourceId;
+  extractionStrategyVersion: DbResourceExtractionStrategyVersion;
+  chunkingStrategyVersion: DbResourceChunkingStrategyVersion;
+}>;
+
 export type ListResourceExtractionDocumentsByResourceInput = Readonly<{
   studentId: StudentId;
   resourceId: ResourceId;
@@ -275,6 +282,9 @@ export type ResourceExtractionRepository = Readonly<{
   createResourceExtractionDocumentCheckpoint: (
     input: CreateResourceExtractionDocumentCheckpointInput,
   ) => Promise<DbResourceExtractionDocumentRecord>;
+  getResourceExtractionDocumentCheckpoint: (
+    input: GetResourceExtractionDocumentCheckpointInput,
+  ) => Promise<DbResourceExtractionDocumentRecord | null>;
   createResourceExtractedContentBlocks: (
     input: readonly CreateResourceExtractedContentBlockInput[],
   ) => Promise<readonly DbResourceExtractedContentBlockRecord[]>;

@@ -2,13 +2,17 @@ import type {
   ExtractionProvenance,
 } from "./ExtractionProvenance.contract.js";
 import type {
+  UnsupportedPageExtractionFailure,
+} from "./ResourceExtractionFailure.contract.js";
+import type {
+  ResourceExtractedPageId,
+} from "./ResourceExtractionIdentifiers.contract.js";
+import type {
   ResourceSourceLocator,
 } from "./ResourceSourceLocator.contract.js";
-import type {
-  UnsupportedPageExtractionFailure,
-} from "./ResourceExtractionResult.contract.js";
 
 export type ExtractedPage = Readonly<{
+  pageId: ResourceExtractedPageId;
   pageNumber: number;
   text: string;
   locator: ResourceSourceLocator;

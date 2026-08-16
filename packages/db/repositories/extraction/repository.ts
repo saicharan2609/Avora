@@ -16,6 +16,7 @@ import type {
   DbResourceExtractionFailureRecord,
   DbResourceExtractionProvenanceRecord,
   GetResourceExtractionDocumentByIdInput,
+  GetResourceExtractionDocumentCheckpointInput,
   ListResourceExtractedContentBlocksInput,
   ListResourceExtractedPagesInput,
   ListResourceExtractionDocumentsByResourceInput,
@@ -374,6 +375,34 @@ export function createResourceExtractionRepository(
         client: input.client,
         checkpoint,
       });
+    },
+
+    getResourceExtractionDocumentCheckpoint: async (
+      checkpoint: GetResourceExtractionDocumentCheckpointInput,
+    ): Promise<DbResourceExtractionDocumentRecord | null> => {
+      const { data, error } = await input.client
+        .from("resource_extraction_documents")
+        .select(resourceExtractionDocumentSelectColumns)
+        .eq("student_id", checkpoint.studentId)
+        .eq("resource_id", checkpoint.resourceId)
+        .eq(
+          "extraction_strategy_version",
+          checkpoint.extractionStrategyVersion,
+        )
+        .eq(
+          "chunking_strategy_version",
+          checkpoint.chunkingStrategyVersion,
+        )
+        .maybeSingle();
+
+      if (error !== null) {
+        throw new ResourceExtractionRepositoryError(
+          "resource_extraction_repository_read_documents_failed",
+          error.message,
+        );
+      }
+
+      return data === null ? null : mapResourceExtractionDocumentRow(data);
     },
 
     createResourceExtractedContentBlocks: async (

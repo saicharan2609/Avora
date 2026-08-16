@@ -1,4 +1,5 @@
 import type {
+  ExtractedResourceContent,
   ResourceExtractionDocument,
   ResourceExtractionFailure,
   ResourceExtractionRequest,
@@ -64,6 +65,11 @@ export function createResourceExtractionService(
 
 function assertValidExtractionRequest(input: ResourceExtractionRequest): void {
   assertNonEmptyString(
+    input.extractionDocumentId,
+    "Resource extraction requires an extraction document id.",
+  );
+
+  assertNonEmptyString(
     input.declaredMimeType,
     "Resource extraction requires a declared MIME type.",
   );
@@ -94,6 +100,7 @@ function assertConsistentExtractionResult(
   }
 
   assertDocumentMatchesRequest(input, result.document);
+  assertContentMatchesRequest(input, result.content);
 
   if (result.outcome === "extracted") {
     if (result.document.status !== "extracted") {
@@ -118,6 +125,12 @@ function assertDocumentMatchesRequest(
   input: ResourceExtractionRequest,
   document: ResourceExtractionDocument,
 ): void {
+  if (document.extractionDocumentId !== input.extractionDocumentId) {
+    throwInconsistentResult(
+      "Resource extraction document id does not match the extraction request.",
+    );
+  }
+
   if (document.studentId !== input.studentId) {
     throwInconsistentResult(
       "Resource extraction document student does not match the extraction request.",
@@ -179,7 +192,111 @@ function assertDocumentMatchesRequest(
   }
 }
 
+function assertContentMatchesRequest(
+  input: ResourceExtractionRequest,
+  content: ExtractedResourceContent,
+): void {
+  if (content.extractionDocumentId !== input.extractionDocumentId) {
+    throwInconsistentResult(
+      "Extracted resource content document id does not match the extraction request.",
+    );
+  }
+
+  if (content.studentId !== input.studentId) {
+    throwInconsistentResult(
+      "Extracted resource content student does not match the extraction request.",
+    );
+  }
+
+  if (content.resourceId !== input.resourceId) {
+    throwInconsistentResult(
+      "Extracted resource content resource does not match the extraction request.",
+    );
+  }
+
+  if (content.extractionStrategyVersion !== input.extractionStrategyVersion) {
+    throwInconsistentResult(
+      "Extracted resource content strategy version does not match the extraction request.",
+    );
+  }
+
+  if (content.chunkingStrategyVersion !== input.chunkingStrategyVersion) {
+    throwInconsistentResult(
+      "Extracted resource content chunking version does not match the extraction request.",
+    );
+  }
+
+  assertNonEmptyString(
+    content.provenance.provenanceId,
+    "Extracted resource content requires stable document provenance id.",
+  );
+
+  if (content.provenance.strategyVersion !== input.extractionStrategyVersion) {
+    throwInconsistentResult(
+      "Extracted resource content provenance strategy version does not match the extraction request.",
+    );
+  }
+
+  for (const page of content.pages) {
+    assertNonEmptyString(
+      page.pageId,
+      "Extracted resource content page requires a stable page id.",
+    );
+
+    assertNonEmptyString(
+      page.provenance.provenanceId,
+      "Extracted resource content page requires stable provenance id.",
+    );
+
+    if (!Number.isSafeInteger(page.pageNumber) || page.pageNumber <= 0) {
+      throwInconsistentResult(
+        "Extracted resource content contains an invalid page number.",
+      );
+    }
+
+    if (page.text.trim().length === 0) {
+      throwInconsistentResult(
+        "Extracted resource content contains an empty page.",
+      );
+    }
+
+    if (
+      page.confidence !== null
+      && (
+        !Number.isFinite(page.confidence)
+        || page.confidence < 0
+        || page.confidence > 1
+      )
+    ) {
+      throwInconsistentResult(
+        "Extracted resource content contains an invalid page confidence.",
+      );
+    }
+
+    if (page.provenance.strategyVersion !== input.extractionStrategyVersion) {
+      throwInconsistentResult(
+        "Extracted page provenance strategy version does not match the extraction request.",
+      );
+    }
+
+    if (page.failure !== null) {
+      assertValidFailure(page.failure);
+
+      if (page.failure.pageNumber !== page.pageNumber) {
+        throwInconsistentResult(
+          "Unsupported-page failure page number does not match the extracted page.",
+        );
+      }
+    }
+  }
+}
+
 function assertValidFailure(failure: ResourceExtractionFailure): void {
+  assertNonEmptyString(
+    failure.failureId,
+    "Resource extraction failure requires a stable failure id.",
+  );
+
   assertNonEmptyString(
     failure.message,
     "Resource extraction failure requires a message.",

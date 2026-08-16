@@ -3,6 +3,7 @@ import type {
 } from "@avora/core/time";
 
 import type {
+  ResourceExtractionProvenanceId,
   ResourceExtractionStrategyVersion,
 } from "./ResourceExtractionIdentifiers.contract.js";
 
@@ -19,6 +20,7 @@ export type ExtractionProvenanceSource =
   (typeof extractionProvenanceSources)[number];
 
 export type ExtractionProvenance = Readonly<{
+  provenanceId: ResourceExtractionProvenanceId;
   source: ExtractionProvenanceSource;
   strategyVersion: ResourceExtractionStrategyVersion;
   extractedAt: IsoDateTimeString;

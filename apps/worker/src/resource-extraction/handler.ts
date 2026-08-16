@@ -117,6 +117,11 @@ function assertResourceExtractionJob(
   }
 
   assertNonEmpty(
+    input.job.payload.extractionDocumentId,
+    "Resource extraction job extraction document id is required.",
+  );
+
+  assertNonEmpty(
     input.job.payload.storage.objectPath,
     "Resource extraction job storage object path is required.",
   );
