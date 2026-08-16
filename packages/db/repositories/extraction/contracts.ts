@@ -182,6 +182,9 @@ export type CreateResourceExtractionDocumentInput = Readonly<{
   extractedAt: IsoDateTimeString;
 }>;
 
+export type CreateResourceExtractionDocumentCheckpointInput =
+  CreateResourceExtractionDocumentInput;
+
 export type CreateResourceExtractedContentBlockInput = Readonly<{
   blockId: DbResourceExtractedContentBlockId;
   extractionDocumentId: DbResourceExtractionDocumentId;
@@ -268,6 +271,9 @@ export type ListResourceExtractionFailuresInput = Readonly<{
 export type ResourceExtractionRepository = Readonly<{
   createResourceExtractionDocument: (
     input: CreateResourceExtractionDocumentInput,
+  ) => Promise<DbResourceExtractionDocumentRecord>;
+  createResourceExtractionDocumentCheckpoint: (
+    input: CreateResourceExtractionDocumentCheckpointInput,
   ) => Promise<DbResourceExtractionDocumentRecord>;
   createResourceExtractedContentBlocks: (
     input: readonly CreateResourceExtractedContentBlockInput[],

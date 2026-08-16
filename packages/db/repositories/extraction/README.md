@@ -72,3 +72,21 @@ The repository remains DB-shaped and does not import `@avora/domain`.
 The persistence layer remains student-scoped through `student_id`, composite extraction-document ownership constraints, and RLS.
 
 This group does not add worker execution, storage adapters, OCR, parsing, AI behavior, retrieval indexing, API routes, UI, or mobile behavior.
+## Stage 10 Group 4 — Extraction document checkpoint
+
+Stage 10 Group 4 adds the DB-backed idempotency primitive required before the worker extraction handler can safely checkpoint extraction-document persistence.
+
+The checkpoint key is:
+
+- `student_id`
+- `resource_id`
+- `extraction_strategy_version`
+- `chunking_strategy_version`
+
+The repository exposes:
+
+- `createResourceExtractionDocumentCheckpoint`
+
+The method creates the extraction document when no checkpoint exists, or returns the existing extraction document for the same checkpoint key.
+
+This primitive is intentionally limited to extraction document checkpointing. It does not implement worker execution, page persistence, provenance persistence, failure persistence, child-row idempotency, storage adapters, OCR, parsing, AI behavior, retrieval indexing, API routes, UI, mobile behavior, RLS changes, or production data cleanup.

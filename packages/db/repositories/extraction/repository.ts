@@ -3,6 +3,7 @@ import type { Json } from "../../generated/database.types.js";
 import type {
   CreateResourceExtractedContentBlockInput,
   CreateResourceExtractedPageInput,
+  CreateResourceExtractionDocumentCheckpointInput,
   CreateResourceExtractionDocumentInput,
   CreateResourceExtractionDocumentWithBlocksInput,
   CreateResourceExtractionFailureInput,
@@ -190,6 +191,56 @@ export function createResourceExtractionRepository(
       }
 
       return mapResourceExtractionDocumentRow(data);
+    },
+
+    createResourceExtractionDocumentCheckpoint: async (
+      document: CreateResourceExtractionDocumentCheckpointInput,
+    ): Promise<DbResourceExtractionDocumentRecord> => {
+      assertValidDocumentInput(document);
+
+      const checkpoint = {
+        studentId: document.studentId,
+        resourceId: document.resourceId,
+        extractionStrategyVersion: document.extractionStrategyVersion,
+        chunkingStrategyVersion: document.chunkingStrategyVersion,
+      } as const;
+
+      const { data, error } = await input.client
+        .from("resource_extraction_documents")
+        .upsert(
+          {
+            extraction_document_id: document.extractionDocumentId,
+            student_id: document.studentId,
+            resource_id: document.resourceId,
+            status: document.status,
+            extraction_strategy_version: document.extractionStrategyVersion,
+            chunking_strategy_version: document.chunkingStrategyVersion,
+            extracted_at: document.extractedAt,
+          },
+          {
+            onConflict:
+              "student_id,resource_id,extraction_strategy_version,chunking_strategy_version",
+            ignoreDuplicates: true,
+          },
+        )
+        .select(resourceExtractionDocumentSelectColumns)
+        .maybeSingle();
+
+      if (error !== null) {
+        throw new ResourceExtractionRepositoryError(
+          "resource_extraction_repository_create_document_failed",
+          error.message,
+        );
+      }
+
+      if (data !== null) {
+        return mapResourceExtractionDocumentRow(data);
+      }
+
+      return readResourceExtractionDocumentCheckpoint({
+        client: input.client,
+        checkpoint,
+      });
     },
 
     createResourceExtractedContentBlocks: async (
@@ -394,6 +445,40 @@ export function createResourceExtractionRepository(
       });
     },
   };
+}
+
+async function readResourceExtractionDocumentCheckpoint(input: Readonly<{
+  client: DatabaseClient;
+  checkpoint: Readonly<{
+    studentId: CreateResourceExtractionDocumentCheckpointInput["studentId"];
+    resourceId: CreateResourceExtractionDocumentCheckpointInput["resourceId"];
+    extractionStrategyVersion: CreateResourceExtractionDocumentCheckpointInput["extractionStrategyVersion"];
+    chunkingStrategyVersion: CreateResourceExtractionDocumentCheckpointInput["chunkingStrategyVersion"];
+  }>;
+}>): Promise<DbResourceExtractionDocumentRecord> {
+  const { data, error } = await input.client
+    .from("resource_extraction_documents")
+    .select(resourceExtractionDocumentSelectColumns)
+    .eq("student_id", input.checkpoint.studentId)
+    .eq("resource_id", input.checkpoint.resourceId)
+    .eq(
+      "extraction_strategy_version",
+      input.checkpoint.extractionStrategyVersion,
+    )
+    .eq(
+      "chunking_strategy_version",
+      input.checkpoint.chunkingStrategyVersion,
+    )
+    .single();
+
+  if (error !== null) {
+    throw new ResourceExtractionRepositoryError(
+      "resource_extraction_repository_read_documents_failed",
+      error.message,
+    );
+  }
+
+  return mapResourceExtractionDocumentRow(data);
 }
 
 function assertValidDocumentInput(
