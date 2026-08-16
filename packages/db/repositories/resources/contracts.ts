@@ -83,6 +83,17 @@ export type MarkResourceProcessingInput = Readonly<{
   resourceId: ResourceId;
 }>;
 
+export type MarkResourceReadyInput = Readonly<{
+  studentId: StudentId;
+  resourceId: ResourceId;
+}>;
+
+export type MarkResourceFailedInput = Readonly<{
+  studentId: StudentId;
+  resourceId: ResourceId;
+  reason: string;
+}>;
+
 export type MarkResourceRejectedInput = Readonly<{
   studentId: StudentId;
   resourceId: ResourceId;
@@ -94,6 +105,8 @@ export type ResourcesRepository = Readonly<{
   markUploadCompleted: (input: MarkResourceUploadCompletedInput) => Promise<DbResourceRecord>;
   getResourceForIngestion: (input: GetResourceForIngestionInput) => Promise<DbResourceRecord | null>;
   markResourceProcessing: (input: MarkResourceProcessingInput) => Promise<DbResourceRecord>;
+  markResourceReady: (input: MarkResourceReadyInput) => Promise<DbResourceRecord>;
+  markResourceFailed: (input: MarkResourceFailedInput) => Promise<DbResourceRecord>;
   markResourceRejected: (input: MarkResourceRejectedInput) => Promise<DbResourceRecord>;
   getById: (input: GetResourceByIdInput) => Promise<DbResourceRecord | null>;
 }>;

@@ -6,7 +6,9 @@ import type {
   DbResourceRecord,
   GetResourceByIdInput,
   GetResourceForIngestionInput,
+  MarkResourceFailedInput,
   MarkResourceProcessingInput,
+  MarkResourceReadyInput,
   MarkResourceRejectedInput,
   MarkResourceUploadCompletedInput,
   ResourcesRepository,
@@ -137,7 +139,59 @@ export function createResourcesRepository(
         })
         .eq("student_id", resource.studentId)
         .eq("resource_id", resource.resourceId)
-        .eq("lifecycle_state", "uploaded")
+        .in("lifecycle_state", ["uploaded", "processing"])
+        .select(resourceSelectColumns)
+        .single();
+
+      if (error !== null) {
+        throw new ResourcesRepositoryError(
+          "resources_repository_update_failed",
+          error.message,
+        );
+      }
+
+      return mapResourceRow(data);
+    },
+
+    markResourceReady: async (
+      resource: MarkResourceReadyInput,
+    ): Promise<DbResourceRecord> => {
+      const { data, error } = await input.client
+        .from("resources")
+        .update({
+          lifecycle_state: "ready",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("student_id", resource.studentId)
+        .eq("resource_id", resource.resourceId)
+        .in("lifecycle_state", ["processing", "ready"])
+        .select(resourceSelectColumns)
+        .single();
+
+      if (error !== null) {
+        throw new ResourcesRepositoryError(
+          "resources_repository_update_failed",
+          error.message,
+        );
+      }
+
+      return mapResourceRow(data);
+    },
+
+    markResourceFailed: async (
+      resource: MarkResourceFailedInput,
+    ): Promise<DbResourceRecord> => {
+      void resource.reason;
+
+      const { data, error } = await input.client
+        .from("resources")
+        .update({
+          lifecycle_state: "failed",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("student_id", resource.studentId)
+        .eq("resource_id", resource.resourceId)
+        .in("lifecycle_state", ["processing", "failed"])
         .select(resourceSelectColumns)
         .single();
 
