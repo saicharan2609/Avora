@@ -27,9 +27,22 @@ export {
 } from "./errors.js";
 
 export {
+  mapDbResourceExtractionFailureToDomainFailure,
+  mapExtractedPageToCreateInput,
+  mapExtractedResourceContentBlocksToCreateInputs,
+  mapExtractedResourceContentBlockToCreateInput,
+  mapExtractedResourceContentDocumentProvenanceToCreateInput,
+  mapExtractedResourceContentFailuresToCreateInputs,
+  mapExtractedResourceContentPageProvenanceToCreateInputs,
+  mapExtractedResourceContentPagesToCreateInputs,
+  mapExtractedResourceContentProvenanceToCreateInputs,
+  mapExtractionProvenanceToCreateInput,
+  mapFailedResourceExtractionRequestToDocumentCreateInput,
+  mapResourceExtractedContentBlockToCreateInput,
   mapResourceExtractionDocumentBlocksToCreateInputs,
   mapResourceExtractionDocumentIdToDb,
   mapResourceExtractionDocumentToCreateInput,
-  mapResourceExtractedContentBlockToCreateInput,
+  mapResourceExtractionFailureToCreateInput,
   mapResourceExtractionJobPayloadToRequest,
+  mapResourceExtractionRequestToCheckpointLookupInput,
 } from "./mapper.js";
