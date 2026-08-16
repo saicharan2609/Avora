@@ -278,13 +278,25 @@ export type ResourceExtractionRepository = Readonly<{
   createResourceExtractedContentBlocks: (
     input: readonly CreateResourceExtractedContentBlockInput[],
   ) => Promise<readonly DbResourceExtractedContentBlockRecord[]>;
+  createResourceExtractedContentBlocksCheckpoint: (
+    input: readonly CreateResourceExtractedContentBlockInput[],
+  ) => Promise<readonly DbResourceExtractedContentBlockRecord[]>;
   createResourceExtractionProvenance: (
+    input: CreateResourceExtractionProvenanceInput,
+  ) => Promise<DbResourceExtractionProvenanceRecord>;
+  createResourceExtractionProvenanceCheckpoint: (
     input: CreateResourceExtractionProvenanceInput,
   ) => Promise<DbResourceExtractionProvenanceRecord>;
   createResourceExtractedPages: (
     input: readonly CreateResourceExtractedPageInput[],
   ) => Promise<readonly DbResourceExtractedPageRecord[]>;
+  createResourceExtractedPagesCheckpoint: (
+    input: readonly CreateResourceExtractedPageInput[],
+  ) => Promise<readonly DbResourceExtractedPageRecord[]>;
   createResourceExtractionFailures: (
+    input: readonly CreateResourceExtractionFailureInput[],
+  ) => Promise<readonly DbResourceExtractionFailureRecord[]>;
+  createResourceExtractionFailuresCheckpoint: (
     input: readonly CreateResourceExtractionFailureInput[],
   ) => Promise<readonly DbResourceExtractionFailureRecord[]>;
   createResourceExtractionDocumentWithBlocks: (

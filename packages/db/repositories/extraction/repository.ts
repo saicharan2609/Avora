@@ -89,6 +89,51 @@ export function createResourceExtractionRepository(
       return mapResourceExtractionProvenanceRow(data);
     },
 
+    createResourceExtractionProvenanceCheckpoint: async (
+      provenance: CreateResourceExtractionProvenanceInput,
+    ): Promise<DbResourceExtractionProvenanceRecord> => {
+      assertValidProvenanceInput(provenance);
+
+      const { data, error } = await input.client
+        .from("resource_extraction_provenance")
+        .upsert(
+          {
+            provenance_id: provenance.provenanceId,
+            extraction_document_id: provenance.extractionDocumentId,
+            student_id: provenance.studentId,
+            resource_id: provenance.resourceId,
+            page_number: provenance.pageNumber,
+            source: provenance.source,
+            strategy_version: provenance.strategyVersion,
+            extracted_at: provenance.extractedAt,
+            notes: provenance.notes,
+          },
+          {
+            onConflict:
+              "student_id,extraction_document_id,provenance_id",
+            ignoreDuplicates: true,
+          },
+        )
+        .select(resourceExtractionProvenanceSelectColumns)
+        .maybeSingle();
+
+      if (error !== null) {
+        throw new ResourceExtractionRepositoryError(
+          "resource_extraction_repository_create_document_failed",
+          error.message,
+        );
+      }
+
+      if (data !== null) {
+        return mapResourceExtractionProvenanceRow(data);
+      }
+
+      return readResourceExtractionProvenanceCheckpoint({
+        client: input.client,
+        provenance,
+      });
+    },
+
     createResourceExtractedPages: async (
       pages: readonly CreateResourceExtractedPageInput[],
     ): Promise<readonly DbResourceExtractedPageRecord[]> => {
@@ -127,6 +172,51 @@ export function createResourceExtractionRepository(
       return data.map(mapResourceExtractedPageRow);
     },
 
+    createResourceExtractedPagesCheckpoint: async (
+      pages: readonly CreateResourceExtractedPageInput[],
+    ): Promise<readonly DbResourceExtractedPageRecord[]> => {
+      for (const page of pages) {
+        assertValidPageInput(page);
+      }
+
+      if (pages.length === 0) {
+        return [];
+      }
+
+      const { error } = await input.client
+        .from("resource_extracted_pages")
+        .upsert(
+          pages.map((page) => ({
+            page_id: page.pageId,
+            extraction_document_id: page.extractionDocumentId,
+            student_id: page.studentId,
+            resource_id: page.resourceId,
+            provenance_id: page.provenanceId,
+            page_number: page.pageNumber,
+            text: page.text,
+            locator: page.locator as unknown as Json,
+            confidence: page.confidence,
+          })),
+          {
+            onConflict:
+              "student_id,extraction_document_id,page_number",
+            ignoreDuplicates: true,
+          },
+        );
+
+      if (error !== null) {
+        throw new ResourceExtractionRepositoryError(
+          "resource_extraction_repository_create_blocks_failed",
+          error.message,
+        );
+      }
+
+      return readResourceExtractedPagesCheckpoint({
+        client: input.client,
+        pages,
+      });
+    },
+
     createResourceExtractionFailures: async (
       failures: readonly CreateResourceExtractionFailureInput[],
     ): Promise<readonly DbResourceExtractionFailureRecord[]> => {
@@ -162,6 +252,49 @@ export function createResourceExtractionRepository(
       }
 
       return data.map(mapResourceExtractionFailureRow);
+    },
+
+    createResourceExtractionFailuresCheckpoint: async (
+      failures: readonly CreateResourceExtractionFailureInput[],
+    ): Promise<readonly DbResourceExtractionFailureRecord[]> => {
+      for (const failure of failures) {
+        assertValidFailureInput(failure);
+      }
+
+      if (failures.length === 0) {
+        return [];
+      }
+
+      const { error } = await input.client
+        .from("resource_extraction_failures")
+        .upsert(
+          failures.map((failure) => ({
+            failure_id: failure.failureId,
+            extraction_document_id: failure.extractionDocumentId,
+            student_id: failure.studentId,
+            resource_id: failure.resourceId,
+            provenance_id: failure.provenanceId,
+            code: failure.code,
+            page_number: failure.pageNumber,
+            message: failure.message,
+          })),
+          {
+            onConflict: "failure_id",
+            ignoreDuplicates: true,
+          },
+        );
+
+      if (error !== null) {
+        throw new ResourceExtractionRepositoryError(
+          "resource_extraction_repository_create_blocks_failed",
+          error.message,
+        );
+      }
+
+      return readResourceExtractionFailuresCheckpoint({
+        client: input.client,
+        failures,
+      });
     },
 
     createResourceExtractionDocument: async (
@@ -280,6 +413,52 @@ export function createResourceExtractionRepository(
       }
 
       return data.map(mapResourceExtractedContentBlockRow);
+    },
+
+    createResourceExtractedContentBlocksCheckpoint: async (
+      blocks: readonly CreateResourceExtractedContentBlockInput[],
+    ): Promise<readonly DbResourceExtractedContentBlockRecord[]> => {
+      for (const block of blocks) {
+        assertValidBlockInput(block);
+      }
+
+      if (blocks.length === 0) {
+        return [];
+      }
+
+      const { error } = await input.client
+        .from("resource_extracted_content_blocks")
+        .upsert(
+          blocks.map((block) => ({
+            block_id: block.blockId,
+            extraction_document_id: block.extractionDocumentId,
+            student_id: block.studentId,
+            resource_id: block.resourceId,
+            kind: block.kind,
+            text: block.text,
+            locator: block.locator as unknown as Json,
+            sort_order: block.sortOrder,
+            parent_block_id: block.parentBlockId,
+            confidence: block.confidence,
+          })),
+          {
+            onConflict:
+              "student_id,extraction_document_id,block_id",
+            ignoreDuplicates: true,
+          },
+        );
+
+      if (error !== null) {
+        throw new ResourceExtractionRepositoryError(
+          "resource_extraction_repository_create_blocks_failed",
+          error.message,
+        );
+      }
+
+      return readResourceExtractedContentBlocksCheckpoint({
+        client: input.client,
+        blocks,
+      });
     },
 
     createResourceExtractionDocumentWithBlocks: async (
@@ -479,6 +658,116 @@ async function readResourceExtractionDocumentCheckpoint(input: Readonly<{
   }
 
   return mapResourceExtractionDocumentRow(data);
+}
+
+async function readResourceExtractedContentBlocksCheckpoint(input: Readonly<{
+  client: DatabaseClient;
+  blocks: readonly CreateResourceExtractedContentBlockInput[];
+}>): Promise<readonly DbResourceExtractedContentBlockRecord[]> {
+  const firstBlock = input.blocks[0];
+
+  if (firstBlock === undefined) {
+    return [];
+  }
+
+  const { data, error } = await input.client
+    .from("resource_extracted_content_blocks")
+    .select(resourceExtractedContentBlockSelectColumns)
+    .eq("student_id", firstBlock.studentId)
+    .eq("extraction_document_id", firstBlock.extractionDocumentId)
+    .in("block_id", input.blocks.map((block) => block.blockId))
+    .order("sort_order", { ascending: true })
+    .order("block_id", { ascending: true });
+
+  if (error !== null) {
+    throw new ResourceExtractionRepositoryError(
+      "resource_extraction_repository_read_blocks_failed",
+      error.message,
+    );
+  }
+
+  return data.map(mapResourceExtractedContentBlockRow);
+}
+
+async function readResourceExtractedPagesCheckpoint(input: Readonly<{
+  client: DatabaseClient;
+  pages: readonly CreateResourceExtractedPageInput[];
+}>): Promise<readonly DbResourceExtractedPageRecord[]> {
+  const firstPage = input.pages[0];
+
+  if (firstPage === undefined) {
+    return [];
+  }
+
+  const { data, error } = await input.client
+    .from("resource_extracted_pages")
+    .select(resourceExtractedPageSelectColumns)
+    .eq("student_id", firstPage.studentId)
+    .eq("extraction_document_id", firstPage.extractionDocumentId)
+    .in("page_number", input.pages.map((page) => page.pageNumber))
+    .order("page_number", { ascending: true })
+    .order("page_id", { ascending: true });
+
+  if (error !== null) {
+    throw new ResourceExtractionRepositoryError(
+      "resource_extraction_repository_read_blocks_failed",
+      error.message,
+    );
+  }
+
+  return data.map(mapResourceExtractedPageRow);
+}
+
+async function readResourceExtractionProvenanceCheckpoint(input: Readonly<{
+  client: DatabaseClient;
+  provenance: CreateResourceExtractionProvenanceInput;
+}>): Promise<DbResourceExtractionProvenanceRecord> {
+  const { data, error } = await input.client
+    .from("resource_extraction_provenance")
+    .select(resourceExtractionProvenanceSelectColumns)
+    .eq("student_id", input.provenance.studentId)
+    .eq("extraction_document_id", input.provenance.extractionDocumentId)
+    .eq("provenance_id", input.provenance.provenanceId)
+    .single();
+
+  if (error !== null) {
+    throw new ResourceExtractionRepositoryError(
+      "resource_extraction_repository_read_documents_failed",
+      error.message,
+    );
+  }
+
+  return mapResourceExtractionProvenanceRow(data);
+}
+
+async function readResourceExtractionFailuresCheckpoint(input: Readonly<{
+  client: DatabaseClient;
+  failures: readonly CreateResourceExtractionFailureInput[];
+}>): Promise<readonly DbResourceExtractionFailureRecord[]> {
+  const firstFailure = input.failures[0];
+
+  if (firstFailure === undefined) {
+    return [];
+  }
+
+  const { data, error } = await input.client
+    .from("resource_extraction_failures")
+    .select(resourceExtractionFailureSelectColumns)
+    .eq("student_id", firstFailure.studentId)
+    .eq("extraction_document_id", firstFailure.extractionDocumentId)
+    .in("failure_id", input.failures.map((failure) => failure.failureId))
+    .order("page_number", { ascending: true, nullsFirst: true })
+    .order("created_at", { ascending: true })
+    .order("failure_id", { ascending: true });
+
+  if (error !== null) {
+    throw new ResourceExtractionRepositoryError(
+      "resource_extraction_repository_read_blocks_failed",
+      error.message,
+    );
+  }
+
+  return data.map(mapResourceExtractionFailureRow);
 }
 
 function assertValidDocumentInput(
