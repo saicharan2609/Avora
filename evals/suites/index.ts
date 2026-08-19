@@ -13,6 +13,40 @@ export {
 } from "./citation-validity.gate.js";
 
 export type {
+  ResourceExtractionQualityCaseKind,
+  ResourceExtractionQualityEvalCase,
+  ResourceExtractionQualityExpectedOutcome,
+  ResourceExtractionQualityExpectations,
+  SyntheticExtractedContentBlock,
+  SyntheticExtractedPage,
+  SyntheticExtractedResourceContent,
+  SyntheticExtractionDocument,
+  SyntheticExtractionFailure,
+  SyntheticExtractionFailureCode,
+  SyntheticExtractionProvenance,
+  SyntheticExtractionProvenanceSource,
+  SyntheticResourceExtractionResult,
+  SyntheticResourceSourceLocator,
+  SyntheticUnsupportedPageExtractionFailure,
+} from "./resource-extraction-quality.fixture.js";
+
+export {
+  resourceExtractionQualityEvalCases,
+} from "./resource-extraction-quality.fixture.js";
+
+export type {
+  ResourceExtractionQualityCaseReport,
+  ResourceExtractionQualityGateOutcome,
+} from "./resource-extraction-quality.gate.js";
+
+export {
+  ResourceExtractionQualityGateFailure,
+  evaluateResourceExtractionQualityCase,
+  runResourceExtractionQualityGate,
+  summarizeResourceExtractionQualityGate,
+} from "./resource-extraction-quality.gate.js";
+
+export type {
   TutorGroundingEvalCase,
   TutorGroundingEvalCaseKind,
   TutorGroundingExpectedOutcome,

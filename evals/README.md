@@ -53,28 +53,23 @@ Stage 4 Group 6 wires the first fail-closed citation-validity gate. It does not 
 This package must not contain AI implementation, prompt implementation, provider SDK usage, model names, application features, business logic, API handlers, database schema, Supabase configuration, authentication implementation, React components, React Native components, pages, or screens.
 
 Consented corpora and full AI evaluation suites remain later-stage work.
-## Stage 11 Group 9 — Grounding and citation eval gate
 
-Stage 11 Group 9 extends the AI evaluation gate with deterministic tutor grounding cases.
+## Stage 10 Group 5 — Extraction quality eval suite
 
-New suite files:
+Stage 10 Group 5 adds a deterministic resource extraction quality gate.
 
-- `suites/tutor-grounding.fixture.ts`
-- `suites/tutor-grounding.gate.ts`
+The suite covers:
 
-The gate covers:
+- normal extracted documents with sufficient synthetic coverage;
+- partially extracted documents with usable content and honest warnings or page failures;
+- scan and handwriting-style extraction success;
+- unsupported-page honesty through existing warning and page-failure semantics;
+- low-coverage extraction failure;
+- fail-closed behavior when the suite has no cases.
 
-- grounded answer with valid citations;
-- unsupported content in a grounded-looking answer;
-- citation validity through Avora's existing `validateGroundedAnswer` contract;
-- unresolved citation failure;
-- honest insufficiency when retrieval context is insufficient;
-- failure when insufficient context is represented as a grounded answer;
-- unresolved citation prevention for tutor API-shaped responses.
-
-The suite uses synthetic fixtures only and does not call model providers, provider SDKs, production credentials, network services, databases, web routes, mobile routes, UI, or retrieval infrastructure.
+The extraction quality suite evaluates synthetic extraction-result-shaped fixtures only. It does not call AI providers, OCR, storage, Supabase, databases, worker code, web APIs, mobile APIs, external services, or runtime extraction providers.
 
 Run:
 
 ```text
-pnpm --filter @avora/evals eval:ai
+pnpm --filter @avora/evals eval:extraction
