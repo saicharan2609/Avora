@@ -7,14 +7,20 @@
     "./adaptivity": "./adaptivity/index.ts"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -b tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:arch": "eslint .",
-    "e2e": "echo \"end-to-end critical flows are implemented in a later stage\"",
-    "test:adaptivity": "pnpm run build && node dist/adaptivity/run-adaptivity-suite.js"
+    "e2e": "echo \"end-to-end critical flows are implemented in staged harnesses\"",
+    "test:adaptivity": "pnpm run build && node dist/adaptivity/run-adaptivity-suite.js",
+    "test:resource-extraction": "pnpm run build && node dist/flows/resource-extraction/run-resource-extraction-flow.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@avora/core": "workspace:*",
+    "@avora/db": "workspace:*",
+    "@avora/domain": "workspace:*",
+    "@avora/jobs": "workspace:*"
+  },
   "devDependencies": {
     "@avora/config": "workspace:*"
   }

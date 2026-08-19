@@ -1,32 +1,36 @@
 {
-  "id": "stage-9-resource-extraction-flow",
+  "id": "stage-10-resource-extraction-e2e-flow",
   "owner": "@avora/qa",
-  "stage": "Stage 9 Group 7",
-  "title": "Resource extraction completion flow",
-  "description": "Validates the completed Stage 9 resource extraction foundation from job handoff through worker handling, domain extraction, repository persistence, locator preservation, hierarchy preservation, and RLS expectations.",
-  "fixture": "../../fixtures/resource-extraction.fixture.json",
+  "stage": "Stage 10 Group 7",
+  "title": "Resource extraction e2e harness",
+  "description": "Documents the executable deterministic Stage 10 Group 7 harness for resource extraction from synthetic resource job through extraction service, deterministic port, persistence, lifecycle convergence, and ready/partially_ready status projection.",
+  "executableHarness": "./run-resource-extraction-flow.ts",
+  "typedFixture": "./resource-extraction.fixture.ts",
+  "historicalFixture": "../../fixtures/resource-extraction.fixture.json",
   "scope": {
     "includes": [
-      "resource extraction job envelope creation",
-      "resource extraction worker handler validation",
-      "resource extraction request mapping",
-      "resource extraction service invocation",
-      "extracted document persistence",
+      "synthetic uploaded resource setup",
+      "resource extraction job request creation",
+      "resource.extraction.extract job name validation",
+      "domain extraction service invocation",
+      "deterministic extraction port",
+      "extraction document persistence",
+      "extracted page persistence",
       "extracted content block persistence",
-      "locator metadata preservation",
-      "parent-child extracted content hierarchy preservation",
-      "repository tree read validation",
-      "student-scoped RLS read validation",
-      "authenticated mutation denial validation"
+      "extraction provenance persistence",
+      "partial extraction failure persistence",
+      "unsupported page failure page number preservation",
+      "resource lifecycle convergence to ready",
+      "successful extraction status projection to ready",
+      "partial extraction status projection to partially_ready",
+      "terminal extraction failure status projection to failed"
     ],
     "excludes": [
-      "resource upload API",
-      "resource ingestion validation runtime",
-      "queue polling",
-      "job claiming",
-      "job acknowledgement",
-      "resource lifecycle status transition implementation",
-      "storage object download",
+      "production data",
+      "real student content",
+      "service-role credentials",
+      "real Supabase database",
+      "real storage",
       "OCR adapters",
       "parser adapters",
       "AI adapters",
@@ -39,37 +43,35 @@
       "web routes",
       "UI",
       "mobile screens",
-      "real student content",
-      "production credentials"
+      "database migrations",
+      "RLS policy changes",
+      "runtime package source changes"
     ]
   },
   "actors": [
     {
-      "name": "student_a",
-      "role": "authenticated_student"
+      "name": "synthetic_student",
+      "role": "authenticated_student_fixture"
     },
     {
-      "name": "student_b",
-      "role": "authenticated_student"
+      "name": "e2e_worker_harness",
+      "role": "deterministic_worker_flow"
     },
     {
-      "name": "worker",
-      "role": "service_role_worker_runtime"
+      "name": "deterministic_extraction_port",
+      "role": "synthetic_extraction_provider"
     }
   ],
   "success_path": [
     {
       "step": 1,
-      "actor": "worker",
-      "action": "create_resource_extraction_job_envelope",
-      "contract": "createResourceExtractionJobEnvelope",
-      "requestFixture": "resource_extraction_job_payload_pdf",
+      "actor": "e2e_worker_harness",
+      "action": "create_resource_extraction_job_request",
       "expected": {
         "jobName": "resource.extraction.extract",
-        "reason": "resource_validation_succeeded",
-        "priority": "normal",
         "payloadContainsStudentId": true,
         "payloadContainsResourceId": true,
+        "payloadContainsExtractionDocumentId": true,
         "payloadContainsStorage": true,
         "payloadContainsDeclaredMimeType": true,
         "payloadContainsContentHash": true,
@@ -79,216 +81,94 @@
     },
     {
       "step": 2,
-      "actor": "worker",
-      "action": "handle_resource_extraction_job",
-      "contract": "createResourceExtractionWorkerHandler",
-      "requestFixture": "resource_extraction_job_request_pdf",
+      "actor": "e2e_worker_harness",
+      "action": "invoke_resource_extraction_service",
       "expected": {
-        "handlerName": "resource-extraction-worker-handler",
-        "jobName": "resource.extraction.extract",
-        "outcome": "extracted",
-        "extractionDocumentIdReturned": true,
-        "persistedBlockCount": 3,
-        "failure": null
+        "deterministicPortInvoked": true,
+        "outcome": "extracted"
       }
     },
     {
       "step": 3,
-      "actor": "worker",
-      "action": "persist_resource_extraction_document",
-      "contract": "createResourceExtractionDocumentWithBlocks",
+      "actor": "e2e_worker_harness",
+      "action": "persist_extracted_result",
       "expected": {
+        "documentPersisted": true,
         "documentStatus": "extracted",
-        "extractionStrategyVersion": "extractor.v1",
-        "chunkingStrategyVersion": "chunker.v1",
-        "studentIdMatchesJob": true,
-        "resourceIdMatchesJob": true
+        "pagesPersisted": true,
+        "blocksPersisted": true,
+        "provenancePersisted": true,
+        "resourceAssociationPreserved": true
       }
     },
     {
       "step": 4,
-      "actor": "worker",
-      "action": "persist_extracted_content_blocks",
-      "contract": "createResourceExtractionDocumentWithBlocks",
+      "actor": "e2e_worker_harness",
+      "action": "converge_resource_lifecycle",
       "expected": {
-        "blockCount": 3,
-        "containsHeading": true,
-        "containsParagraph": true,
-        "containsList": true,
-        "allBlocksHaveLocator": true,
-        "allBlocksHaveNonEmptyText": true,
-        "allSortOrdersAreNonNegative": true,
-        "confidenceValuesAreNullOrBetweenZeroAndOne": true
+        "resourceLifecycleState": "ready",
+        "processingStatus": "ready"
+      }
+    }
+  ],
+  "partial_path": [
+    {
+      "step": 1,
+      "actor": "e2e_worker_harness",
+      "action": "invoke_partial_extraction",
+      "expected": {
+        "outcome": "partially_extracted",
+        "usableContentPersisted": true,
+        "unsupportedPageFailurePersisted": true,
+        "unsupportedPageNumberPreserved": true
       }
     },
     {
-      "step": 5,
-      "actor": "worker",
-      "action": "read_resource_extraction_document_tree",
-      "contract": "getResourceExtractionDocumentTree",
+      "step": 2,
+      "actor": "e2e_worker_harness",
+      "action": "converge_partial_lifecycle_and_status",
       "expected": {
-        "documentReturned": true,
-        "rootBlockCount": 2,
-        "childBlockCount": 1,
-        "treePreservesParentChildRelationship": true,
-        "treeSortsBySortOrderThenBlockId": true
-      }
-    },
-    {
-      "step": 6,
-      "actor": "student_a",
-      "action": "read_own_resource_extraction_document",
-      "table": "public.resource_extraction_documents",
-      "expected": {
-        "access": "allowed",
-        "documentVisible": true
-      }
-    },
-    {
-      "step": 7,
-      "actor": "student_a",
-      "action": "read_own_resource_extracted_content_blocks",
-      "table": "public.resource_extracted_content_blocks",
-      "expected": {
-        "access": "allowed",
-        "blocksVisible": true
+        "resourceLifecycleState": "ready",
+        "processingStatus": "partially_ready",
+        "doesNotFlattenPartialIntoReady": true
       }
     }
   ],
   "failure_path": [
     {
       "step": 1,
-      "actor": "worker",
-      "action": "handle_failed_extraction_result",
+      "actor": "e2e_worker_harness",
+      "action": "invoke_terminal_failed_extraction",
       "expected": {
         "outcome": "failed",
-        "extractionDocumentId": null,
-        "persistedBlockCount": 0,
-        "failureReturned": true,
-        "documentNotPersistedByWorkerHandler": true
-      }
-    },
-    {
-      "step": 2,
-      "actor": "worker",
-      "action": "reject_invalid_job_name",
-      "expected": {
-        "throwsTypedWorkerHandlerError": true,
-        "errorCode": "resource_extraction_worker_invalid_job"
-      }
-    },
-    {
-      "step": 3,
-      "actor": "worker",
-      "action": "reject_invalid_payload",
-      "expected": {
-        "throwsTypedWorkerHandlerError": true,
-        "errorCode": "resource_extraction_worker_invalid_job"
-      }
-    }
-  ],
-  "authorization_path": [
-    {
-      "step": 1,
-      "actor": "student_b",
-      "action": "read_other_student_resource_extraction_documents",
-      "table": "public.resource_extraction_documents",
-      "expected": {
-        "access": "denied_or_empty",
-        "studentADataVisible": false
-      }
-    },
-    {
-      "step": 2,
-      "actor": "student_b",
-      "action": "read_other_student_resource_extracted_content_blocks",
-      "table": "public.resource_extracted_content_blocks",
-      "expected": {
-        "access": "denied_or_empty",
-        "studentADataVisible": false
-      }
-    },
-    {
-      "step": 3,
-      "actor": "student_a",
-      "action": "insert_own_resource_extraction_document",
-      "table": "public.resource_extraction_documents",
-      "expected": {
-        "access": "denied",
-        "mutationAllowed": false
-      }
-    },
-    {
-      "step": 4,
-      "actor": "student_a",
-      "action": "update_own_resource_extraction_document",
-      "table": "public.resource_extraction_documents",
-      "expected": {
-        "access": "denied",
-        "mutationAllowed": false
-      }
-    },
-    {
-      "step": 5,
-      "actor": "student_a",
-      "action": "delete_own_resource_extraction_document",
-      "table": "public.resource_extraction_documents",
-      "expected": {
-        "access": "denied",
-        "mutationAllowed": false
-      }
-    },
-    {
-      "step": 6,
-      "actor": "student_a",
-      "action": "insert_own_resource_extracted_content_block",
-      "table": "public.resource_extracted_content_blocks",
-      "expected": {
-        "access": "denied",
-        "mutationAllowed": false
-      }
-    },
-    {
-      "step": 7,
-      "actor": "student_a",
-      "action": "update_own_resource_extracted_content_block",
-      "table": "public.resource_extracted_content_blocks",
-      "expected": {
-        "access": "denied",
-        "mutationAllowed": false
-      }
-    },
-    {
-      "step": 8,
-      "actor": "student_a",
-      "action": "delete_own_resource_extracted_content_block",
-      "table": "public.resource_extracted_content_blocks",
-      "expected": {
-        "access": "denied",
-        "mutationAllowed": false
+        "failedDocumentPersisted": true,
+        "failurePersisted": true,
+        "resourceLifecycleState": "failed",
+        "processingStatus": "failed"
       }
     }
   ],
   "assertions": [
     "resource extraction job handoff uses resource.extraction.extract",
-    "worker handler accepts only resource extraction jobs",
-    "worker handler maps job payload to ResourceExtractionRequest",
-    "domain extraction service validates request consistency",
+    "domain extraction service invokes deterministic extraction port",
     "successful extraction output is persisted",
-    "partial extraction output is persisted with warning",
-    "failed extraction output is not persisted by Group 6 worker handler",
-    "extracted content blocks preserve source locator metadata",
-    "extracted content blocks preserve parent-child hierarchy",
-    "repository tree reads preserve deterministic order",
-    "student can read own extraction output",
-    "student cannot read another student's extraction output",
-    "student cannot insert extraction output",
-    "student cannot update extraction output",
-    "student cannot delete extraction output",
-    "no web route is required for Stage 9",
-    "no UI behavior is required for Stage 9",
-    "no mobile behavior is required for Stage 9",
-    "no AI adapter is required for Stage 9",
-    "no retrieval indexing is required for Stage 9"
+    "successful extraction persists extracted pages",
+    "successful extraction persists extracted content blocks",
+    "successful extraction persists provenance",
+    "successful extraction converges resource lifecycle to ready",
+    "successful extraction projects processing status ready",
+    "partial extraction output is persisted with usable content",
+    "partial extraction persists unsupported_page failure",
+    "partial extraction preserves unsupported page number",
+    "partial extraction converges resource lifecycle to ready",
+    "partial extraction projects processing status partially_ready",
+    "partial extraction is not flattened into ready",
+    "terminal failed extraction persists failed document and failure",
+    "terminal failed extraction converges resource lifecycle to failed",
+    "no production data is used",
+    "no service-role credentials are used",
+    "no real Supabase database is used",
+    "no OCR, parser, AI, embedding, retrieval, API route, UI, or mobile behavior is used",
+    "no runtime package source is modified"
   ]
 }

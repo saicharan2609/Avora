@@ -45,14 +45,15 @@ Stage 4 Group 6 wires the first always-on structural adaptivity gate. It does no
 ## Gates
 
 - `test:adaptivity` runs the structural adaptivity suite.
-- The suite must not be skipped, marked pending, or weakened.
-- The suite uses synthetic fixtures only.
+- `test:resource-extraction` runs the Stage 10 Group 7 resource extraction e2e harness.
+- The suites must not be skipped, marked pending, or weakened.
+- The suites use synthetic fixtures only.
 
 ## Boundaries
 
 This package must not contain application features, business logic, API handlers, database schema, Supabase configuration, authentication implementation, AI implementation, React components, React Native components, pages, or screens.
 
-End-to-end critical flows and load simulation remain later-stage work.
+End-to-end critical flows and load simulation are added only as explicitly staged deterministic harnesses.
 
 ## Stage 7 Group 11 — Resource ingestion validation flow
 
@@ -79,6 +80,7 @@ The flow covers authenticated setup progress reads, academic term creation, subj
 This flow uses synthetic fixtures only.
 
 This flow must not use production data, service-role credentials, direct database repository imports, UI behavior, mobile behavior, worker behavior, AI behavior, or retrieval behavior.
+
 ## Stage 9 Group 6 — Resource placement correction flow
 
 Stage 9 Group 6 adds the resource placement correction flow plan under:
@@ -91,27 +93,39 @@ The flow covers resource upload, upload completion, validated ingestion, classif
 This flow uses synthetic fixtures only.
 
 This flow must not use production data, real student content, real academic material, service-role credentials, direct runtime imports, direct database repository imports, runtime classifier execution, worker execution, AI behavior, retrieval behavior, UI behavior, or mobile behavior.
-## Stage 9 Group 7 — Resource extraction flow
 
-Stage 9 Group 7 adds the resource extraction completion flow under:
+## Stage 9 Group 7 — Resource extraction flow plan
 
-- `flows/resource-extraction/`
+Stage 9 Group 7 added the historical resource extraction completion flow plan under:
+
+- `flows/resource-extraction/resource-extraction.flow-plan.json`
 - `fixtures/resource-extraction.fixture.json`
 
-The flow covers resource extraction job handoff, worker handler validation, domain extraction service invocation, extraction repository persistence, source locator preservation, parent-child extracted block hierarchy, and RLS expectations.
+The Stage 9 plan is retained as historical planning context only. Stage 10 Group 7 supersedes it with an executable deterministic harness.
 
-This flow uses synthetic fixtures only.
+## Stage 10 Group 7 — Resource extraction e2e harness
 
-This flow must not use production data, real student content, service-role credentials, direct runtime imports, OCR adapters, parser adapters, AI adapters, embeddings, retrieval indexing, API routes, UI, or mobile behavior.
-## Stage 11 Group 9 — Tutor grounding and citation flow
+Stage 10 Group 7 adds an executable deterministic resource extraction harness under:
 
-Stage 11 Group 9 adds a plan/fixture-based tutor grounding flow under:
+- `flows/resource-extraction/resource-extraction.fixture.ts`
+- `flows/resource-extraction/resource-extraction.e2e.ts`
+- `flows/resource-extraction/run-resource-extraction-flow.ts`
 
-- `flows/tutor-grounding/`
-- `fixtures/tutor-grounding.fixture.json`
+The harness proves:
 
-The flow covers authenticated tutor requests, scoped retrieval context, grounded answers with citations, insufficiency behavior, unresolved citation blocking, and citation locator preservation.
+- a synthetic uploaded resource can be represented as a resource extraction job;
+- extraction reaches the domain extraction service through a deterministic extraction port;
+- extraction output is persisted into in-memory implementations of the real repository contracts;
+- successful extraction converges resource lifecycle to `ready`;
+- partially extracted output persists usable content and unsupported-page failure metadata;
+- partially extracted output converges resource lifecycle to `ready` while public processing status remains `partially_ready`;
+- terminal failed extraction persists failed document/failure semantics and converges status to `failed`.
 
-This flow uses synthetic fixtures only.
+This harness uses synthetic fixtures only.
 
-This group does not add browser automation, mobile automation, runtime shortcuts, provider SDK calls, model calls, production data, database migrations, repositories, UI, mobile behavior, or Stage 12 artifact behavior.
+This harness must not use production data, real student content, service-role credentials, real Supabase databases, real storage, OCR, parser adapters, provider SDK calls, model calls, embeddings, retrieval indexing, summaries, notes, flashcards, quizzes, API routes, UI, or mobile behavior.
+
+Run:
+
+```text
+pnpm --filter @avora/e2e test:resource-extraction

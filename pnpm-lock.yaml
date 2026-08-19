@@ -145,6 +145,19 @@ importers:
         version: 24.10.4
 
   e2e:
+    dependencies:
+      '@avora/core':
+        specifier: workspace:*
+        version: link:../packages/core
+      '@avora/db':
+        specifier: workspace:*
+        version: link:../packages/db
+      '@avora/domain':
+        specifier: workspace:*
+        version: link:../packages/domain
+      '@avora/jobs':
+        specifier: workspace:*
+        version: link:../packages/jobs
     devDependencies:
       '@avora/config':
         specifier: workspace:*
