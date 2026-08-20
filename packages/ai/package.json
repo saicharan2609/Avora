@@ -8,11 +8,11 @@
   "import": "./dist/src/index.js",
   "default": "./dist/src/index.js"
 },
-    "./gateway": "./gateway/index.ts",
+    "./gateway": "./dist/gateway/index.js",
     "./gateway/budget-gate": "./gateway/budget-gate/index.ts",
     "./gateway/context": "./gateway/context/index.ts",
     "./gateway/envelope": "./gateway/envelope/index.ts",
-    "./gateway/invocation": "./gateway/invocation/index.ts",
+    "./gateway/invocation": "./dist/gateway/invocation/index.js",
     "./gateway/validation": "./gateway/validation/index.ts",
     "./gateway/tutor": "./dist/gateway/tutor/index.js",
     "./gateway/citations": "./gateway/citations/index.ts",
