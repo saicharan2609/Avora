@@ -7,10 +7,10 @@
     "./ports": "./ports/index.ts",
     "./chunking": "./chunking/index.ts",
     "./strategies": "./strategies/index.ts",
-    "./scope": "./scope/index.ts",
+    "./scope": "./dist/scope/index.js",
     "./search": "./dist/search/index.js",
     "./indexing": "./dist/indexing/index.js",
-    "./insufficiency": "./insufficiency/index.ts"
+    "./insufficiency": "./dist/insufficiency/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
