@@ -25,6 +25,12 @@
     },
     {
       "path": "../packages/domain"
+    },
+    {
+      "path": "../packages/retrieval"
+    },
+    {
+      "path": "../packages/ai"
     }
   ]
 }

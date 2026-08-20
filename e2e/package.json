@@ -13,13 +13,16 @@
     "lint:arch": "eslint .",
     "e2e": "echo \"end-to-end critical flows are implemented in staged harnesses\"",
     "test:adaptivity": "pnpm run build && node dist/adaptivity/run-adaptivity-suite.js",
-    "test:resource-extraction": "pnpm run build && node dist/flows/resource-extraction/run-resource-extraction-flow.js"
+    "test:resource-extraction": "pnpm run build && node dist/flows/resource-extraction/run-resource-extraction-flow.js",
+    "test:tutor-grounding": "pnpm run build && node dist/flows/tutor-grounding/run-tutor-grounding-flow.js"
   },
   "dependencies": {
+    "@avora/ai": "workspace:*",
     "@avora/core": "workspace:*",
     "@avora/db": "workspace:*",
     "@avora/domain": "workspace:*",
-    "@avora/jobs": "workspace:*"
+    "@avora/jobs": "workspace:*",
+    "@avora/retrieval": "workspace:*"
   },
   "devDependencies": {
     "@avora/config": "workspace:*"

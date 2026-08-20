@@ -146,6 +146,9 @@ importers:
 
   e2e:
     dependencies:
+      '@avora/ai':
+        specifier: workspace:*
+        version: link:../packages/ai
       '@avora/core':
         specifier: workspace:*
         version: link:../packages/core
@@ -158,6 +161,9 @@ importers:
       '@avora/jobs':
         specifier: workspace:*
         version: link:../packages/jobs
+      '@avora/retrieval':
+        specifier: workspace:*
+        version: link:../packages/retrieval
     devDependencies:
       '@avora/config':
         specifier: workspace:*
