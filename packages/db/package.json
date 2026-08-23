@@ -12,7 +12,8 @@
     "./repositories/placement": "./dist/repositories/placement/index.js",
     "./repositories/resources": "./dist/repositories/resources/index.js",
     "./repositories/extraction": "./dist/repositories/extraction/index.js",
-    "./repositories/jobs": "./dist/repositories/jobs/index.js"
+    "./repositories/jobs": "./dist/repositories/jobs/index.js",
+    "./repositories/resource-extraction-jobs": "./dist/repositories/resource-extraction-jobs/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

@@ -1,0 +1,78 @@
+{
+  "id": "stage-10-g4-resource-extraction-jobs-transactional-enqueue-plan",
+  "owner": "@avora/data",
+  "stage": "Stage 10 Group 4",
+  "title": "Resource extraction job transactional enqueue and idempotency plan",
+  "description": "Documents the atomicity and replay-safety invariants introduced by 20260817120000_resource_extraction_jobs_transactional_enqueue.sql, satisfying ENG-154/AD-27 (transactional outbox for this worker flow) and ENG-139 (idempotency key, safe replay).",
+  "requirement_trace": [
+    "ENG-154",
+    "ENG-139",
+    "AD-27",
+    "AD-26",
+    "EP-04",
+    "FR-037"
+  ],
+  "mechanism": {
+    "trigger": "enqueue_resource_extraction_job_after_ingestion_success",
+    "function": "app_private.enqueue_resource_extraction_job_on_ingestion_success",
+    "fires_on": "public.resource_ingestion_jobs AFTER UPDATE WHEN new.status = 'succeeded' AND old.status IS DISTINCT FROM 'succeeded'",
+    "idempotency_index": "resource_extraction_jobs_logical_identity_uniq (student_id, resource_id, payload->>'extractionStrategyVersion', payload->>'chunkingStrategyVersion')"
+  },
+  "execution_note": "This plan is a reviewed specification artifact, not an executable harness. Verifying live-transaction atomicity and concurrent-insert convergence requires a running Postgres/Supabase instance, which was not available in the session that authored this migration. The cases below must be executed against a real database (e.g. via a pgTAP suite or an integration test with db:ready) before this plan can be marked as run, not merely documented.",
+  "atomicity_cases": [
+    {
+      "name": "extraction job exists immediately after ingestion job succeeds, in the same transaction",
+      "setup": "claim a queued resource_ingestion_jobs row, then call completeResourceIngestionJob for it",
+      "expected": "exactly one resource_extraction_jobs row exists for that student/resource/strategy pair once the UPDATE commits, because the trigger runs inside the same statement's transaction",
+      "verified_live": false
+    },
+    {
+      "name": "a rolled-back ingestion completion never leaves an orphaned extraction job",
+      "setup": "begin a transaction, update resource_ingestion_jobs.status to succeeded, then roll back instead of committing",
+      "expected": "no resource_extraction_jobs row exists after rollback, because trigger effects are part of the same transaction and roll back with it",
+      "verified_live": false
+    }
+  ],
+  "idempotency_cases": [
+    {
+      "name": "replaying the ingestion validation handler does not create a duplicate extraction job",
+      "setup": "claim and process a resource_ingestion_jobs row to completion (extraction job created), then simulate a stale-claim reclaim and re-run the handler for a row that somehow re-reaches the succeeded transition for the same logical identity",
+      "expected": "the second insert attempt hits resource_extraction_jobs_logical_identity_uniq and is silently skipped (ON CONFLICT DO NOTHING); exactly one row remains",
+      "verified_live": false
+    },
+    {
+      "name": "completeResourceIngestionJob is itself single-fire per job",
+      "setup": "call completeResourceIngestionJob twice for the same jobId/workerId after the first call already transitioned status away from claimed",
+      "expected": "the second call's WHERE .eq('status','claimed') matches zero rows, so the UPDATE (and therefore the trigger) never fires a second time for that job",
+      "verified_live": false
+    }
+  ],
+  "concurrency_cases": [
+    {
+      "name": "two concurrent transactions racing to create the extraction job for the same logical identity converge to one row",
+      "setup": "two sessions concurrently execute an UPDATE that satisfies the trigger's WHEN clause for the same student_id, resource_id, extraction_strategy_version, chunking_strategy_version",
+      "expected": "the unique index resource_extraction_jobs_logical_identity_uniq allows only one INSERT to commit; the second, losing transaction's trigger-driven INSERT hits ON CONFLICT DO NOTHING and commits with zero new rows, never erroring and never duplicating",
+      "verified_live": false
+    }
+  ],
+  "regression_cases": [
+    {
+      "name": "RLS negative-authorization plan still passes",
+      "command": "node packages/db/rls/harness/run-rls-plans.mjs",
+      "verified_live": true,
+      "result": "10 plans, 90 cases, all passing, including resource-extraction-jobs.rls-plan.json (5 cases)"
+    },
+    {
+      "name": "extraction quality eval gate still passes",
+      "command": "node evals/dist/suites/run-resource-extraction-quality-gates.js",
+      "verified_live": true,
+      "result": "6 synthetic cases, all passing"
+    },
+    {
+      "name": "extraction e2e harness still passes",
+      "command": "node e2e/dist/flows/resource-extraction/run-resource-extraction-flow.js",
+      "verified_live": true,
+      "result": "3 cases, all passing"
+    }
+  ]
+}

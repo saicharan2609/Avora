@@ -26,6 +26,26 @@ export {
   ResourceExtractionWorkerHandlerError,
 } from "./errors.js";
 
+export type {
+  CreateResourceExtractionJobHandlerAdapterInput,
+} from "./ResourceExtractionJobHandlerAdapter.js";
+
+export {
+  createResourceExtractionJobHandlerAdapter,
+} from "./ResourceExtractionJobHandlerAdapter.js";
+
+export type {
+  CreateResourceExtractionWorkerInput,
+  ResourceExtractionClaimLoopOptions,
+  ResourceExtractionJobHandler,
+  ResourceExtractionJobHandlerResult,
+  ResourceExtractionWorker,
+} from "./ResourceExtractionWorker.js";
+
+export {
+  createResourceExtractionWorker,
+} from "./ResourceExtractionWorker.js";
+
 export {
   mapDbResourceExtractionFailureToDomainFailure,
   mapExtractedPageToCreateInput,

@@ -1,0 +1,42 @@
+{
+  "table": "public.resource_extraction_jobs",
+  "owner": "@avora/data",
+  "stage": "Stage 10 Group 4",
+  "cases": [
+    {
+      "name": "student can select own resource extraction jobs",
+      "role": "authenticated",
+      "operation": "select",
+      "expectation": "allowed",
+      "scope": "own"
+    },
+    {
+      "name": "student cannot select another student's resource extraction jobs",
+      "role": "authenticated",
+      "operation": "select",
+      "expectation": "denied",
+      "scope": "cross_student"
+    },
+    {
+      "name": "student cannot insert own resource extraction job",
+      "role": "authenticated",
+      "operation": "insert",
+      "expectation": "denied",
+      "scope": "own"
+    },
+    {
+      "name": "student cannot update own resource extraction job",
+      "role": "authenticated",
+      "operation": "update",
+      "expectation": "denied",
+      "scope": "own"
+    },
+    {
+      "name": "student cannot delete own resource extraction job",
+      "role": "authenticated",
+      "operation": "delete",
+      "expectation": "denied",
+      "scope": "own"
+    }
+  ]
+}

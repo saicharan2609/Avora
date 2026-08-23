@@ -101,6 +101,90 @@ export type Database = {
           },
         ];
       };
+      resource_extraction_jobs: {
+        Row: {
+          attempt_count: number;
+          available_at: string;
+          completed_at: string | null;
+          created_at: string;
+          enqueued_at: string;
+          failed_at: string | null;
+          heartbeat_at: string | null;
+          job_id: string;
+          job_name: "resource.extraction.extract";
+          last_error: string | null;
+          locked_at: string | null;
+          locked_by: string | null;
+          payload: Json;
+          priority: Database["public"]["Enums"]["resource_extraction_job_priority"];
+          reason: Database["public"]["Enums"]["resource_extraction_job_reason"];
+          resource_id: string;
+          started_at: string | null;
+          status: Database["public"]["Enums"]["resource_extraction_job_status"];
+          student_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          attempt_count?: number;
+          available_at?: string;
+          completed_at?: string | null;
+          created_at?: string;
+          enqueued_at?: string;
+          failed_at?: string | null;
+          heartbeat_at?: string | null;
+          job_id?: string;
+          job_name: "resource.extraction.extract";
+          last_error?: string | null;
+          locked_at?: string | null;
+          locked_by?: string | null;
+          payload: Json;
+          priority: Database["public"]["Enums"]["resource_extraction_job_priority"];
+          reason: Database["public"]["Enums"]["resource_extraction_job_reason"];
+          resource_id: string;
+          started_at?: string | null;
+          status?: Database["public"]["Enums"]["resource_extraction_job_status"];
+          student_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          attempt_count?: number;
+          available_at?: string;
+          completed_at?: string | null;
+          created_at?: string;
+          enqueued_at?: string;
+          failed_at?: string | null;
+          heartbeat_at?: string | null;
+          job_id?: string;
+          job_name?: "resource.extraction.extract";
+          last_error?: string | null;
+          locked_at?: string | null;
+          locked_by?: string | null;
+          payload?: Json;
+          priority?: Database["public"]["Enums"]["resource_extraction_job_priority"];
+          reason?: Database["public"]["Enums"]["resource_extraction_job_reason"];
+          resource_id?: string;
+          started_at?: string | null;
+          status?: Database["public"]["Enums"]["resource_extraction_job_status"];
+          student_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "resource_extraction_jobs_resource_id_fkey";
+            columns: ["resource_id"];
+            isOneToOne: false;
+            referencedRelation: "resources";
+            referencedColumns: ["resource_id"];
+          },
+          {
+            foreignKeyName: "resource_extraction_jobs_student_id_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["student_id"];
+          },
+        ];
+      };
       chunks: {
         Row: {
           chunk_id: string;
@@ -1147,6 +1231,19 @@ export type Database = {
       resource_ingestion_job_priority: "normal" | "high";
       resource_ingestion_job_reason: "upload_completed";
       resource_ingestion_job_status:
+        | "queued"
+        | "claimed"
+        | "running"
+        | "succeeded"
+        | "failed"
+        | "dead_lettered"
+        | "cancelled";
+
+      resource_extraction_job_priority: "interactive" | "normal" | "backfill";
+      resource_extraction_job_reason:
+        | "resource_validation_succeeded"
+        | "manual_reprocess_requested";
+      resource_extraction_job_status:
         | "queued"
         | "claimed"
         | "running"

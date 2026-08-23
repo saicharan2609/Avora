@@ -6,6 +6,12 @@ export {
   createResourceIngestionJobsRepository,
   ResourceIngestionJobsRepositoryError,
 } from "./jobs/index.js";
+export type * from "./resource-extraction-jobs/index.js";
+
+export {
+  createResourceExtractionJobsRepository,
+  ResourceExtractionJobsRepositoryError,
+} from "./resource-extraction-jobs/index.js";
 export type * from "./academic/index.js";
 
 export {
