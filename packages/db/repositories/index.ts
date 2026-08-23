@@ -12,6 +12,24 @@ export {
   createResourceExtractionJobsRepository,
   ResourceExtractionJobsRepositoryError,
 } from "./resource-extraction-jobs/index.js";
+export type * from "./resource-chunking-jobs/index.js";
+
+export {
+  createResourceChunkingJobsRepository,
+  ResourceChunkingJobsRepositoryError,
+} from "./resource-chunking-jobs/index.js";
+export type * from "./resource-indexing-jobs/index.js";
+
+export {
+  createResourceIndexingJobsRepository,
+  ResourceIndexingJobsRepositoryError,
+} from "./resource-indexing-jobs/index.js";
+export type * from "./resource-upload-ticket-jobs/index.js";
+
+export {
+  createResourceUploadTicketJobsRepository,
+  ResourceUploadTicketJobsRepositoryError,
+} from "./resource-upload-ticket-jobs/index.js";
 export type * from "./academic/index.js";
 
 export {

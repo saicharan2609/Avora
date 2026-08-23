@@ -4,12 +4,12 @@ import type {
 import {
   TutorGatewayError,
   createTutorGateway,
+  createTutorRetrievalSearch,
 } from "@avora/ai/gateway/tutor";
 import type {
   TutorGatewayPort,
 } from "@avora/ai/gateway/tutor";
 import { createRetrievalChunkRepository } from "@avora/db/repositories/chunks";
-import { createScopedRetrievalSearch } from "@avora/retrieval/search";
 
 import type {
   AuthenticatedTutorApiStudent,
@@ -32,7 +32,7 @@ export function createWebTutorApiComposition(
     client: input.authenticatedStudent.client,
   });
 
-  const retrievalSearch = createScopedRetrievalSearch({
+  const retrievalSearch = createTutorRetrievalSearch({
     retrievalChunkRepository,
   });
 

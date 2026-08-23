@@ -130,68 +130,7 @@ function assertValidChunkerInput(input: ResourceChunkerInput): void {
     );
   }
 
-  if (String(input.strategy.chunkingStrategyVersion).trim().length === 0) {
-    throw new ResourceChunkerError(
-      "resource_chunker_invalid_input",
-      "Resource chunker requires a non-empty chunking strategy version.",
-    );
-  }
-
-  if (String(input.strategy.sanitisationStrategyVersion).trim().length === 0) {
-    throw new ResourceChunkerError(
-      "resource_chunker_invalid_input",
-      "Resource chunker requires a non-empty sanitisation strategy version.",
-    );
-  }
-
-  if (!Number.isSafeInteger(input.strategy.targetTokenEstimate)) {
-    throw new ResourceChunkerError(
-      "resource_chunker_invalid_input",
-      "Resource chunker target token estimate must be a safe integer.",
-    );
-  }
-
-  if (!Number.isSafeInteger(input.strategy.maximumTokenEstimate)) {
-    throw new ResourceChunkerError(
-      "resource_chunker_invalid_input",
-      "Resource chunker maximum token estimate must be a safe integer.",
-    );
-  }
-
-  if (!Number.isSafeInteger(input.strategy.overlapBlockCount)) {
-    throw new ResourceChunkerError(
-      "resource_chunker_invalid_input",
-      "Resource chunker overlap block count must be a safe integer.",
-    );
-  }
-
-  if (input.strategy.targetTokenEstimate <= 0) {
-    throw new ResourceChunkerError(
-      "resource_chunker_invalid_input",
-      "Resource chunker target token estimate must be positive.",
-    );
-  }
-
-  if (input.strategy.maximumTokenEstimate <= 0) {
-    throw new ResourceChunkerError(
-      "resource_chunker_invalid_input",
-      "Resource chunker maximum token estimate must be positive.",
-    );
-  }
-
-  if (input.strategy.targetTokenEstimate > input.strategy.maximumTokenEstimate) {
-    throw new ResourceChunkerError(
-      "resource_chunker_invalid_input",
-      "Resource chunker target token estimate must not exceed the maximum token estimate.",
-    );
-  }
-
-  if (input.strategy.overlapBlockCount < 0) {
-    throw new ResourceChunkerError(
-      "resource_chunker_invalid_input",
-      "Resource chunker overlap block count must be non-negative.",
-    );
-  }
+  assertValidChunkingStrategy(input.strategy);
 
   if (input.blocks.length === 0) {
     throw new ResourceChunkerError(
@@ -203,6 +142,71 @@ function assertValidChunkerInput(input: ResourceChunkerInput): void {
   for (const block of input.blocks) {
     assertBlockBelongsToDocument(input.document, block);
     assertBlockHasContent(block);
+  }
+}
+
+function assertValidChunkingStrategy(strategy: ChunkingStrategy): void {
+  if (String(strategy.chunkingStrategyVersion).trim().length === 0) {
+    throw new ResourceChunkerError(
+      "resource_chunker_invalid_input",
+      "Resource chunker requires a non-empty chunking strategy version.",
+    );
+  }
+
+  if (String(strategy.sanitisationStrategyVersion).trim().length === 0) {
+    throw new ResourceChunkerError(
+      "resource_chunker_invalid_input",
+      "Resource chunker requires a non-empty sanitisation strategy version.",
+    );
+  }
+
+  if (!Number.isSafeInteger(strategy.targetTokenEstimate)) {
+    throw new ResourceChunkerError(
+      "resource_chunker_invalid_input",
+      "Resource chunker target token estimate must be a safe integer.",
+    );
+  }
+
+  if (!Number.isSafeInteger(strategy.maximumTokenEstimate)) {
+    throw new ResourceChunkerError(
+      "resource_chunker_invalid_input",
+      "Resource chunker maximum token estimate must be a safe integer.",
+    );
+  }
+
+  if (!Number.isSafeInteger(strategy.overlapBlockCount)) {
+    throw new ResourceChunkerError(
+      "resource_chunker_invalid_input",
+      "Resource chunker overlap block count must be a safe integer.",
+    );
+  }
+
+  if (strategy.targetTokenEstimate <= 0) {
+    throw new ResourceChunkerError(
+      "resource_chunker_invalid_input",
+      "Resource chunker target token estimate must be positive.",
+    );
+  }
+
+  if (strategy.maximumTokenEstimate <= 0) {
+    throw new ResourceChunkerError(
+      "resource_chunker_invalid_input",
+      "Resource chunker maximum token estimate must be positive.",
+    );
+  }
+
+  if (strategy.targetTokenEstimate > strategy.maximumTokenEstimate) {
+    throw new ResourceChunkerError(
+      "resource_chunker_invalid_input",
+      "Resource chunker target token estimate must not exceed the maximum token estimate.",
+    );
+  }
+
+  if (strategy.overlapBlockCount < 0) {
+    throw new ResourceChunkerError(
+      "resource_chunker_invalid_input",
+      "Resource chunker overlap block count must be non-negative.",
+    );
   }
 }
 

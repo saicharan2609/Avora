@@ -115,4 +115,4 @@ Public surface:
 
 The request contract intentionally excludes `studentId`. Student ownership is resolved by the authenticated web route.
 
-This group does not implement AI Gateway orchestration, retrieval logic, provider calls, UI, mobile behavior, database schema, repositories, evals, or e2e flows.
+This group does not implement AI Gateway orchestration, retrieval logic, provider calls, UI, mobile behavior, database schema, repositories, evals, e2e flows, a streaming response contract, or an entitlement/usage-allowance response contract. Streaming and entitlement are deferred to a later group.

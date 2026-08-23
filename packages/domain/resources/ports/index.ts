@@ -13,6 +13,11 @@ export type {
   ResourceIngestionQueuePort,
 } from "./ResourceIngestionQueuePort.js";
 export type {
+  ResourceUploadTicketEnqueueInput,
+  ResourceUploadTicketEnqueueResult,
+  ResourceUploadTicketQueuePort,
+} from "./ResourceUploadTicketQueuePort.js";
+export type {
   InspectResourceObjectInput,
   InspectResourceObjectResult,
   ResourceObjectInspectionPort,

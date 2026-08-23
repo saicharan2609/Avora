@@ -1,9 +1,11 @@
 import type {
   DeclareResourceUploadResponseBody,
   CompleteResourceUploadResponseBody,
+  GetResourceUploadTicketResponseBody,
   ResourceUploadApiResource,
   ResourceUploadApiStorageLocation,
   ResourceUploadApiTicket,
+  ResourceUploadApiTicketJobStatus,
 } from "@avora/core/contracts/resources";
 import type {
   DeclareResourceUploadResult,
@@ -11,14 +13,29 @@ import type {
   ResourceRecord,
   ResourceStorageLocation,
   ResourceUploadTicket,
+  ResourceUploadTicketJobAccepted,
 } from "@avora/domain/resources";
 
 export function serializeDeclareResourceUploadResult(
   result: DeclareResourceUploadResult,
+  ticketJob: ResourceUploadTicketJobAccepted,
 ): DeclareResourceUploadResponseBody {
   return {
     resource: serializeResource(result.resource),
-    ticket: serializeUploadTicket(result.ticket),
+    ticketJob: {
+      jobId: ticketJob.jobId,
+      enqueuedAt: ticketJob.enqueuedAt,
+    },
+  };
+}
+
+export function serializeGetResourceUploadTicketResult(
+  status: ResourceUploadApiTicketJobStatus,
+  ticket: ResourceUploadTicket | null,
+): GetResourceUploadTicketResponseBody {
+  return {
+    status,
+    ticket: ticket === null ? null : serializeUploadTicket(ticket),
   };
 }
 

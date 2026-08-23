@@ -221,28 +221,34 @@ function deriveProcessingStatus(
   }
 
   if (input.resource.lifecycleState === "ready") {
-    if (input.extraction?.status === "partially_extracted") {
-      return {
-        status: "partially_ready",
-        terminal: true,
-      };
-    }
+    return deriveReadyProcessingStatus(input.extraction);
+  }
 
-    if (input.extraction?.status === "failed") {
-      return {
-        status: "failed",
-        terminal: true,
-      };
-    }
+  return {
+    status: "failed",
+    terminal: true,
+  };
+}
 
+function deriveReadyProcessingStatus(
+  extraction: DbResourceExtractionDocumentRecord | null,
+): WebResourceProcessingStatus["processing"] {
+  if (extraction?.status === "partially_extracted") {
     return {
-      status: "ready",
+      status: "partially_ready",
+      terminal: true,
+    };
+  }
+
+  if (extraction?.status === "failed") {
+    return {
+      status: "failed",
       terminal: true,
     };
   }
 
   return {
-    status: "failed",
+    status: "ready",
     terminal: true,
   };
 }

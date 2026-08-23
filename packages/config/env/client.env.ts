@@ -7,6 +7,8 @@ export const clientEnvironmentSchema = z.object({
 
 export type ClientEnvironment = z.infer<typeof clientEnvironmentSchema>;
 
-export function parseClientEnvironment(input: NodeJS.ProcessEnv): ClientEnvironment {
+export function parseClientEnvironment(
+  input: Record<string, string | undefined>
+): ClientEnvironment {
   return clientEnvironmentSchema.parse(input);
 }

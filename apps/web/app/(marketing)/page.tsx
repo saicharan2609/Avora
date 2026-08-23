@@ -18,7 +18,7 @@ export default function MarketingPage(): ReactNode {
         aria-labelledby="avora-shell-title"
         style={{
           width: "100%",
-          maxWidth: "760px",
+          maxWidth: webTokens.layout.containerMd,
           padding: webTokens.space.xl,
           border: `${webTokens.layout.divider} solid ${webTokens.border.subtle}`,
           borderRadius: webTokens.radius.xl,

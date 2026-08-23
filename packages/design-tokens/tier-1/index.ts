@@ -42,6 +42,8 @@ export const tier1Tokens = {
     touchTarget: "44px",
     divider: "1px",
     progressTrack: "4px",
+    containerSm: "560px",
+    containerMd: "760px",
   },
   radius: {
     none: "0",

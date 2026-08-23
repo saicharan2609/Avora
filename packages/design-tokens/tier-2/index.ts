@@ -48,6 +48,8 @@ export const tier2Tokens = {
     touchTarget: tier1Tokens.size.touchTarget,
     divider: tier1Tokens.size.divider,
     progressTrack: tier1Tokens.size.progressTrack,
+    containerSm: tier1Tokens.size.containerSm,
+    containerMd: tier1Tokens.size.containerMd,
   },
   space: {
     none: tier1Tokens.space[0],

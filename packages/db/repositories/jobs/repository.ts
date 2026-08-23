@@ -488,23 +488,11 @@ function mapPayload(payload: Json): DbResourceIngestionJobPayload {
     throwInvalidPayloadShape();
   }
 
-  const studentId = payload["studentId"];
-  const resourceId = payload["resourceId"];
-  const storage = payload["storage"];
-  const declaredMimeType = payload["declaredMimeType"];
-  const byteSize = payload["byteSize"];
-  const contentHash = payload["contentHash"];
-  const requestedAt = payload["requestedAt"];
+  assertValidPayloadFieldShape(payload);
 
-  if (
-    typeof studentId !== "string"
-    || typeof resourceId !== "string"
-    || !isJsonObject(storage)
-    || typeof declaredMimeType !== "string"
-    || typeof byteSize !== "number"
-    || typeof contentHash !== "string"
-    || typeof requestedAt !== "string"
-  ) {
+  const storage = payload["storage"];
+
+  if (!isJsonObject(storage)) {
     throwInvalidPayloadShape();
   }
 
@@ -521,18 +509,31 @@ function mapPayload(payload: Json): DbResourceIngestionJobPayload {
   }
 
   return {
-    studentId: studentId as StudentId,
-    resourceId: resourceId as ResourceId,
+    studentId: payload["studentId"] as StudentId,
+    resourceId: payload["resourceId"] as ResourceId,
     storage: {
       bucket: storageBucket,
       objectPath: storageObjectPath,
       version: storageVersion,
     },
-    declaredMimeType,
-    byteSize,
-    contentHash,
-    requestedAt: requestedAt as IsoDateTimeString,
+    declaredMimeType: payload["declaredMimeType"] as string,
+    byteSize: payload["byteSize"] as number,
+    contentHash: payload["contentHash"] as string,
+    requestedAt: payload["requestedAt"] as IsoDateTimeString,
   };
+}
+
+function assertValidPayloadFieldShape(payload: Record<string, Json>): void {
+  if (
+    typeof payload["studentId"] !== "string"
+    || typeof payload["resourceId"] !== "string"
+    || typeof payload["declaredMimeType"] !== "string"
+    || typeof payload["byteSize"] !== "number"
+    || typeof payload["contentHash"] !== "string"
+    || typeof payload["requestedAt"] !== "string"
+  ) {
+    throwInvalidPayloadShape();
+  }
 }
 
 function isJsonObject(value: unknown): value is Record<string, Json> {

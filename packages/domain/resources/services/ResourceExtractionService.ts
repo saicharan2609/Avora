@@ -1,5 +1,7 @@
 import type {
+  ExtractedPage,
   ExtractedResourceContent,
+  ResourceExtractedContentBlock,
   ResourceExtractionDocument,
   ResourceExtractionFailure,
   ResourceExtractionRequest,
@@ -156,39 +158,45 @@ function assertDocumentMatchesRequest(
   }
 
   for (const block of document.blocks) {
-    if (block.text.trim().length === 0) {
-      throwInconsistentResult(
-        "Resource extraction document contains an empty extracted content block.",
-      );
-    }
+    assertValidExtractedContentBlock(block);
+  }
+}
 
-    if (!Number.isSafeInteger(block.sortOrder) || block.sortOrder < 0) {
-      throwInconsistentResult(
-        "Resource extraction document contains an invalid extracted content block sort order.",
-      );
-    }
+function assertValidExtractedContentBlock(
+  block: ResourceExtractedContentBlock,
+): void {
+  if (block.text.trim().length === 0) {
+    throwInconsistentResult(
+      "Resource extraction document contains an empty extracted content block.",
+    );
+  }
 
-    if (
-      block.confidence !== null
-      && (
-        !Number.isFinite(block.confidence)
-        || block.confidence < 0
-        || block.confidence > 1
-      )
-    ) {
-      throwInconsistentResult(
-        "Resource extraction document contains an invalid extracted content block confidence.",
-      );
-    }
+  if (!Number.isSafeInteger(block.sortOrder) || block.sortOrder < 0) {
+    throwInconsistentResult(
+      "Resource extraction document contains an invalid extracted content block sort order.",
+    );
+  }
 
-    if (
-      block.parentBlockId !== null
-      && block.parentBlockId === block.blockId
-    ) {
-      throwInconsistentResult(
-        "Resource extraction document contains a block that references itself as its parent.",
-      );
-    }
+  if (
+    block.confidence !== null
+    && (
+      !Number.isFinite(block.confidence)
+      || block.confidence < 0
+      || block.confidence > 1
+    )
+  ) {
+    throwInconsistentResult(
+      "Resource extraction document contains an invalid extracted content block confidence.",
+    );
+  }
+
+  if (
+    block.parentBlockId !== null
+    && block.parentBlockId === block.blockId
+  ) {
+    throwInconsistentResult(
+      "Resource extraction document contains a block that references itself as its parent.",
+    );
   }
 }
 
@@ -238,56 +246,69 @@ function assertContentMatchesRequest(
   }
 
   for (const page of content.pages) {
-    assertNonEmptyString(
-      page.pageId,
-      "Extracted resource content page requires a stable page id.",
+    assertValidExtractedPage(page, input);
+  }
+}
+
+function assertValidExtractedPage(
+  page: ExtractedPage,
+  input: ResourceExtractionRequest,
+): void {
+  assertNonEmptyString(
+    page.pageId,
+    "Extracted resource content page requires a stable page id.",
+  );
+
+  assertNonEmptyString(
+    page.provenance.provenanceId,
+    "Extracted resource content page requires stable provenance id.",
+  );
+
+  if (!Number.isSafeInteger(page.pageNumber) || page.pageNumber <= 0) {
+    throwInconsistentResult(
+      "Extracted resource content contains an invalid page number.",
     );
+  }
 
-    assertNonEmptyString(
-      page.provenance.provenanceId,
-      "Extracted resource content page requires stable provenance id.",
+  if (page.text.trim().length === 0) {
+    throwInconsistentResult(
+      "Extracted resource content contains an empty page.",
     );
+  }
 
-    if (!Number.isSafeInteger(page.pageNumber) || page.pageNumber <= 0) {
-      throwInconsistentResult(
-        "Extracted resource content contains an invalid page number.",
-      );
-    }
+  if (
+    page.confidence !== null
+    && (
+      !Number.isFinite(page.confidence)
+      || page.confidence < 0
+      || page.confidence > 1
+    )
+  ) {
+    throwInconsistentResult(
+      "Extracted resource content contains an invalid page confidence.",
+    );
+  }
 
-    if (page.text.trim().length === 0) {
-      throwInconsistentResult(
-        "Extracted resource content contains an empty page.",
-      );
-    }
+  if (page.provenance.strategyVersion !== input.extractionStrategyVersion) {
+    throwInconsistentResult(
+      "Extracted page provenance strategy version does not match the extraction request.",
+    );
+  }
 
-    if (
-      page.confidence !== null
-      && (
-        !Number.isFinite(page.confidence)
-        || page.confidence < 0
-        || page.confidence > 1
-      )
-    ) {
-      throwInconsistentResult(
-        "Extracted resource content contains an invalid page confidence.",
-      );
-    }
+  assertValidExtractedPageFailure(page);
+}
 
-    if (page.provenance.strategyVersion !== input.extractionStrategyVersion) {
-      throwInconsistentResult(
-        "Extracted page provenance strategy version does not match the extraction request.",
-      );
-    }
+function assertValidExtractedPageFailure(page: ExtractedPage): void {
+  if (page.failure === null) {
+    return;
+  }
 
-    if (page.failure !== null) {
-      assertValidFailure(page.failure);
+  assertValidFailure(page.failure);
 
-      if (page.failure.pageNumber !== page.pageNumber) {
-        throwInconsistentResult(
-          "Unsupported-page failure page number does not match the extracted page.",
-        );
-      }
-    }
+  if (page.failure.pageNumber !== page.pageNumber) {
+    throwInconsistentResult(
+      "Unsupported-page failure page number does not match the extracted page.",
+    );
   }
 }
 

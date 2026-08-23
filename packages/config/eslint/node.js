@@ -2,18 +2,17 @@ import globals from "globals";
 
 export default [
   {
-    files: [
-      "apps/worker/**/*.{ts,js,mjs,cjs}",
-      "packages/config/**/*.{ts,js,mjs,cjs}",
-      ".github/**/*.js"
-    ],
+    files: ["**/*.{js,cjs,mjs,ts,tsx}"],
     languageOptions: {
       globals: {
         ...globals.node
       }
-    },
+    }
+  },
+  {
+    files: ["**/*.{mjs,cjs}"],
     rules: {
-      "no-process-exit": "error"
+      "no-console": "off"
     }
   }
 ];

@@ -43,7 +43,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       authenticatedStudent,
     });
 
-    const result = await service.declareUpload({
+    const { result, ticketJob } = await service.declareUpload({
       studentId: authenticatedStudent.studentId,
       kind: parsedBody.data.kind,
       originalFilename: parsedBody.data.originalFilename,
@@ -51,10 +51,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       byteSize: parsedBody.data.byteSize,
     });
 
-    const responseBody = serializeDeclareResourceUploadResult(result);
+    const responseBody = serializeDeclareResourceUploadResult(result, ticketJob);
     const parsedResponseBody = declareResourceUploadResponseBodySchema.parse(responseBody);
 
-    return createJsonResponse(parsedResponseBody, 201);
+    return createJsonResponse(parsedResponseBody, 202);
   } catch (error) {
     return createErrorResponse(mapResourceUploadError(error));
   }

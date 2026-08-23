@@ -9,7 +9,8 @@
     "gateway/**/*.ts",
     "ports/**/*.ts",
     "embeddings/**/*.ts",
-    "adapters/**/*.ts"
+    "adapters/**/*.ts",
+    "prompts/**/*.ts"
   ],
   "references": [
     {

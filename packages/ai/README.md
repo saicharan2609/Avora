@@ -138,3 +138,68 @@ TutorQuery
 → TutorAnswerInvocationPort.invokeTutorAnswer
 → validateGroundedAnswer
 → TutorGatewayResponse
+```
+
+## Phase E — Tutor answer generation (Gemini provider)
+
+Phase E adds the concrete provider path behind `TutorAnswerInvocationPort`: the versioned tutor
+system policy, the six-part context assembly seam, the sealed model-input construction seam, the
+protected routing policy, output-contract validation, machine citation resolution, and the Gemini
+adapter itself.
+
+Public surface:
+
+- `@avora/ai/gateway/context` — `assembleTutorSixPartContext`, `TutorSixPartContext`
+- `@avora/ai/gateway/envelope` — `sealTutorModelInput`, `SealedTutorModelInput`
+- `@avora/ai/gateway/validation` — `validateTutorAnswerRawOutput`, `TutorAnswerRawOutput`
+- `@avora/ai/gateway/citations` — `resolveTutorCitations`, `TutorCitationResolutionResult`
+- `@avora/ai/adapters/google` — `createGeminiTutorAnswerAdapter`, `createGoogleGenAITutorAnswerClient`
+
+The tutor answer generation flow is:
+
+```text
+TutorQuery + GroundedContextEnvelope (evidence, already sealed by Stage 11 Group 6/7)
+→ assembleTutorSixPartContext        (gateway/context)   — system policy, task contract,
+                                                             academic frame, personalisation,
+                                                             evidence, interaction history
+→ sealTutorModelInput                (gateway/envelope)  — the only seam that may construct
+                                                             model input; redacts resourceId
+                                                             and locator out of what is sent
+→ resolveTutorAnswerRoutingConfig    (gateway/routing, protected, not part of the public
+                                                             package surface)
+→ GeminiTutorAnswerClient.generateContent (adapters/google) — provider SDK call, tools omitted
+→ validateTutorAnswerRawOutput       (gateway/validation) — untrusted output, schema only
+→ resolveTutorCitations              (gateway/citations)  — resourceId/locator resolved only
+                                                             from the trusted envelope, never
+                                                             from the model
+→ TutorAnswerInvocationResult
+```
+
+`gateway/routing/` remains a protected, non-exported path (no `package.json` export, no barrel):
+model identifiers are configuration data for the Gateway, never importable by a feature module.
+`prompts/tutor/` is likewise internal to `@avora/ai` and is not part of the public package surface.
+
+Requirement trace: AIR-001, AIR-002, AIR-003, AIR-006, ENG-210, ENG-211, ENG-212, ENG-216,
+ENG-217, ENG-219, ENG-221, ENG-224, ENG-226, ENG-229, ENG-230, ENG-231, NN-02, NN-03, NN-11.
+
+This phase does not implement AI budget gating (`gateway/budget-gate/`), telemetry
+(`gateway/telemetry/`), or wiring the adapter into a route handler or worker job — those remain
+open for a later stage.
+
+## Pre-Stage-12 readiness correction — embedding invocation gate
+
+`createGeminiEmbeddingPort` now requires an `invocationGateState` input and calls
+`authorizeAiProviderInvocation` before ever calling the provider client, closing a gap identified
+during the pre-Stage-12 readiness audit: unlike the tutor-answer path, the embedding adapter had no
+authorization gate at all, even though it is the one path already wired with a real API key in
+`apps/worker/src/runtime/createWorkerRuntime.ts`. The worker composition root passes
+`invocationGateState: undefined`, which fails closed — this does not enable live embedding calls;
+it only ensures the path refuses safely once a worker execution loop is eventually wired up.
+
+## Pre-Stage-12 dependency approval — `@google/genai` (ENG-366 / ENG-404)
+
+Owner decision (2026-08-23): Approved `@google/genai@2.18.0` as the Gemini provider SDK for the server/worker-side AI adapter implementation.
+- Server/worker-side runtime only (never bundled into web or mobile client code).
+- Maintained strictly behind `TutorAnswerInvocationPort` / `EmbeddingPort` in `packages/ai/adapters/google/`.
+- No feature module touches the SDK directly (ENG-210, AD-12).
+- License: Apache-2.0 (allowlisted per ENG-369).

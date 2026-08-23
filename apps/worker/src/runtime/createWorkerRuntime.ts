@@ -1,8 +1,14 @@
-import { createSupabaseStorageInspectionAdapter } from "@avora/adapters/supabase/storage";
+import { createSupabaseStorageAdapter, createSupabaseStorageInspectionAdapter } from "@avora/adapters/supabase/storage";
+import { createGeminiEmbeddingPort, createGoogleGenAIEmbeddingClient } from "@avora/ai/adapters/google";
 import { createServiceRoleDatabaseClient } from "@avora/db/client";
 import { createResourceIngestionJobsRepository } from "@avora/db/repositories/jobs";
 import { createResourceExtractionJobsRepository } from "@avora/db/repositories/resource-extraction-jobs";
+import { createResourceChunkingJobsRepository } from "@avora/db/repositories/resource-chunking-jobs";
+import { createResourceIndexingJobsRepository } from "@avora/db/repositories/resource-indexing-jobs";
+import { createResourceUploadTicketJobsRepository } from "@avora/db/repositories/resource-upload-ticket-jobs";
 import { createResourceExtractionRepository } from "@avora/db/repositories/extraction";
+import type { ResourceExtractionRepository } from "@avora/db/repositories/extraction";
+import { createRetrievalChunkRepository } from "@avora/db/repositories/chunks";
 import { createResourcesRepository } from "@avora/db/repositories/resources";
 import {
   createResourceIngestionValidationService,
@@ -10,6 +16,11 @@ import {
   ResourceExtractionServiceError,
 } from "@avora/domain/resources";
 import type { ResourceExtractionPort, ResourceExtractionRequest, ResourceExtractionResult } from "@avora/domain/resources";
+import { createResourceChunker } from "@avora/retrieval/chunking";
+import type {
+  ResourceChunkerExtractedContentBlock,
+  ResourceChunkerExtractionDocument,
+} from "@avora/retrieval/chunking";
 
 import { createResourceIngestionValidationHandler } from "../resource-ingestion/ResourceIngestionValidationHandler.js";
 import {
@@ -22,22 +33,47 @@ import {
   createResourceExtractionWorkerHandler,
   type ResourceExtractionWorker,
 } from "../resource-extraction/index.js";
+import {
+  createResourceChunkingJobHandlerAdapter,
+  createResourceChunkingWorker,
+  createResourceChunkingWorkerHandler,
+  type ResourceChunkingExtractionRepository,
+  type ResourceChunkingWorker,
+} from "../resource-chunking/index.js";
+import {
+  createResourceIndexingJobHandlerAdapter,
+  createResourceIndexingWorker,
+  createResourceIndexingWorkerHandler,
+  type EmbeddingIndexWriter,
+  type ResourceIndexingWorker,
+  type WriteChunkEmbeddingsInput,
+  type WriteChunkEmbeddingsResult,
+} from "../resource-indexing/index.js";
+import {
+  createResourceUploadTicketWorker,
+  type ResourceUploadTicketWorker,
+} from "../resource-upload-ticket/index.js";
 
 export type WorkerRuntimeEnvironment = Readonly<{
   supabaseUrl: string;
   supabaseServiceRoleKey: string;
+  geminiApiKey: string;
   workerId: string;
 }>;
 
 export type WorkerRuntime = Readonly<{
   resourceIngestionWorker: ResourceIngestionWorker;
   resourceExtractionWorker: ResourceExtractionWorker;
+  resourceChunkingWorker: ResourceChunkingWorker;
+  resourceIndexingWorker: ResourceIndexingWorker;
+  resourceUploadTicketWorker: ResourceUploadTicketWorker;
 }>;
 
 export function readWorkerRuntimeEnvironment(): WorkerRuntimeEnvironment {
   return {
     supabaseUrl: readRequiredEnvironmentValue("SUPABASE_URL"),
     supabaseServiceRoleKey: readRequiredEnvironmentValue("SUPABASE_SERVICE_ROLE_KEY"),
+    geminiApiKey: readRequiredEnvironmentValue("GEMINI_API_KEY"),
     workerId: process.env["AVORA_WORKER_ID"] ?? `worker-${process.pid}`,
   };
 }
@@ -62,11 +98,33 @@ export function createWorkerRuntime(
     client: database.client,
   });
 
+  const resourceChunkingJobsRepository = createResourceChunkingJobsRepository({
+    client: database.client,
+  });
+
+  const resourceIndexingJobsRepository = createResourceIndexingJobsRepository({
+    client: database.client,
+  });
+
+  const resourceUploadTicketJobsRepository = createResourceUploadTicketJobsRepository({
+    client: database.client,
+  });
+
   const extractionRepository = createResourceExtractionRepository({
     client: database.client,
   });
 
+  const retrievalChunkRepository = createRetrievalChunkRepository({
+    client: database.client,
+  });
+
   const storageInspection = createSupabaseStorageInspectionAdapter({
+    supabaseUrl: environment.supabaseUrl,
+    supabaseServiceRoleKey: environment.supabaseServiceRoleKey,
+  });
+
+  // Worker-tier only (SEC-005, AD-11): apps/web never constructs this client.
+  const uploadBlobStore = createSupabaseStorageAdapter({
     supabaseUrl: environment.supabaseUrl,
     supabaseServiceRoleKey: environment.supabaseServiceRoleKey,
   });
@@ -86,6 +144,31 @@ export function createWorkerRuntime(
     resourcesRepository,
   });
 
+  const chunkingWorkerHandler = createResourceChunkingWorkerHandler({
+    extractionRepository: createResourceChunkingExtractionRepositoryAdapter({
+      extractionRepository,
+    }),
+    retrievalChunkRepository,
+    resourceChunker: createResourceChunker(),
+  });
+
+  const embeddingPort = createGeminiEmbeddingPort({
+    client: createGoogleGenAIEmbeddingClient({
+      apiKey: environment.geminiApiKey,
+    }),
+    // Fails closed by design (AiProviderInvocationGate): no worker-tier
+    // configuration surface for this gate exists yet, so it must not default
+    // to "enabled". This mirrors the tutor-answer path's composition root,
+    // which likewise does not wire a live invocation-gate state.
+    invocationGateState: undefined,
+  });
+
+  const indexingWorkerHandler = createResourceIndexingWorkerHandler({
+    retrievalChunkRepository,
+    embeddingPort,
+    embeddingIndexWriter: createUnavailableEmbeddingIndexWriter(),
+  });
+
   return {
     resourceIngestionWorker: createResourceIngestionWorker({
       repository: resourceIngestionJobsRepository,
@@ -101,6 +184,25 @@ export function createWorkerRuntime(
       }),
       workerId: environment.workerId,
     }),
+    resourceChunkingWorker: createResourceChunkingWorker({
+      repository: resourceChunkingJobsRepository,
+      handler: createResourceChunkingJobHandlerAdapter({
+        chunkingWorkerHandler,
+      }),
+      workerId: environment.workerId,
+    }),
+    resourceIndexingWorker: createResourceIndexingWorker({
+      repository: resourceIndexingJobsRepository,
+      handler: createResourceIndexingJobHandlerAdapter({
+        indexingWorkerHandler,
+      }),
+      workerId: environment.workerId,
+    }),
+    resourceUploadTicketWorker: createResourceUploadTicketWorker({
+      repository: resourceUploadTicketJobsRepository,
+      blobStore: uploadBlobStore,
+      workerId: environment.workerId,
+    }),
   };
 }
 
@@ -112,6 +214,76 @@ function createUnavailableExtractionPort(): ResourceExtractionPort {
       throw new ResourceExtractionServiceError(
         "resource_extraction_port_failed",
         "Extraction provider is not configured for the worker runtime.",
+      );
+    },
+  };
+}
+
+type CreateResourceChunkingExtractionRepositoryAdapterInput = Readonly<{
+  extractionRepository: ResourceExtractionRepository;
+}>;
+
+function createResourceChunkingExtractionRepositoryAdapter(
+  input: CreateResourceChunkingExtractionRepositoryAdapterInput,
+): ResourceChunkingExtractionRepository {
+  return {
+    getResourceExtractionDocumentById: async (lookup) => {
+      const document = await input.extractionRepository.getResourceExtractionDocumentById({
+        studentId: lookup.studentId,
+        extractionDocumentId:
+          lookup.extractionDocumentId as unknown as Parameters<
+            ResourceExtractionRepository["getResourceExtractionDocumentById"]
+          >[0]["extractionDocumentId"],
+      });
+
+      if (document === null) {
+        return null;
+      }
+
+      const mapped: ResourceChunkerExtractionDocument = {
+        studentId: document.studentId,
+        resourceId: document.resourceId,
+        extractionDocumentId:
+          document.extractionDocumentId as unknown as ResourceChunkerExtractionDocument["extractionDocumentId"],
+        status: document.status,
+      };
+
+      return mapped;
+    },
+
+    listResourceExtractedContentBlocks: async (lookup) => {
+      const blocks = await input.extractionRepository.listResourceExtractedContentBlocks({
+        studentId: lookup.studentId,
+        extractionDocumentId:
+          lookup.extractionDocumentId as unknown as Parameters<
+            ResourceExtractionRepository["listResourceExtractedContentBlocks"]
+          >[0]["extractionDocumentId"],
+      });
+
+      return blocks.map((block): ResourceChunkerExtractedContentBlock => ({
+        blockId: block.blockId as unknown as ResourceChunkerExtractedContentBlock["blockId"],
+        extractionDocumentId:
+          block.extractionDocumentId as unknown as ResourceChunkerExtractedContentBlock["extractionDocumentId"],
+        studentId: block.studentId,
+        resourceId: block.resourceId,
+        kind: block.kind as unknown as ResourceChunkerExtractedContentBlock["kind"],
+        text: block.text,
+        locator: block.locator as unknown as ResourceChunkerExtractedContentBlock["locator"],
+        sortOrder: block.sortOrder,
+        parentBlockId: block.parentBlockId,
+        confidence: block.confidence,
+      }));
+    },
+  };
+}
+
+function createUnavailableEmbeddingIndexWriter(): EmbeddingIndexWriter {
+  return {
+    writeChunkEmbeddings: (
+      _input: WriteChunkEmbeddingsInput,
+    ): Promise<WriteChunkEmbeddingsResult> => {
+      throw new Error(
+        "Embedding index writer is not configured for the worker runtime: chunk_embeddings persistence does not exist yet.",
       );
     },
   };

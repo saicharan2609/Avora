@@ -87,3 +87,11 @@ The repository remains DB-shaped and does not import `@avora/domain`.
 The persistence layer remains student-scoped through `student_id`, composite extraction-document ownership constraints, and RLS.
 
 This group does not add worker execution, storage adapters, OCR, parsing, AI behavior, retrieval indexing, API routes, UI, or mobile behavior.
+
+## Pre-Stage-12 readiness correction — resource upload ticket job idempotency
+
+Adds:
+
+- `20260823090000_resource_upload_ticket_jobs_idempotency.sql`
+
+This migration adds a partial unique index preventing more than one concurrently in-flight `resource_upload_ticket_jobs` row from existing per resource, closing a data-integrity gap identified during the pre-Stage-12 readiness audit (ENG-139, ENG-157). It does not add worker execution, API routes, AI/provider behavior, UI, or mobile code.

@@ -3,7 +3,6 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: [
     "@avora/core",
-    "@avora/retrieval",
     "@avora/ai",
   ],
 };

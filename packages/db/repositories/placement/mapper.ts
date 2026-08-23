@@ -20,7 +20,6 @@ import type {
   DbResourcePlacementId,
   DbResourcePlacementRecord,
   DbResourcePlacementStatus,
-  DbResourcePlacementTarget,
   DbStructureUnitId,
   DbSubjectId,
   ListResourcePlacementsByAcademicUnitInput,

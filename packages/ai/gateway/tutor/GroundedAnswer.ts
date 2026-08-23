@@ -26,6 +26,7 @@ export type GroundedAnswerStatus =
 export type AIRefusalReason =
   | "ungrounded_answer_blocked"
   | "citation_validation_failed"
+  | "invocation_failed"
   | "unsupported_request";
 
 export type AIRefusalResponse = Readonly<{

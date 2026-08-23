@@ -31,6 +31,18 @@ export const resourceUploadApiStorageBuckets = [
 export const declareResourceUploadPath = "/api/resources/uploads" as const;
 export const completeResourceUploadPathTemplate =
   "/api/resources/uploads/{resourceId}/complete" as const;
+export const getResourceUploadTicketPathTemplate =
+  "/api/resources/uploads/{resourceId}/ticket" as const;
+
+export const resourceUploadApiTicketJobStatuses = [
+  "pending",
+  "ready",
+  "failed",
+] as const;
+
+export const resourceUploadApiTicketJobStatusSchema = z.enum(
+  resourceUploadApiTicketJobStatuses,
+);
 
 export const resourceUploadApiResourceKindSchema = z.enum(resourceUploadApiResourceKinds);
 
@@ -142,10 +154,17 @@ export const declareResourceUploadRequestBodySchema = z
   })
   .strict();
 
+export const resourceUploadApiTicketJobSchema = z
+  .object({
+    jobId: z.string().uuid().describe("Stable Avora job identifier."),
+    enqueuedAt: resourceUploadApiIsoDateTimeSchema,
+  })
+  .strict();
+
 export const declareResourceUploadResponseBodySchema = z
   .object({
     resource: resourceUploadApiResourceSchema,
-    ticket: resourceUploadApiTicketSchema,
+    ticketJob: resourceUploadApiTicketJobSchema,
   })
   .strict();
 
@@ -158,6 +177,13 @@ export const completeResourceUploadRequestBodySchema = z
 export const completeResourceUploadResponseBodySchema = z
   .object({
     resource: resourceUploadApiResourceSchema,
+  })
+  .strict();
+
+export const getResourceUploadTicketResponseBodySchema = z
+  .object({
+    status: resourceUploadApiTicketJobStatusSchema,
+    ticket: resourceUploadApiTicketSchema.nullable(),
   })
   .strict();
 
@@ -193,6 +219,13 @@ export const completeResourceUploadContract = {
   pathTemplate: completeResourceUploadPathTemplate,
   requestBody: completeResourceUploadRequestBodySchema,
   responseBody: completeResourceUploadResponseBodySchema,
+  errorResponseBody: resourceUploadApiErrorResponseBodySchema,
+} as const;
+
+export const getResourceUploadTicketContract = {
+  method: "GET",
+  pathTemplate: getResourceUploadTicketPathTemplate,
+  responseBody: getResourceUploadTicketResponseBodySchema,
   errorResponseBody: resourceUploadApiErrorResponseBodySchema,
 } as const;
 
@@ -246,6 +279,18 @@ export type ResourceUploadApiErrorResponseBody = z.infer<
   typeof resourceUploadApiErrorResponseBodySchema
 >;
 
+export type ResourceUploadApiTicketJobStatus = z.infer<
+  typeof resourceUploadApiTicketJobStatusSchema
+>;
+
+export type ResourceUploadApiTicketJob = z.infer<typeof resourceUploadApiTicketJobSchema>;
+
+export type GetResourceUploadTicketResponseBody = z.infer<
+  typeof getResourceUploadTicketResponseBodySchema
+>;
+
 export type DeclareResourceUploadContract = typeof declareResourceUploadContract;
 
 export type CompleteResourceUploadContract = typeof completeResourceUploadContract;
+
+export type GetResourceUploadTicketContract = typeof getResourceUploadTicketContract;

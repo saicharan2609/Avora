@@ -22,7 +22,6 @@ export type ResourceUploadTicket = Readonly<{
 
 export type DeclareResourceUploadResult = Readonly<{
   resource: ResourceRecord;
-  ticket: ResourceUploadTicket;
 }>;
 
 export type CompleteResourceUploadInput = Readonly<{

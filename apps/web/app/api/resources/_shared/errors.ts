@@ -5,6 +5,7 @@ import { SupabaseStorageAdapterError } from "@avora/adapters/supabase/storage";
 import type { ResourceUploadApiErrorCode } from "@avora/core/contracts/resources";
 
 import { WebResourceAuthenticationError } from "./authenticated-student";
+import { WebResourceUploadTicketNotFoundError } from "./resource-upload-orchestrator";
 
 export type WebResourceApiErrorStatus = 400 | 401 | 403 | 404 | 409 | 413 | 503;
 
@@ -47,6 +48,14 @@ export function mapResourceUploadError(error: unknown): WebResourceApiError {
     return {
       status: 400,
       code: "resource_upload_invalid_request",
+      message: error.message,
+    };
+  }
+
+  if (error instanceof WebResourceUploadTicketNotFoundError) {
+    return {
+      status: 404,
+      code: "resource_upload_not_found",
       message: error.message,
     };
   }

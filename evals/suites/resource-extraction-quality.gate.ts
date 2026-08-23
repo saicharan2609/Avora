@@ -66,6 +66,40 @@ export function evaluateResourceExtractionQualityCase(
 ): ResourceExtractionQualityCaseReport {
   const reasons: string[] = [];
 
+  const coverageRatio = calculateCoverageRatio({
+    result: evaluationCase.result,
+    expectedFragments: evaluationCase.expectations.expectedFragments,
+  });
+
+  const averageConfidence = calculateAverageConfidence(evaluationCase.result);
+
+  appendCoreMetricReasons({
+    evaluationCase,
+    coverageRatio,
+    averageConfidence,
+    reasons,
+  });
+  appendProvenanceAndFailureReasons({ evaluationCase, reasons });
+
+  return {
+    caseId: evaluationCase.caseId,
+    outcome: reasons.length === 0 ? "pass" : "fail",
+    coverageRatio,
+    averageConfidence,
+    reasons,
+  };
+}
+
+function appendCoreMetricReasons(
+  input: Readonly<{
+    evaluationCase: ResourceExtractionQualityEvalCase;
+    coverageRatio: number;
+    averageConfidence: number;
+    reasons: string[];
+  }>,
+): void {
+  const { evaluationCase, coverageRatio, averageConfidence, reasons } = input;
+
   if (
     evaluationCase.result.outcome
     !== evaluationCase.expectations.expectedExtractionOutcome
@@ -75,24 +109,26 @@ export function evaluateResourceExtractionQualityCase(
     );
   }
 
-  const coverageRatio = calculateCoverageRatio({
-    result: evaluationCase.result,
-    expectedFragments: evaluationCase.expectations.expectedFragments,
-  });
-
   if (coverageRatio < evaluationCase.expectations.minCoverageRatio) {
     reasons.push(
       `coverage ${formatMetric(coverageRatio)} is below required ${formatMetric(evaluationCase.expectations.minCoverageRatio)}`,
     );
   }
 
-  const averageConfidence = calculateAverageConfidence(evaluationCase.result);
-
   if (averageConfidence < evaluationCase.expectations.minAverageConfidence) {
     reasons.push(
       `average confidence ${formatMetric(averageConfidence)} is below required ${formatMetric(evaluationCase.expectations.minAverageConfidence)}`,
     );
   }
+}
+
+function appendProvenanceAndFailureReasons(
+  input: Readonly<{
+    evaluationCase: ResourceExtractionQualityEvalCase;
+    reasons: string[];
+  }>,
+): void {
+  const { evaluationCase, reasons } = input;
 
   for (const source of evaluationCase.expectations.requiredProvenanceSources) {
     if (!resultHasProvenanceSource(evaluationCase.result, source)) {
@@ -114,6 +150,17 @@ export function evaluateResourceExtractionQualityCase(
     reasons.push("expected page-level extraction failure was not present");
   }
 
+  appendFailureCodeReasons({ evaluationCase, reasons });
+}
+
+function appendFailureCodeReasons(
+  input: Readonly<{
+    evaluationCase: ResourceExtractionQualityEvalCase;
+    reasons: string[];
+  }>,
+): void {
+  const { evaluationCase, reasons } = input;
+
   for (const code of evaluationCase.expectations.requiredFailureCodes) {
     if (!resultHasFailureCode(evaluationCase.result, code)) {
       reasons.push(`missing required extraction failure code ${code}`);
@@ -127,14 +174,6 @@ export function evaluateResourceExtractionQualityCase(
       );
     }
   }
-
-  return {
-    caseId: evaluationCase.caseId,
-    outcome: reasons.length === 0 ? "pass" : "fail",
-    coverageRatio,
-    averageConfidence,
-    reasons,
-  };
 }
 
 function calculateCoverageRatio(

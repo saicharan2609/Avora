@@ -30,6 +30,9 @@ export {
   resourceClassificationJobName,
   resourceClassificationJobPriorities,
   resourceClassificationJobReasons,
+  resourceUploadTicketJobName,
+  resourceUploadTicketJobPriorities,
+  resourceUploadTicketJobReasons,
 } from "./jobs/index.js";
 
 export {

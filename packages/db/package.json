@@ -13,7 +13,10 @@
     "./repositories/resources": "./dist/repositories/resources/index.js",
     "./repositories/extraction": "./dist/repositories/extraction/index.js",
     "./repositories/jobs": "./dist/repositories/jobs/index.js",
-    "./repositories/resource-extraction-jobs": "./dist/repositories/resource-extraction-jobs/index.js"
+    "./repositories/resource-extraction-jobs": "./dist/repositories/resource-extraction-jobs/index.js",
+    "./repositories/resource-chunking-jobs": "./dist/repositories/resource-chunking-jobs/index.js",
+    "./repositories/resource-indexing-jobs": "./dist/repositories/resource-indexing-jobs/index.js",
+    "./repositories/resource-upload-ticket-jobs": "./dist/repositories/resource-upload-ticket-jobs/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

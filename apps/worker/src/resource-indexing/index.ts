@@ -25,3 +25,23 @@ export {
   createResourceIndexingWorkerHandler,
   resourceIndexingWorkerHandlerName,
 } from "./handler.js";
+
+export type {
+  CreateResourceIndexingJobHandlerAdapterInput,
+} from "./ResourceIndexingJobHandlerAdapter.js";
+
+export {
+  createResourceIndexingJobHandlerAdapter,
+} from "./ResourceIndexingJobHandlerAdapter.js";
+
+export type {
+  CreateResourceIndexingWorkerInput,
+  ResourceIndexingClaimLoopOptions,
+  ResourceIndexingJobHandler,
+  ResourceIndexingJobHandlerResult,
+  ResourceIndexingWorker,
+} from "./ResourceIndexingWorker.js";
+
+export {
+  createResourceIndexingWorker,
+} from "./ResourceIndexingWorker.js";

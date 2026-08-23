@@ -54,6 +54,8 @@ export type {
   DeclareResourceUploadParsedRequestBody,
   DeclareResourceUploadRequestBody,
   DeclareResourceUploadResponseBody,
+  GetResourceUploadTicketContract,
+  GetResourceUploadTicketResponseBody,
   ResourceUploadApiErrorCode,
   ResourceUploadApiErrorResponseBody,
   ResourceUploadApiLifecycleState,
@@ -62,6 +64,8 @@ export type {
   ResourceUploadApiStorageBucket,
   ResourceUploadApiStorageLocation,
   ResourceUploadApiTicket,
+  ResourceUploadApiTicketJob,
+  ResourceUploadApiTicketJobStatus,
 } from "./ResourceUploadApi.contract.js";
 
 export {
@@ -73,6 +77,9 @@ export {
   declareResourceUploadPath,
   declareResourceUploadRequestBodySchema,
   declareResourceUploadResponseBodySchema,
+  getResourceUploadTicketContract,
+  getResourceUploadTicketPathTemplate,
+  getResourceUploadTicketResponseBodySchema,
   resourceUploadApiByteSizeSchema,
   resourceUploadApiContentHashSchema,
   resourceUploadApiErrorCodeSchema,
@@ -91,5 +98,7 @@ export {
   resourceUploadApiStorageBucketSchema,
   resourceUploadApiStorageBuckets,
   resourceUploadApiStorageLocationSchema,
+  resourceUploadApiTicketJobStatusSchema,
+  resourceUploadApiTicketJobStatuses,
   resourceUploadApiTicketSchema,
 } from "./ResourceUploadApi.contract.js";

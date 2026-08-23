@@ -22,3 +22,23 @@ client request
 → web-local tutor composition
 → TutorGatewayPort.answerTutorQuery
 → typed HTTP response
+```
+
+## Explicitly out of scope
+
+Stage 11 Group 8 does not implement:
+
+- retrieval logic;
+- AI provider logic;
+- prompt assembly;
+- provider SDK calls;
+- UI;
+- mobile behavior;
+- database migrations;
+- repositories;
+- evals;
+- e2e flows;
+- Server-Sent Events streaming of the tutor response;
+- entitlement or usage-allowance checking before invoking the Tutor Gateway.
+
+Streaming and entitlement are deferred to a later group. The current route returns a single typed JSON response and performs no allowance check before invoking `TutorGatewayPort.answerTutorQuery`.

@@ -1,7 +1,4 @@
 import type {
-  RetrievalInsufficiency,
-} from "@avora/retrieval/insufficiency";
-import type {
   RetrievalSearchPort,
 } from "@avora/retrieval/search";
 
@@ -91,11 +88,22 @@ export function createTutorGateway(
         });
       }
 
-      const candidate = await invokeTutorAnswerSafely({
-        input,
-        query,
-        context,
-      });
+      let candidate;
+
+      try {
+        candidate = await invokeTutorAnswerSafely({
+          input,
+          query,
+          context,
+        });
+      } catch {
+        return createAIRefusalResponse({
+          query,
+          reason: "invocation_failed",
+          message:
+            "I could not produce a grounded answer from your materials right now.",
+        });
+      }
 
       const groundedAnswer: GroundedAnswer = {
         status: "answered",

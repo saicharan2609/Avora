@@ -22,4 +22,4 @@ Route handlers validate `@avora/core/contracts/tutor` request bodies, resolve th
 
 Request bodies must not accept `studentId`; authenticated student scope is resolved server-side.
 
-The route does not implement retrieval logic, AI provider logic, prompt assembly, provider SDK calls, UI, mobile behavior, database migrations, repositories, evals, or e2e flows.
+The route does not implement retrieval logic, AI provider logic, prompt assembly, provider SDK calls, UI, mobile behavior, database migrations, repositories, evals, e2e flows, Server-Sent Events streaming, or entitlement/usage-allowance checking. Streaming and entitlement are deferred to a later group.

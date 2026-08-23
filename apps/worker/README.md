@@ -126,3 +126,7 @@ New module:
 The handler reads ready retrieval chunks, requests embeddings through `@avora/ai/embeddings`, and delegates embedding persistence to an injected embedding index writer seam.
 
 This group does not add a claim loop, queue infrastructure, database schema, RLS policy, repository implementation, vector search, scoped retrieval search, hybrid search, AI Tutor orchestration, web APIs, mobile APIs, evals, or e2e flows.
+
+## Pre-Stage-12 readiness exception — bootstrap and lifecycle logging
+
+Owner decision (2026-08-23): Process startup and shutdown lifecycle logging in `src/main.ts` and `src/runtime/shutdown.ts` is an explicitly approved bootstrap/lifecycle console logging exception while `LoggerContract` implementation is pending. No-console remains strictly enforced across all domain, service, and handler logic.

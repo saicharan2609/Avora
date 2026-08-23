@@ -35,6 +35,19 @@ export {
   resourceChunkingWorkerHandlerName,
 } from "./resource-chunking/index.js";
 export type {
+  CreateResourceChunkingJobHandlerAdapterInput,
+  CreateResourceChunkingWorkerInput,
+  ResourceChunkingClaimLoopOptions,
+  ResourceChunkingJobHandler,
+  ResourceChunkingJobHandlerResult,
+  ResourceChunkingWorker,
+} from "./resource-chunking/index.js";
+
+export {
+  createResourceChunkingJobHandlerAdapter,
+  createResourceChunkingWorker,
+} from "./resource-chunking/index.js";
+export type {
   ChunkEmbeddingRecord,
   EmbeddingIndexWriter,
   ResourceIndexingWorkerDependencies,
@@ -51,4 +64,17 @@ export {
   ResourceIndexingWorkerError,
   createResourceIndexingWorkerHandler,
   resourceIndexingWorkerHandlerName,
+} from "./resource-indexing/index.js";
+export type {
+  CreateResourceIndexingJobHandlerAdapterInput,
+  CreateResourceIndexingWorkerInput,
+  ResourceIndexingClaimLoopOptions,
+  ResourceIndexingJobHandler,
+  ResourceIndexingJobHandlerResult,
+  ResourceIndexingWorker,
+} from "./resource-indexing/index.js";
+
+export {
+  createResourceIndexingJobHandlerAdapter,
+  createResourceIndexingWorker,
 } from "./resource-indexing/index.js";

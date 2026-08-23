@@ -174,6 +174,7 @@ export const tutorApiInsufficientContextResponseBodySchema = z
 export const tutorApiRefusalReasonSchema = z.enum([
   "ungrounded_answer_blocked",
   "citation_validation_failed",
+  "invocation_failed",
   "unsupported_request",
 ]);
 

@@ -25,3 +25,17 @@ export {
   resourceClassificationJobPriorities,
   resourceClassificationJobReasons,
 } from "./ResourceClassificationJob.contract.js";
+
+export type {
+  ResourceUploadTicketJobAccepted,
+  ResourceUploadTicketJobPayload,
+  ResourceUploadTicketJobPriority,
+  ResourceUploadTicketJobReason,
+  ResourceUploadTicketJobRequest,
+} from "./ResourceUploadTicketJob.contract.js";
+
+export {
+  resourceUploadTicketJobName,
+  resourceUploadTicketJobPriorities,
+  resourceUploadTicketJobReasons,
+} from "./ResourceUploadTicketJob.contract.js";

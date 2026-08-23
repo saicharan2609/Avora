@@ -59,5 +59,19 @@ export const environmentVariableContracts = [
     owner: "@avora/ai",
     required: true,
     description: "Environment selector for AI routing policy."
+  },
+  {
+    name: "GEMINI_API_KEY",
+    tier: "server",
+    owner: "@avora/ai",
+    required: true,
+    description: "Google Gemini provider API key for AI Gateway model access. Server tier only."
+  },
+  {
+    name: "GEMINI_API_KEY",
+    tier: "worker",
+    owner: "@avora/ai",
+    required: true,
+    description: "Google Gemini provider API key for AI Gateway model access. Worker tier only."
   }
 ] as const satisfies readonly EnvironmentVariableContract[];

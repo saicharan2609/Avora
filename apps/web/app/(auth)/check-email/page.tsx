@@ -18,7 +18,7 @@ export default function CheckEmailPage(): ReactNode {
         aria-labelledby="check-email-title"
         style={{
           width: "100%",
-          maxWidth: "560px",
+          maxWidth: webTokens.layout.containerSm,
           padding: webTokens.space.xl,
           border: `${webTokens.layout.divider} solid ${webTokens.border.subtle}`,
           borderRadius: webTokens.radius.xl,

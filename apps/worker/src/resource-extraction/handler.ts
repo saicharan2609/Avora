@@ -84,26 +84,16 @@ export function createResourceExtractionWorkerHandler(
         handleInput.job.payload,
       );
 
-      const existingBeforeProcessing = await getExistingUsableCheckpoint({
-        extractionRepository: input.extractionRepository,
-        request: extractionRequest,
-      });
-
-      if (existingBeforeProcessing.usable) {
-        await convergeResourceLifecycle({
+      const resultFromCheckpointBeforeProcessing =
+        await tryConvergeFromExistingCheckpoint({
           resourcesRepository: input.resourcesRepository,
-          studentId: handleInput.job.payload.studentId,
-          resourceId: handleInput.job.payload.resourceId,
-          outcome: existingBeforeProcessing.outcome,
-          failureMessage: existingBeforeProcessing.failure?.message ?? null,
+          extractionRepository: input.extractionRepository,
+          request: extractionRequest,
+          job: handleInput.job,
         });
 
-        return mapExistingCheckpointToHandledResult({
-          jobName: handleInput.job.name,
-          studentId: handleInput.job.payload.studentId,
-          resourceId: handleInput.job.payload.resourceId,
-          existing: existingBeforeProcessing,
-        });
+      if (resultFromCheckpointBeforeProcessing !== null) {
+        return resultFromCheckpointBeforeProcessing;
       }
 
       const processingTransition = await tryMarkResourceProcessing({
@@ -113,28 +103,16 @@ export function createResourceExtractionWorkerHandler(
       });
 
       if (!processingTransition.transitioned) {
-        const existingAfterFailedProcessingTransition =
-          await getExistingUsableCheckpoint({
+        const resultFromCheckpointAfterFailedTransition =
+          await tryConvergeFromExistingCheckpoint({
+            resourcesRepository: input.resourcesRepository,
             extractionRepository: input.extractionRepository,
             request: extractionRequest,
+            job: handleInput.job,
           });
 
-        if (existingAfterFailedProcessingTransition.usable) {
-          await convergeResourceLifecycle({
-            resourcesRepository: input.resourcesRepository,
-            studentId: handleInput.job.payload.studentId,
-            resourceId: handleInput.job.payload.resourceId,
-            outcome: existingAfterFailedProcessingTransition.outcome,
-            failureMessage:
-              existingAfterFailedProcessingTransition.failure?.message ?? null,
-          });
-
-          return mapExistingCheckpointToHandledResult({
-            jobName: handleInput.job.name,
-            studentId: handleInput.job.payload.studentId,
-            resourceId: handleInput.job.payload.resourceId,
-            existing: existingAfterFailedProcessingTransition,
-          });
+        if (resultFromCheckpointAfterFailedTransition !== null) {
+          return resultFromCheckpointAfterFailedTransition;
         }
 
         throw new ResourceExtractionWorkerHandlerError(
@@ -143,26 +121,16 @@ export function createResourceExtractionWorkerHandler(
         );
       }
 
-      const existingAfterProcessing = await getExistingUsableCheckpoint({
-        extractionRepository: input.extractionRepository,
-        request: extractionRequest,
-      });
-
-      if (existingAfterProcessing.usable) {
-        await convergeResourceLifecycle({
+      const resultFromCheckpointAfterProcessing =
+        await tryConvergeFromExistingCheckpoint({
           resourcesRepository: input.resourcesRepository,
-          studentId: handleInput.job.payload.studentId,
-          resourceId: handleInput.job.payload.resourceId,
-          outcome: existingAfterProcessing.outcome,
-          failureMessage: existingAfterProcessing.failure?.message ?? null,
+          extractionRepository: input.extractionRepository,
+          request: extractionRequest,
+          job: handleInput.job,
         });
 
-        return mapExistingCheckpointToHandledResult({
-          jobName: handleInput.job.name,
-          studentId: handleInput.job.payload.studentId,
-          resourceId: handleInput.job.payload.resourceId,
-          existing: existingAfterProcessing,
-        });
+      if (resultFromCheckpointAfterProcessing !== null) {
+        return resultFromCheckpointAfterProcessing;
       }
 
       const extractionResult = await input.extractionService.extractResource(
@@ -288,6 +256,39 @@ export function createResourceExtractionWorkerHandler(
       };
     },
   };
+}
+
+async function tryConvergeFromExistingCheckpoint(
+  input: Readonly<{
+    resourcesRepository: ResourcesRepository;
+    extractionRepository: ResourceExtractionRepository;
+    request: ResourceExtractionRequest;
+    job: HandleResourceExtractionJobInput["job"];
+  }>,
+): Promise<ResourceExtractionWorkerHandledResult | null> {
+  const existing = await getExistingUsableCheckpoint({
+    extractionRepository: input.extractionRepository,
+    request: input.request,
+  });
+
+  if (!existing.usable) {
+    return null;
+  }
+
+  await convergeResourceLifecycle({
+    resourcesRepository: input.resourcesRepository,
+    studentId: input.job.payload.studentId,
+    resourceId: input.job.payload.resourceId,
+    outcome: existing.outcome,
+    failureMessage: existing.failure?.message ?? null,
+  });
+
+  return mapExistingCheckpointToHandledResult({
+    jobName: input.job.name,
+    studentId: input.job.payload.studentId,
+    resourceId: input.job.payload.resourceId,
+    existing,
+  });
 }
 
 async function getExistingUsableCheckpoint(

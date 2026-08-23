@@ -26,6 +26,15 @@ export {
   resourceExtractionStorageBuckets,
 } from "../resource-extraction/index.js";
 
+export type * from "../resource-chunking/index.js";
+
+export {
+  createResourceChunkingJobEnvelope,
+  resourceChunkingJobName,
+  resourceChunkingJobPriorities,
+  resourceChunkingJobReasons,
+} from "../resource-chunking/index.js";
+
 export type * from "../resource-classification/index.js";
 
 export {

@@ -4,12 +4,10 @@ import type {
   DeclareResourceUploadInput,
   DeclareResourceUploadResult,
 } from "../contracts/ResourceUpload.contract.js";
-import type { BlobStorePort } from "../ports/BlobStorePort.js";
 import type { ResourceRepositoryPort } from "../repositories/ResourceRepositoryPort.js";
 
 export type ResourceUploadServiceDependencies = Readonly<{
   repository: ResourceRepositoryPort;
-  blobStore: BlobStorePort;
 }>;
 
 export type ResourceUploadService = Readonly<{
@@ -21,8 +19,7 @@ export type ResourceUploadServiceErrorCode =
   | "resource_upload_invalid_filename"
   | "resource_upload_invalid_mime_type"
   | "resource_upload_invalid_byte_size"
-  | "resource_upload_invalid_content_hash"
-  | "resource_upload_storage_location_mismatch";
+  | "resource_upload_invalid_content_hash";
 
 export class ResourceUploadServiceError extends Error {
   public readonly code: ResourceUploadServiceErrorCode;
@@ -51,34 +48,8 @@ export function createResourceUploadService(
         byteSize: input.byteSize,
       });
 
-      const ticket = await dependencies.blobStore.createUploadTicket({
-        studentId: resource.studentId,
-        resourceId: resource.resourceId,
-        bucket: "quarantine",
-        objectPath: resource.storage.objectPath,
-        byteSize: resource.byteSize,
-        declaredMimeType: resource.declaredMimeType,
-      });
-
-      if (
-        ticket.storage.bucket !== resource.storage.bucket ||
-        ticket.storage.objectPath !== resource.storage.objectPath ||
-        ticket.storage.version !== resource.storage.version
-      ) {
-        throw new ResourceUploadServiceError(
-          "resource_upload_storage_location_mismatch",
-          "Upload ticket storage location must match the persisted resource storage location",
-        );
-      }
-
       return {
         resource,
-        ticket: {
-          resourceId: resource.resourceId,
-          storage: ticket.storage,
-          uploadUrl: ticket.uploadUrl,
-          expiresAt: ticket.expiresAt,
-        },
       };
     },
 

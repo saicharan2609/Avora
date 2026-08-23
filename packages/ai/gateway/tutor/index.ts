@@ -83,3 +83,11 @@ export {
 export {
   TutorGatewayError,
 } from "./TutorGatewayError.js";
+
+export type {
+  CreateTutorRetrievalSearchInput,
+} from "./TutorRetrievalSearch.js";
+
+export {
+  createTutorRetrievalSearch,
+} from "./TutorRetrievalSearch.js";
