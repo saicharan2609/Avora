@@ -38,9 +38,8 @@ export function createDocumentExtractionAdapter(
   input: CreateDocumentExtractionAdapterInput,
 ): ExtractionPort {
   return {
-    extractResourceContent: (request) => (
-      input.provider.extractDocumentResource(request)
-    ),
+    extractResourceContent: (request) =>
+      input.provider.extractDocumentResource(request),
   };
 }
 
@@ -48,9 +47,8 @@ export function createScanExtractionAdapter(
   input: CreateScanExtractionAdapterInput,
 ): ExtractionPort {
   return {
-    extractResourceContent: (request) => (
-      input.provider.extractScanResource(request)
-    ),
+    extractResourceContent: (request) =>
+      input.provider.extractScanResource(request),
   };
 }
 
@@ -58,8 +56,12 @@ export function createHandwritingExtractionAdapter(
   input: CreateHandwritingExtractionAdapterInput,
 ): ExtractionPort {
   return {
-    extractResourceContent: (request) => (
-      input.provider.extractHandwritingResource(request)
-    ),
+    extractResourceContent: (request) =>
+      input.provider.extractHandwritingResource(request),
   };
 }
+
+export * from "./sanitization/index.js";
+export * from "./pdf/index.js";
+export * from "./vision/index.js";
+export * from "./composite/index.js";

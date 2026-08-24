@@ -20,12 +20,13 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "lint:arch": "eslint ."
+    "lint:arch": "eslint .",
+    "test:unit": "pnpm run build && node dist/extraction/__tests__/ResourceTextSanitizer.unit.js && node dist/extraction/__tests__/PdfExtractionAdapter.unit.js && node dist/extraction/__tests__/VisionExtractionAdapter.unit.js && node dist/extraction/__tests__/CompositeResourceExtractionAdapter.unit.js"
   },
   "dependencies": {
     "@avora/core": "workspace:*",
     "@avora/db": "workspace:*",
-"@avora/domain": "workspace:*",
+    "@avora/domain": "workspace:*",
     "@supabase/supabase-js": "2.110.8"
   },
   "devDependencies": {

@@ -1,5 +1,11 @@
-import { createSupabaseStorageAdapter, createSupabaseStorageInspectionAdapter } from "@avora/adapters/supabase/storage";
-import { createGeminiEmbeddingPort, createGoogleGenAIEmbeddingClient } from "@avora/ai/adapters/google";
+import {
+  createSupabaseStorageAdapter,
+  createSupabaseStorageInspectionAdapter,
+} from "@avora/adapters/supabase/storage";
+import {
+  createGeminiEmbeddingPort,
+  createGoogleGenAIEmbeddingClient,
+} from "@avora/ai/adapters/google";
 import { createServiceRoleDatabaseClient } from "@avora/db/client";
 import { createResourceIngestionJobsRepository } from "@avora/db/repositories/jobs";
 import { createResourceExtractionJobsRepository } from "@avora/db/repositories/resource-extraction-jobs";
@@ -13,10 +19,13 @@ import { createResourcesRepository } from "@avora/db/repositories/resources";
 import {
   createResourceIngestionValidationService,
   createResourceExtractionService,
-  ResourceExtractionServiceError,
 } from "@avora/domain/resources";
-import type { ResourceExtractionPort, ResourceExtractionRequest, ResourceExtractionResult } from "@avora/domain/resources";
+import {
+  createCompositeResourceExtractionAdapter,
+  createPdfExtractionAdapter,
+} from "@avora/adapters/extraction";
 import { createResourceChunker } from "@avora/retrieval/chunking";
+
 import type {
   ResourceChunkerExtractedContentBlock,
   ResourceChunkerExtractionDocument,
@@ -72,7 +81,9 @@ export type WorkerRuntime = Readonly<{
 export function readWorkerRuntimeEnvironment(): WorkerRuntimeEnvironment {
   return {
     supabaseUrl: readRequiredEnvironmentValue("SUPABASE_URL"),
-    supabaseServiceRoleKey: readRequiredEnvironmentValue("SUPABASE_SERVICE_ROLE_KEY"),
+    supabaseServiceRoleKey: readRequiredEnvironmentValue(
+      "SUPABASE_SERVICE_ROLE_KEY",
+    ),
     geminiApiKey: readRequiredEnvironmentValue("GEMINI_API_KEY"),
     workerId: process.env["AVORA_WORKER_ID"] ?? `worker-${process.pid}`,
   };
@@ -90,13 +101,16 @@ export function createWorkerRuntime(
     client: database.client,
   });
 
-  const resourceIngestionJobsRepository = createResourceIngestionJobsRepository({
-    client: database.client,
-  });
+  const resourceIngestionJobsRepository = createResourceIngestionJobsRepository(
+    {
+      client: database.client,
+    },
+  );
 
-  const resourceExtractionJobsRepository = createResourceExtractionJobsRepository({
-    client: database.client,
-  });
+  const resourceExtractionJobsRepository =
+    createResourceExtractionJobsRepository({
+      client: database.client,
+    });
 
   const resourceChunkingJobsRepository = createResourceChunkingJobsRepository({
     client: database.client,
@@ -106,9 +120,10 @@ export function createWorkerRuntime(
     client: database.client,
   });
 
-  const resourceUploadTicketJobsRepository = createResourceUploadTicketJobsRepository({
-    client: database.client,
-  });
+  const resourceUploadTicketJobsRepository =
+    createResourceUploadTicketJobsRepository({
+      client: database.client,
+    });
 
   const extractionRepository = createResourceExtractionRepository({
     client: database.client,
@@ -134,8 +149,13 @@ export function createWorkerRuntime(
     objectInspection: storageInspection,
   });
 
+  const pdfExtractionAdapter = createPdfExtractionAdapter();
+  const compositeExtractionAdapter = createCompositeResourceExtractionAdapter({
+    pdfAdapter: pdfExtractionAdapter,
+  });
+
   const extractionService = createResourceExtractionService({
-    extractor: createUnavailableExtractionPort(),
+    extractor: compositeExtractionAdapter,
   });
 
   const extractionWorkerHandler = createResourceExtractionWorkerHandler({
@@ -206,19 +226,6 @@ export function createWorkerRuntime(
   };
 }
 
-function createUnavailableExtractionPort(): ResourceExtractionPort {
-  return {
-    extractResourceContent: (
-      _input: ResourceExtractionRequest,
-    ): Promise<ResourceExtractionResult> => {
-      throw new ResourceExtractionServiceError(
-        "resource_extraction_port_failed",
-        "Extraction provider is not configured for the worker runtime.",
-      );
-    },
-  };
-}
-
 type CreateResourceChunkingExtractionRepositoryAdapterInput = Readonly<{
   extractionRepository: ResourceExtractionRepository;
 }>;
@@ -228,13 +235,14 @@ function createResourceChunkingExtractionRepositoryAdapter(
 ): ResourceChunkingExtractionRepository {
   return {
     getResourceExtractionDocumentById: async (lookup) => {
-      const document = await input.extractionRepository.getResourceExtractionDocumentById({
-        studentId: lookup.studentId,
-        extractionDocumentId:
-          lookup.extractionDocumentId as unknown as Parameters<
-            ResourceExtractionRepository["getResourceExtractionDocumentById"]
-          >[0]["extractionDocumentId"],
-      });
+      const document =
+        await input.extractionRepository.getResourceExtractionDocumentById({
+          studentId: lookup.studentId,
+          extractionDocumentId:
+            lookup.extractionDocumentId as unknown as Parameters<
+              ResourceExtractionRepository["getResourceExtractionDocumentById"]
+            >[0]["extractionDocumentId"],
+        });
 
       if (document === null) {
         return null;
@@ -252,23 +260,26 @@ function createResourceChunkingExtractionRepositoryAdapter(
     },
 
     listResourceExtractedContentBlocks: async (lookup) => {
-      const blocks = await input.extractionRepository.listResourceExtractedContentBlocks({
-        studentId: lookup.studentId,
-        extractionDocumentId:
-          lookup.extractionDocumentId as unknown as Parameters<
-            ResourceExtractionRepository["listResourceExtractedContentBlocks"]
-          >[0]["extractionDocumentId"],
-      });
+      const blocks =
+        await input.extractionRepository.listResourceExtractedContentBlocks({
+          studentId: lookup.studentId,
+          extractionDocumentId:
+            lookup.extractionDocumentId as unknown as Parameters<
+              ResourceExtractionRepository["listResourceExtractedContentBlocks"]
+            >[0]["extractionDocumentId"],
+        });
 
       return blocks.map((block): ResourceChunkerExtractedContentBlock => ({
-        blockId: block.blockId as unknown as ResourceChunkerExtractedContentBlock["blockId"],
+        blockId:
+          block.blockId as unknown as ResourceChunkerExtractedContentBlock["blockId"],
         extractionDocumentId:
           block.extractionDocumentId as unknown as ResourceChunkerExtractedContentBlock["extractionDocumentId"],
         studentId: block.studentId,
         resourceId: block.resourceId,
         kind: block.kind as unknown as ResourceChunkerExtractedContentBlock["kind"],
         text: block.text,
-        locator: block.locator as unknown as ResourceChunkerExtractedContentBlock["locator"],
+        locator:
+          block.locator as unknown as ResourceChunkerExtractedContentBlock["locator"],
         sortOrder: block.sortOrder,
         parentBlockId: block.parentBlockId,
         confidence: block.confidence,

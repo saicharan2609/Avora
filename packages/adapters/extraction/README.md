@@ -20,23 +20,33 @@ The factories adapt provider-shaped extraction implementations to the domain-own
 - `createDocumentExtractionAdapter`
 - `createScanExtractionAdapter`
 - `createHandwritingExtractionAdapter`
+- `createPdfExtractionAdapter`
+- `createVisionExtractionAdapter`
+- `createCompositeResourceExtractionAdapter`
+- `sanitizeExtractedText`
+- `sanitizeExtractedContentBlocks`
+
+## Stage 12 Group 1 — Concrete Extraction Adapters & Sanitization
+
+Stage 12 Group 1 implements concrete extraction adapters satisfying `ResourceExtractionPort`:
+
+1. `pdf/`: Structural digital PDF text parser and extractor (`createPdfExtractionAdapter`, `parsePdfStructure`).
+2. `vision/`: Multimodal OCR/Vision extractor for scanned notes and Xerox copies (`createVisionExtractionAdapter`).
+3. `sanitization/`: Text block sanitization enforcing `SEC-281` and `ENG-222` (HTML/script injection stripping, control character removal, Unicode NFKC normalization, LaTeX math preservation).
+4. `composite/`: Unified MIME-routed extraction adapter with fallback from empty digital PDF to vision OCR (`createCompositeResourceExtractionAdapter`).
 
 ## Boundaries
 
 This adapter may import:
 
 - `@avora/domain/resources`
+- `@avora/core`
 
 This adapter must not import:
 
 - `@avora/db`
-- `@avora/ai`
 - `@avora/retrieval`
 - `@avora/jobs`
 - apps
 - UI packages
 - mobile packages
-
-This adapter does not implement provider SDK calls, OCR, parsing, handwriting recognition, scan processing, storage access, persistence, RLS, worker execution, API routes, AI behavior, retrieval behavior, UI, or mobile code.
-
-Provider implementations must be supplied from approved adapter-owned directories and must satisfy the provider interfaces structurally.
