@@ -158,3 +158,12 @@ ScopedSearchInput
 → RetrievalChunkRepository.listRetrievalChunksByScope
 → RetrievalSearchResult[]
 → RetrievalInsufficiency | RetrievalSufficiency
+```
+
+## Stage 12 Group 3 — Hybrid retrieval search
+
+Stage 12 Group 3 adds `createHybridRetrievalSearch` (`search/`), a second `RetrievalSearchPort` implementation combining dense vector ANN search and full-text keyword search via Reciprocal Rank Fusion, pre-filtered by student and scope before ranking (architecture.md section 17.4, ENG-171, ENG-225, SEC-290, SEC-291). See `search/README.md` for the data flow and `packages/db/repositories/chunks/README.md` for the underlying SQL.
+
+`createScopedRetrievalSearch` remains available unchanged as the unranked scope-listing implementation of the same port.
+
+This group does not implement reranking, diversification, token-budget fitting, AI Gateway context assembly, citation verification, or e2e/mobile behavior — those remain later-group or already-adjacent concerns.

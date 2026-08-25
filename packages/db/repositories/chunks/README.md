@@ -49,4 +49,12 @@ This repository must not import UI packages or apps.
 
 This repository may use generated Supabase database types and role-scoped Supabase clients.
 
-This repository owns concrete persistence access only. Chunking algorithms, scope resolution runtime, embeddings, vector search, keyword search, hybrid retrieval, insufficiency, AI Gateway context assembly, citation verification, worker execution, route handlers, UI, and mobile behavior belong to later groups.
+This repository owns concrete persistence access only. Chunking algorithms, scope resolution runtime, insufficiency, AI Gateway context assembly, citation verification, worker execution, route handlers, UI, and mobile behavior belong to later groups.
+
+## Stage 12 Group 3 — Hybrid search
+
+Stage 12 Group 3 adds `searchRetrievalChunksHybrid`, which pre-filters by student and scope and returns chunks ranked by Reciprocal Rank Fusion of dense vector similarity (`chunk_embeddings`) and keyword relevance (`chunks.content_tsv`, `architecture.md` section 17.4).
+
+The ranking itself runs inside the `public.search_chunks_hybrid` SQL function (`supabase/migrations/20260825090000_hybrid_retrieval_search.sql`), called via `client.rpc(...)`. That function is `SECURITY DEFINER` — the only way to grant `authenticated` callers a role-scoped path to `chunk_embeddings`, which intentionally carries no `authenticated` RLS policy (`20260824091000_chunk_embeddings.sql`) — but it independently re-asserts `auth.uid() = p_student_id` before reading a single row, so the pre-filter is stricter than, and independent of, table-level RLS (ENG-171, ENG-225, SEC-290, SEC-291). This keeps the elevated-privilege surface to one auditable ranking query; the full chunk rows returned to the caller are re-read through the ordinary `authenticated` `chunks_select_own` RLS policy, with an explicit `student_id` equality re-check in this repository method as a second, independent ownership assertion (SEC-291).
+
+This method does not compute the query embedding — callers (composition roots) supply `queryEmbedding` already computed through `@avora/ai`'s `EmbeddingPort`, since this repository must not import `@avora/ai` or hold a provider SDK (NN-02).

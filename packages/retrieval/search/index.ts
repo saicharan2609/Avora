@@ -12,6 +12,12 @@ export type {
   CreateScopedRetrievalSearchInput,
 } from "./ScopedRetrievalSearch.js";
 
+export type {
+  CreateHybridRetrievalSearchInput,
+  EmbedQueryText,
+  EmbedQueryTextInput,
+} from "./HybridRetrievalSearch.js";
+
 export {
   RetrievalSearchError,
 } from "./RetrievalSearchError.js";
@@ -19,3 +25,7 @@ export {
 export {
   createScopedRetrievalSearch,
 } from "./ScopedRetrievalSearch.js";
+
+export {
+  createHybridRetrievalSearch,
+} from "./HybridRetrievalSearch.js";

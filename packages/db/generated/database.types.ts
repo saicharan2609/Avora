@@ -1581,7 +1581,30 @@ export type Database = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      search_chunks_hybrid: {
+        Args: {
+          p_student_id: string;
+          p_term_id: string | null;
+          p_subject_id: string | null;
+          p_structure_unit_id: string | null;
+          p_resource_id: string | null;
+          p_status: string;
+          p_query_text: string;
+          // Sent as a plain JS number[]; pgvector's json/jsonb cast support
+          // (verified against the live stack) converts it into vector(1536)
+          // on the way in. See chunk_embeddings.Insert.embedding above for
+          // the same pattern.
+          p_query_embedding: number[];
+          p_embedding_strategy_version: string;
+          p_match_count: number;
+        };
+        Returns: {
+          chunk_id: string;
+          fused_score: number;
+        }[];
+      };
+    };
     Enums: {
       resource_ingestion_job_priority: "normal" | "high";
       resource_ingestion_job_reason: "upload_completed";

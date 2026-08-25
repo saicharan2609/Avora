@@ -153,6 +153,24 @@ export type ListRetrievalChunksByScopeInput = Readonly<{
   status: DbRetrievalChunkStatus;
 }>;
 
+export type SearchRetrievalChunksHybridInput = Readonly<{
+  studentId: StudentId;
+  termId: string | null;
+  subjectId: string | null;
+  structureUnitId: string | null;
+  resourceId: ResourceId | null;
+  status: DbRetrievalChunkStatus;
+  queryText: string;
+  queryEmbedding: readonly number[];
+  embeddingStrategyVersion: string;
+  matchCount: number;
+}>;
+
+export type DbHybridSearchResult = Readonly<{
+  chunk: DbRetrievalChunkRecord;
+  fusedScore: number;
+}>;
+
 export type RetrievalChunkRepository = Readonly<{
   createRetrievalChunk: (
     input: CreateRetrievalChunkInput,
@@ -172,4 +190,7 @@ export type RetrievalChunkRepository = Readonly<{
   listRetrievalChunksByScope: (
     input: ListRetrievalChunksByScopeInput,
   ) => Promise<readonly DbRetrievalChunkRecord[]>;
+  searchRetrievalChunksHybrid: (
+    input: SearchRetrievalChunksHybridInput,
+  ) => Promise<readonly DbHybridSearchResult[]>;
 }>;

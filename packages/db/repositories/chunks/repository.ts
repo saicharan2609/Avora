@@ -3,12 +3,14 @@ import type { Json } from "../../generated/database.types.js";
 import type {
   CreateRetrievalChunkInput,
   CreateRetrievalChunksInput,
+  DbHybridSearchResult,
   DbRetrievalChunkRecord,
   GetRetrievalChunkByIdInput,
   ListRetrievalChunksByExtractionDocumentInput,
   ListRetrievalChunksByResourceInput,
   ListRetrievalChunksByScopeInput,
   RetrievalChunkRepository,
+  SearchRetrievalChunksHybridInput,
 } from "./contracts.js";
 import {
   RetrievalChunkRepositoryError,
@@ -183,6 +185,91 @@ export function createRetrievalChunkRepository(
 
       return data.map(mapRetrievalChunkRow);
     },
+
+    searchRetrievalChunksHybrid: async (
+      search: SearchRetrievalChunksHybridInput,
+    ): Promise<readonly DbHybridSearchResult[]> => {
+      assertValidHybridSearchInput(search);
+
+      const { data: rankedRows, error: rpcError } = await input.client.rpc(
+        "search_chunks_hybrid",
+        {
+          p_student_id: search.studentId,
+          p_term_id: search.termId,
+          p_subject_id: search.subjectId,
+          p_structure_unit_id: search.structureUnitId,
+          p_resource_id: search.resourceId,
+          p_status: search.status,
+          p_query_text: search.queryText,
+          p_query_embedding: [...search.queryEmbedding],
+          p_embedding_strategy_version: search.embeddingStrategyVersion,
+          p_match_count: search.matchCount,
+        },
+      );
+
+      if (rpcError !== null) {
+        throw new RetrievalChunkRepositoryError(
+          "retrieval_chunk_repository_hybrid_search_failed",
+          rpcError.message,
+        );
+      }
+
+      if (rankedRows.length === 0) {
+        return [];
+      }
+
+      const { data: chunkRows, error: chunkReadError } = await input.client
+        .from("chunks")
+        .select(chunkSelectColumns)
+        .eq("student_id", search.studentId)
+        .eq("status", search.status)
+        .in(
+          "chunk_id",
+          rankedRows.map((rankedRow) => rankedRow.chunk_id),
+        );
+
+      if (chunkReadError !== null) {
+        throw new RetrievalChunkRepositoryError(
+          "retrieval_chunk_repository_hybrid_search_failed",
+          chunkReadError.message,
+        );
+      }
+
+      const chunkById = new Map(
+        chunkRows.map((row) => [row.chunk_id, mapRetrievalChunkRow(row)]),
+      );
+
+      const results: DbHybridSearchResult[] = [];
+
+      for (const rankedRow of rankedRows) {
+        const chunk = chunkById.get(rankedRow.chunk_id);
+
+        if (chunk === undefined) {
+          // Benign eventual-consistency race (e.g. the chunk was superseded
+          // or deleted between the ranking read and this follow-up read),
+          // not an ownership violation. Skip rather than fail closed.
+          continue;
+        }
+
+        if (chunk.studentId !== search.studentId) {
+          // SEC-291: ownership is re-asserted here independently of the
+          // ranking query that selected the candidate. This should be
+          // unreachable given the .eq("student_id", ...) filter above; if it
+          // ever fires, that filter has a bug and the leak must fail loud.
+          throw new RetrievalChunkRepositoryError(
+            "retrieval_chunk_repository_hybrid_search_ownership_violation",
+            "Hybrid search returned a chunk not owned by the requesting student.",
+          );
+        }
+
+        results.push({
+          chunk,
+          fusedScore: rankedRow.fused_score,
+        });
+      }
+
+      return results;
+    },
   };
 }
 
@@ -277,6 +364,38 @@ function assertValidChunkInput(input: CreateRetrievalChunkInput): void {
     throw new RetrievalChunkRepositoryError(
       "retrieval_chunk_repository_invalid_chunk",
       "Retrieval chunk sort order must be a non-negative integer.",
+    );
+  }
+}
+
+function assertValidHybridSearchInput(
+  input: SearchRetrievalChunksHybridInput,
+): void {
+  if (input.queryText.trim().length === 0) {
+    throw new RetrievalChunkRepositoryError(
+      "retrieval_chunk_repository_invalid_hybrid_search_input",
+      "Hybrid search requires a non-empty query text.",
+    );
+  }
+
+  if (input.queryEmbedding.length === 0) {
+    throw new RetrievalChunkRepositoryError(
+      "retrieval_chunk_repository_invalid_hybrid_search_input",
+      "Hybrid search requires a non-empty query embedding vector.",
+    );
+  }
+
+  if (input.embeddingStrategyVersion.trim().length === 0) {
+    throw new RetrievalChunkRepositoryError(
+      "retrieval_chunk_repository_invalid_hybrid_search_input",
+      "Hybrid search requires an embedding strategy version.",
+    );
+  }
+
+  if (!Number.isSafeInteger(input.matchCount) || input.matchCount <= 0) {
+    throw new RetrievalChunkRepositoryError(
+      "retrieval_chunk_repository_invalid_hybrid_search_input",
+      "Hybrid search match count must be a positive safe integer.",
     );
   }
 }

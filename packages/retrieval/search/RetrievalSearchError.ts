@@ -1,6 +1,7 @@
 export type RetrievalSearchErrorCode =
   | "retrieval_search_invalid_input"
-  | "retrieval_search_repository_failed";
+  | "retrieval_search_repository_failed"
+  | "retrieval_search_query_embedding_failed";
 
 export class RetrievalSearchError extends Error {
   public readonly code: RetrievalSearchErrorCode;

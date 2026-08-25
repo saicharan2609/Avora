@@ -14,6 +14,7 @@ export type {
   DbRetrievalChunkTextSpan,
   DbRetrievalChunkTimeRange,
   DbRetrievalChunkingStrategyVersion,
+  DbHybridSearchResult,
   DbRetrievalExtractedContentBlockId,
   DbRetrievalExtractionDocumentId,
   DbRetrievalSanitisationStrategyVersion,
@@ -22,6 +23,7 @@ export type {
   ListRetrievalChunksByResourceInput,
   ListRetrievalChunksByScopeInput,
   RetrievalChunkRepository,
+  SearchRetrievalChunksHybridInput,
 } from "./contracts.js";
 
 export type {

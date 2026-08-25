@@ -49,7 +49,14 @@ export {
   resolveScopedSearchPredicate,
 } from "../scope/index.js";
 
+export type {
+  CreateHybridRetrievalSearchInput,
+  EmbedQueryText,
+  EmbedQueryTextInput,
+} from "../search/index.js";
+
 export {
   RetrievalSearchError,
   createScopedRetrievalSearch,
+  createHybridRetrievalSearch,
 } from "../search/index.js";
