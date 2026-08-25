@@ -237,3 +237,25 @@ Tables:
 All reads and writes are scoped by `student_id`.
 
 This group does not implement classification workers, placement services, placement APIs, correction e2e, extraction work, retrieval behavior, AI/provider behavior, UI, mobile code, or Stage 11 behavior.
+
+## Stage 12 Group 2 — Embedding generation & vector indexing
+
+Stage 12 Group 2 adds Supabase schema, RLS artifacts, and concrete repositories for chunk embeddings and the content-addressed embedding cache.
+
+New tables:
+
+- `public.chunk_embeddings`
+- `public.embedding_cache`
+
+`chunk_embeddings` persists dense vector embeddings for retrieval chunks, versioned by `embedding_strategy_version` (primary key `(chunk_id, embedding_strategy_version)`, so a model upgrade inserts a new row rather than overwriting the old one), with an HNSW cosine index for approximate nearest neighbour search. It carries no authenticated-role RLS policy: raw embedding vectors have no student-facing surface, so only the service-role worker plane (and, later, the Group 3 retrieval search service) reads or writes it.
+
+`embedding_cache` is the AD-30 / ENG-238 / SEC-322 content-addressed embedding cache. It carries no `student_id`, `resource_id`, or `chunk_id` column and no policy for any client-reachable role; it is keyed only by `(content_hash, embedding_strategy_version)` and is never joined into a student-facing query.
+
+New public surface:
+
+- `@avora/db/repositories/chunk-embeddings`
+- `@avora/db/repositories/embedding-cache`
+
+Dimensionality: both tables use `vector(1536)`, not the `gemini-embedding-001` model's native 3072 dimensions. pgvector's HNSW/IVFFlat indexes only support up to 2000 dimensions for the standard `vector` type; 1536 is Gemini's supported truncated output dimensionality (Matryoshka representation learning), keeping this schema on the standard, documented pgvector type. See `packages/ai/adapters/google/GeminiEmbeddingModel.ts`.
+
+This group does not add vector search query logic, scoped retrieval, hybrid search, AI Tutor orchestration, web routes, UI, mobile behavior, or a cache eviction/TTL policy.

@@ -16,14 +16,17 @@
     "./repositories/resource-extraction-jobs": "./dist/repositories/resource-extraction-jobs/index.js",
     "./repositories/resource-chunking-jobs": "./dist/repositories/resource-chunking-jobs/index.js",
     "./repositories/resource-indexing-jobs": "./dist/repositories/resource-indexing-jobs/index.js",
-    "./repositories/resource-upload-ticket-jobs": "./dist/repositories/resource-upload-ticket-jobs/index.js"
+    "./repositories/resource-upload-ticket-jobs": "./dist/repositories/resource-upload-ticket-jobs/index.js",
+    "./repositories/chunk-embeddings": "./dist/repositories/chunk-embeddings/index.js",
+    "./repositories/embedding-cache": "./dist/repositories/embedding-cache/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:arch": "eslint .",
-    "test:rls": "node rls/harness/run-rls-plans.mjs"
+    "test:rls": "node rls/harness/run-rls-plans.mjs",
+    "test:unit": "pnpm run build && node dist/repositories/chunk-embeddings/__tests__/mapper.unit.js && node dist/repositories/embedding-cache/__tests__/mapper.unit.js"
   },
   "dependencies": {
     "@avora/core": "workspace:*",

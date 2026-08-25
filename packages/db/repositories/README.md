@@ -61,3 +61,21 @@ The chunks repository owns concrete database access for `public.chunks`.
 It must not import `@avora/retrieval`, `@avora/domain`, `@avora/jobs`, `@avora/ai`, adapters, apps, or UI packages.
 
 Retrieval mechanics, chunking algorithms, scope resolution runtime, embeddings, hybrid search, insufficiency, AI Gateway context assembly, and citation verification belong to later groups.
+
+## Stage 12 Group 2 — Chunk embeddings and content-addressed embedding cache repositories
+
+Stage 12 Group 2 adds:
+
+- `chunk-embeddings/`
+- `embedding-cache/`
+
+The chunk-embeddings repository owns concrete database access for `public.chunk_embeddings`,
+versioned per embedding strategy. The embedding-cache repository owns concrete database access for
+`public.embedding_cache`, the AD-30 / ENG-238 / SEC-322 content-addressed embedding cache, which
+carries no student attribution by design.
+
+Neither repository must import `@avora/retrieval`, `@avora/domain`, `@avora/jobs`, `@avora/ai`, adapters, apps, or UI packages.
+
+Embedding provider calls, the content-addressed cache decorator (`@avora/ai/embeddings`), vector
+search, hybrid search, retrieval insufficiency, AI Gateway context assembly, and citation
+verification belong to `@avora/ai`, `@avora/retrieval`, and later groups.

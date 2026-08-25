@@ -33,7 +33,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:arch": "eslint .",
-    "test:contract": "pnpm run build && node dist/adapters/google/__tests__/GeminiEmbeddingAdapter.contract.js && node dist/adapters/google/__tests__/GeminiTutorAnswerAdapter.contract.js"
+    "test:contract": "pnpm run build && node dist/adapters/google/__tests__/GeminiEmbeddingAdapter.contract.js && node dist/adapters/google/__tests__/GeminiTutorAnswerAdapter.contract.js && node dist/embeddings/__tests__/ContentAddressedEmbeddingPort.contract.js"
   },
   "dependencies": {
     "@avora/core": "workspace:*",

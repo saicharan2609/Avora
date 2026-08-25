@@ -1489,6 +1489,96 @@ export type Database = {
           },
         ];
       };
+      chunk_embeddings: {
+        Row: {
+          chunk_id: string;
+          content_hash: string;
+          created_at: string;
+          dimensions: number;
+          // PostgREST serializes a pgvector column's wire text
+          // representation as a JSON string, not a JSON array. Insert/
+          // Update below accept a plain number[] (verified against the
+          // live stack; a JS array serializes to identical text on the
+          // way in), but the Row a SELECT actually returns is a string
+          // that repository mappers must parse.
+          embedding: string;
+          embedding_strategy_version: string;
+          resource_id: string;
+          student_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          chunk_id: string;
+          content_hash: string;
+          created_at?: string;
+          dimensions: number;
+          embedding: number[];
+          embedding_strategy_version: string;
+          resource_id: string;
+          student_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          chunk_id?: string;
+          content_hash?: string;
+          created_at?: string;
+          dimensions?: number;
+          embedding?: number[];
+          embedding_strategy_version?: string;
+          resource_id?: string;
+          student_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "chunk_embeddings_student_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["student_id"];
+          },
+          {
+            foreignKeyName: "chunk_embeddings_chunk_fkey";
+            columns: ["student_id", "chunk_id"];
+            isOneToOne: false;
+            referencedRelation: "chunks";
+            referencedColumns: ["student_id", "chunk_id"];
+          },
+          {
+            foreignKeyName: "chunk_embeddings_resource_fkey";
+            columns: ["student_id", "resource_id"];
+            isOneToOne: false;
+            referencedRelation: "resources";
+            referencedColumns: ["student_id", "resource_id"];
+          },
+        ];
+      };
+      embedding_cache: {
+        Row: {
+          content_hash: string;
+          created_at: string;
+          dimensions: number;
+          // See chunk_embeddings.Row.embedding above: PostgREST returns a
+          // pgvector column as a JSON string on SELECT, not a JSON array.
+          embedding: string;
+          embedding_strategy_version: string;
+        };
+        Insert: {
+          content_hash: string;
+          created_at?: string;
+          dimensions: number;
+          embedding: number[];
+          embedding_strategy_version: string;
+        };
+        Update: {
+          content_hash?: string;
+          created_at?: string;
+          dimensions?: number;
+          embedding?: number[];
+          embedding_strategy_version?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

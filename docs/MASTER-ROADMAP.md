@@ -269,8 +269,8 @@ STAGE 12 EXECUTION FLOW & GROUP DEPENDENCY TOPOLOGY:
 ### Group 2: Embedding Generation & Vector Indexing
 - **Objective:** Implement concrete `EmbeddingPort` adapter to generate dense vector embeddings for chunks and populate the Postgres `pgvector` HNSW index.
 - **Required Deliverables:**
-  1. Concrete Gemini embedding client (`@avora/adapters/embeddings/gemini`).
-  2. Indexing worker execution handler updating `public.chunks.embedding` (`vector(768)` / `vector(1536)`).
+  1. Concrete Gemini embedding client (`packages/ai/adapters/google/`, per `architecture.md` section 47.1 / line 1881: "There are exactly two adapter directories: `packages/ai/adapters/` for model, embedding and orchestration providers, and `packages/adapters/` for every other external vendor." `packages/adapters/embeddings/` is correctly documentation-only — a concrete provider adapter there would fail CI, ENG-018.) — **correction, 2026-08-24:** this bullet originally read `@avora/adapters/embeddings/gemini`, which conflicts with the architecture and was never implemented at that path.
+  2. Indexing worker execution handler updating `public.chunk_embeddings` (`vector(1536)`, HNSW-indexed). — **correction, 2026-08-24:** this bullet originally read `public.chunks.embedding` (`vector(768)` / `vector(1536)`), which conflicts with `architecture.md` lines 286, 584, 596, 1881 (a dedicated, independently-versioned `chunk_embeddings` table, distinct from `chunks`) and with `packages/db/repositories/resource-indexing-jobs/README.md`'s pre-existing "Embedding provider calls, embedding persistence (`chunk_embeddings`)..." note. Architecture.md is higher authority than this roadmap (CLAUDE.md section "Document | Authority"); the roadmap wording was stale, not the implementation. 1536, not 768, was selected — see the Stage 12 Group 2 owner decision below.
   3. Content-addressed embedding cache to prevent duplicate inference cost (`AD-30`, `ENG-238`, `SEC-322`).
 - **Owning Packages:** `@avora/adapters`, `@avora/retrieval`, `@avora/worker`, `@avora/db`.
 - **Dependencies:** Stage 11 Group 4 (Indexing handler), `@google/genai` approval.
@@ -810,6 +810,7 @@ pnpm --filter evals run eval:extraction
 | 2026-08-23 | **Worker Lifecycle Logging** | Approved explicit scoped ESLint `no-console: "off"` override for process startup/shutdown in `main.ts` and `shutdown.ts` in lieu of speculative logger rewrite. | `packages/config/eslint/base.js` L94–106, `apps/worker/README.md` L130–132 |
 | 2026-08-23 | **Provider SDK Dependency** | Formally approved `@google/genai@2.18.0` as the designated Gemini SDK for server/worker-side adapter implementation (`ENG-366`, `ENG-404`). | `packages/ai/README.md` L199–205, `packages/ai/package.json` L42 |
 | 2026-08-23 | **Upload Ticket Idempotency** | Approved partial unique index on `resource_upload_ticket_jobs` ensuring strictly one in-flight ticket job per resource. | Migration `20260823090000_resource_upload_ticket_jobs_idempotency.sql` |
+| 2026-08-24 | **Stage 12 Group 2 — Embedding dimensionality** | Approved requesting Gemini's truncated **1536-dimension** output (`outputDimensionality: 1536`) instead of `gemini-embedding-001`'s native 3072 dimensions. Reason: pgvector's HNSW/IVFFlat indexes only index the standard `vector` type up to 2000 dimensions; `architecture.md` line 596 requires an HNSW index on `chunk_embeddings`; 3072 would force either an undocumented `halfvec` column type or an unindexed table, neither acceptable. 1536 is within `MASTER-ROADMAP.md`'s originally-stated `vector(768)` / `vector(1536)` option set. Strategy version bumped to `gemini-embedding-001.1536d.v1`; superseded `...3072d.v1` value remains only in the historical migration `20260818120000_resource_indexing_jobs_transactional_enqueue.sql`, never edited. | `packages/ai/adapters/google/GeminiEmbeddingModel.ts`, `supabase/migrations/20260824093000_resource_indexing_jobs_embedding_strategy_1536d.sql` |
 
 ---
 
@@ -921,7 +922,7 @@ This document sits at position 6 in the repository's constitutional authority hi
 
 ## 20. Database Migration Provenance Catalog
 
-Complete chronological catalog of all 21 SQL migration files on disk ([`supabase/migrations/`](file:///d:/Projects/Avora/supabase/migrations/)) and their documented Stage/Group attribution:
+Complete chronological catalog of all 25 SQL migration files on disk ([`supabase/migrations/`](file:///d:/Projects/Avora/supabase/migrations/)) and their documented Stage/Group attribution:
 
 | Migration File | Stage / Group | Objects & Tables Created / Modified | Verified Purpose |
 | :--- | :--- | :--- | :--- |
@@ -933,7 +934,7 @@ Complete chronological catalog of all 21 SQL migration files on disk ([`supabase
 | `20260806164100_resource_ingestion_jobs.sql` | Stage 7 Group 8 | `public.resource_ingestion_jobs` | Durable ingestion queueing |
 | `20260807083100_academic_structure.sql` | Stage 8 Group 2 | `academic_terms`, `subjects`, `structure_units` | Label-agnostic academic graph (`ltree`) |
 | `20260807122600_resource_extraction_documents.sql` | Stage 9 Group 2 | `resource_extraction_documents`, `extracted_content_blocks` | Structured document extraction |
-| `20260811172000_retrieval_chunks.sql` | Stage 10 Group 2 | `public.chunks` table, embedding vector column | Retrieval chunks & embedding storage |
+| `20260811172000_retrieval_chunks.sql` | Stage 10 Group 2 | `public.chunks` table | Retrieval chunks (locator, text, scope facets). **Correction, 2026-08-24:** this row previously claimed an "embedding vector column"; the migration file's own header explicitly states it "intentionally does not implement... embeddings, vector search", and no such column was ever added to `chunks`. Embedding storage is `public.chunk_embeddings`, a separate table added in Stage 12 Group 2 (`architecture.md` lines 286, 584, 596 mandate a distinct, independently-versioned table). |
 | `20260814124500_resource_placements.sql` | Completion Group B | `resource_placements`, `placement_corrections` | Academic structure resource linkage |
 | `20260814131500_resource_placement_candidates.sql` | Compat Correction | `resource_placement_candidates` | Auto-classification suggestions |
 | `20260815093500_resource_extraction_pages_failures_provenance.sql` | Stage 10 Group 2 | `extraction_pages`, `extraction_failures`, `provenance` | Fine-grained extraction lifecycle |
@@ -946,3 +947,7 @@ Complete chronological catalog of all 21 SQL migration files on disk ([`supabase
 | `20260818120000_resource_indexing_jobs_transactional_enqueue.sql` | Stage 11 Group 2 | `enqueue_resource_indexing_job()` function | Transactional indexing dispatch |
 | `20260819090000_resource_upload_ticket_jobs.sql` | Stage 11 / Pre-12 | `public.resource_upload_ticket_jobs` | Worker-only signed URL issuance |
 | `20260823090000_resource_upload_ticket_jobs_idempotency.sql` | Pre-Stage-12 | Unique partial index on upload ticket jobs | Single in-flight ticket per resource |
+| `20260824090000_chunks_student_chunk_unique.sql` | Stage 12 Group 2 | `chunks_student_chunk_unique` constraint | Enables composite FK from `chunk_embeddings` |
+| `20260824091000_chunk_embeddings.sql` | Stage 12 Group 2 | `vector` extension, `public.chunk_embeddings` table, HNSW index | Dense vector embedding storage, versioned |
+| `20260824092000_embedding_cache.sql` | Stage 12 Group 2 | `public.embedding_cache` table | Content-addressed embedding cache (`AD-30`) |
+| `20260824093000_resource_indexing_jobs_embedding_strategy_1536d.sql` | Stage 12 Group 2 | `enqueue_resource_indexing_job_on_chunking_success()` function replaced | Literal `embeddingStrategyVersion` updated 3072d → 1536d |

@@ -54,3 +54,15 @@ export {
   ResourcePlacementRepositoryError,
   createResourcePlacementRepository,
 } from "./placement/index.js";
+export type * from "./chunk-embeddings/index.js";
+
+export {
+  ChunkEmbeddingsRepositoryError,
+  createChunkEmbeddingsRepository,
+} from "./chunk-embeddings/index.js";
+export type * from "./embedding-cache/index.js";
+
+export {
+  EmbeddingCacheRepositoryError,
+  createEmbeddingCacheRepository,
+} from "./embedding-cache/index.js";

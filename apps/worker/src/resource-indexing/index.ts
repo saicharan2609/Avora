@@ -45,3 +45,11 @@ export type {
 export {
   createResourceIndexingWorker,
 } from "./ResourceIndexingWorker.js";
+
+export type {
+  CreateSupabaseEmbeddingIndexWriterInput,
+} from "./SupabaseEmbeddingIndexWriter.js";
+
+export {
+  createSupabaseEmbeddingIndexWriter,
+} from "./SupabaseEmbeddingIndexWriter.js";

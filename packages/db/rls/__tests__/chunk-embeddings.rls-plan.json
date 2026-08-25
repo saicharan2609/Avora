@@ -1,0 +1,66 @@
+{
+  "id": "stage-12-chunk-embeddings-rls-plan",
+  "owner": "@avora/data",
+  "stage": "Stage 12 Group 2",
+  "title": "Chunk embeddings RLS plan",
+  "description": "Covers deny-by-default RLS expectations for chunk_embeddings. Raw embedding vectors have no student-facing surface, so every operation is denied for the authenticated role; only the service-role worker plane reads or writes this table.",
+  "tables": [
+    "public.chunk_embeddings"
+  ],
+  "cases": [
+    {
+      "name": "student cannot select own chunk embeddings",
+      "table": "public.chunk_embeddings",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot select another student's chunk embeddings",
+      "table": "public.chunk_embeddings",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot insert own chunk embedding",
+      "table": "public.chunk_embeddings",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot update own chunk embedding",
+      "table": "public.chunk_embeddings",
+      "role": "authenticated",
+      "operation": "update",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot delete own chunk embedding",
+      "table": "public.chunk_embeddings",
+      "role": "authenticated",
+      "operation": "delete",
+      "scope": "own",
+      "expectation": "denied"
+    }
+  ],
+  "ownership_notes": [
+    "chunk_embeddings are student-owned derived artifacts versioned by embedding_strategy_version",
+    "chunk_embeddings reference public.chunks through same-student composite ownership",
+    "chunk_embeddings reference public.resources through same-student composite ownership",
+    "no authenticated select, insert, update, or delete policy exists in Stage 12 Group 2 (ENG-304 secure default)",
+    "worker mutation and future Group 3 retrieval search rely on service-role bypass",
+    "raw embedding vectors are never rendered in any student-facing surface"
+  ],
+  "index_notes": [
+    "student_id is indexed directly and is mandatory for vector search pre-filtering (ENG-171, SEC-290)",
+    "student_id, resource_id composite index supports resource-scoped retrieval",
+    "embedding_strategy_version is indexed for controlled re-embedding backfills",
+    "an HNSW cosine index on embedding supports approximate nearest neighbour search"
+  ]
+}

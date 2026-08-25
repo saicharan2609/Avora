@@ -196,6 +196,41 @@ authorization gate at all, even though it is the one path already wired with a r
 `invocationGateState: undefined`, which fails closed — this does not enable live embedding calls;
 it only ensures the path refuses safely once a worker execution loop is eventually wired up.
 
+## Stage 12 Group 2 — Content-addressed embedding cache
+
+Stage 12 Group 2 adds the AD-30 / ENG-238 / SEC-322 content-addressed embedding cache as a
+decorator over any `EmbeddingPort`, and requests Gemini's truncated 1536-dimension output instead
+of the model's native 3072 dimensions so `public.chunk_embeddings` can use a standard pgvector
+`vector` type with a standard HNSW index (pgvector's HNSW/IVFFlat indexes only support up to 2000
+dimensions for that type). See `packages/ai/adapters/google/GeminiEmbeddingModel.ts`.
+
+Public surface:
+
+- `@avora/ai/embeddings` — `EmbeddingCachePort`, `createContentAddressedEmbeddingPort`,
+  `ContentAddressedEmbeddingPortError`
+
+The cache-aside flow is:
+
+```text
+EmbedTextsInput
+→ EmbeddingCachePort.getCachedEmbeddings (keyed by contentHash + strategyVersion only)
+→ cache misses → inner EmbeddingPort.embedTexts
+→ EmbeddingCachePort.putCachedEmbeddings (write-through for misses)
+→ EmbedTextsResult (ordered to match the originally requested inputs)
+```
+
+`EmbeddingCachePort` carries no `studentId`, `resourceId`, or `chunkId` at the type level, matching
+the binding privacy constraint in `ENGINEERING-RULES.md` `ENG-238`: a cache entry is never
+attributable to any student. The concrete cache repository (`@avora/db/repositories/embedding-cache`)
+and the concrete chunk embedding persistence repository (`@avora/db/repositories/chunk-embeddings`)
+are wired together only in `apps/worker/src/runtime/createWorkerRuntime.ts`.
+
+This group does not implement vector search, scoped retrieval, hybrid search, AI Tutor
+orchestration, web APIs, mobile APIs, evals, or e2e flows.
+
+Requirement trace: AD-18, AD-19, AD-30, ENG-165, ENG-168, ENG-171, ENG-238, NN-04, NN-06, NN-07,
+SEC-290, SEC-322.
+
 ## Pre-Stage-12 dependency approval — `@google/genai` (ENG-366 / ENG-404)
 
 Owner decision (2026-08-23): Approved `@google/genai@2.18.0` as the Gemini provider SDK for the server/worker-side AI adapter implementation.

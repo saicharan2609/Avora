@@ -6,6 +6,10 @@ import {
   createGeminiEmbeddingPort,
   createGoogleGenAIEmbeddingClient,
 } from "@avora/ai/adapters/google";
+import {
+  createContentAddressedEmbeddingPort,
+} from "@avora/ai/embeddings";
+import type { EmbeddingCacheEntry, EmbeddingCachePort } from "@avora/ai/embeddings";
 import { createServiceRoleDatabaseClient } from "@avora/db/client";
 import { createResourceIngestionJobsRepository } from "@avora/db/repositories/jobs";
 import { createResourceExtractionJobsRepository } from "@avora/db/repositories/resource-extraction-jobs";
@@ -15,6 +19,9 @@ import { createResourceUploadTicketJobsRepository } from "@avora/db/repositories
 import { createResourceExtractionRepository } from "@avora/db/repositories/extraction";
 import type { ResourceExtractionRepository } from "@avora/db/repositories/extraction";
 import { createRetrievalChunkRepository } from "@avora/db/repositories/chunks";
+import { createChunkEmbeddingsRepository } from "@avora/db/repositories/chunk-embeddings";
+import { createEmbeddingCacheRepository } from "@avora/db/repositories/embedding-cache";
+import type { DbEmbeddingCacheStrategyVersion } from "@avora/db/repositories/embedding-cache";
 import { createResourcesRepository } from "@avora/db/repositories/resources";
 import {
   createResourceIngestionValidationService,
@@ -53,10 +60,8 @@ import {
   createResourceIndexingJobHandlerAdapter,
   createResourceIndexingWorker,
   createResourceIndexingWorkerHandler,
-  type EmbeddingIndexWriter,
+  createSupabaseEmbeddingIndexWriter,
   type ResourceIndexingWorker,
-  type WriteChunkEmbeddingsInput,
-  type WriteChunkEmbeddingsResult,
 } from "../resource-indexing/index.js";
 import {
   createResourceUploadTicketWorker,
@@ -133,6 +138,14 @@ export function createWorkerRuntime(
     client: database.client,
   });
 
+  const chunkEmbeddingsRepository = createChunkEmbeddingsRepository({
+    client: database.client,
+  });
+
+  const embeddingCacheRepository = createEmbeddingCacheRepository({
+    client: database.client,
+  });
+
   const storageInspection = createSupabaseStorageInspectionAdapter({
     supabaseUrl: environment.supabaseUrl,
     supabaseServiceRoleKey: environment.supabaseServiceRoleKey,
@@ -172,7 +185,7 @@ export function createWorkerRuntime(
     resourceChunker: createResourceChunker(),
   });
 
-  const embeddingPort = createGeminiEmbeddingPort({
+  const geminiEmbeddingPort = createGeminiEmbeddingPort({
     client: createGoogleGenAIEmbeddingClient({
       apiKey: environment.geminiApiKey,
     }),
@@ -183,10 +196,20 @@ export function createWorkerRuntime(
     invocationGateState: undefined,
   });
 
+  // Wraps the Gemini port with the AD-30 / ENG-238 content-addressed cache:
+  // identical chunk text at the same embedding strategy version is embedded
+  // once, never once per student circulating an identical resource.
+  const embeddingPort = createContentAddressedEmbeddingPort({
+    inner: geminiEmbeddingPort,
+    cache: createEmbeddingCachePortAdapter({ embeddingCacheRepository }),
+  });
+
   const indexingWorkerHandler = createResourceIndexingWorkerHandler({
     retrievalChunkRepository,
     embeddingPort,
-    embeddingIndexWriter: createUnavailableEmbeddingIndexWriter(),
+    embeddingIndexWriter: createSupabaseEmbeddingIndexWriter({
+      chunkEmbeddingsRepository,
+    }),
   });
 
   return {
@@ -288,14 +311,43 @@ function createResourceChunkingExtractionRepositoryAdapter(
   };
 }
 
-function createUnavailableEmbeddingIndexWriter(): EmbeddingIndexWriter {
+type CreateEmbeddingCachePortAdapterInput = Readonly<{
+  embeddingCacheRepository: ReturnType<typeof createEmbeddingCacheRepository>;
+}>;
+
+function createEmbeddingCachePortAdapter(
+  input: CreateEmbeddingCachePortAdapterInput,
+): EmbeddingCachePort {
   return {
-    writeChunkEmbeddings: (
-      _input: WriteChunkEmbeddingsInput,
-    ): Promise<WriteChunkEmbeddingsResult> => {
-      throw new Error(
-        "Embedding index writer is not configured for the worker runtime: chunk_embeddings persistence does not exist yet.",
-      );
+    getCachedEmbeddings: async (lookup) => {
+      const result = await input.embeddingCacheRepository.getCachedEmbeddings({
+        keys: lookup.keys.map((key) => ({
+          contentHash: key.contentHash,
+          embeddingStrategyVersion:
+            key.embeddingStrategyVersion as unknown as DbEmbeddingCacheStrategyVersion,
+        })),
+      });
+
+      return {
+        entries: result.entries.map((entry) => ({
+          contentHash: entry.contentHash,
+          embeddingStrategyVersion:
+            entry.embeddingStrategyVersion as unknown as EmbeddingCacheEntry["embeddingStrategyVersion"],
+          vector: entry.vector,
+          dimensions: entry.dimensions,
+        })),
+      };
+    },
+    putCachedEmbeddings: async (write) => {
+      await input.embeddingCacheRepository.putCachedEmbeddings({
+        entries: write.entries.map((entry) => ({
+          contentHash: entry.contentHash,
+          embeddingStrategyVersion:
+            entry.embeddingStrategyVersion as unknown as DbEmbeddingCacheStrategyVersion,
+          vector: entry.vector,
+          dimensions: entry.dimensions,
+        })),
+      });
     },
   };
 }

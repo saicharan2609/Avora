@@ -1,0 +1,50 @@
+{
+  "id": "stage-12-embedding-cache-rls-plan",
+  "owner": "@avora/data",
+  "stage": "Stage 12 Group 2",
+  "title": "Embedding cache RLS plan",
+  "description": "Covers deny-by-default RLS expectations for embedding_cache. This table is not student-scoped: it carries no student_id, resource_id, or chunk_id column at all, by binding privacy constraint AD-30 (ENGINEERING-RULES.md ENG-238) - cache entries must never be attributable to any student. Every role other than service-role is denied every operation.",
+  "tables": [
+    {
+      "tableName": "public.embedding_cache",
+      "studentScoped": false,
+      "operations": ["select", "insert", "update", "delete"]
+    }
+  ],
+  "cases": [
+    {
+      "caseName": "authenticated role cannot select any embedding_cache row",
+      "tableName": "public.embedding_cache",
+      "operation": "select",
+      "expectedOutcome": "deny"
+    },
+    {
+      "caseName": "authenticated role cannot insert an embedding_cache row",
+      "tableName": "public.embedding_cache",
+      "operation": "insert",
+      "expectedOutcome": "deny"
+    },
+    {
+      "caseName": "authenticated role cannot update an embedding_cache row",
+      "tableName": "public.embedding_cache",
+      "operation": "update",
+      "expectedOutcome": "deny"
+    },
+    {
+      "caseName": "authenticated role cannot delete an embedding_cache row",
+      "tableName": "public.embedding_cache",
+      "operation": "delete",
+      "expectedOutcome": "deny"
+    }
+  ],
+  "ownership_notes": [
+    "embedding_cache has no student_id column and is never attributable to any student (AD-30)",
+    "no foreign key from any student-scoped table ever references embedding_cache; correlation with chunk_embeddings is by (content_hash, embedding_strategy_version) value only, never by foreign key",
+    "no policy exists for any client-reachable role (ENG-304 secure default); only the service-role worker plane reads or writes this table",
+    "cache hits are invisible in every student-facing surface"
+  ],
+  "index_notes": [
+    "primary key (content_hash, embedding_strategy_version) is the sole cache lookup path",
+    "an HNSW cosine index on embedding is not required for cache reads, which are exact-key lookups, not similarity search"
+  ]
+}
