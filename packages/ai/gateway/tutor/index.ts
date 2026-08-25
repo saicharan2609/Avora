@@ -4,9 +4,7 @@ export type {
   CreateAIInsufficiencyResponseInput,
 } from "./AIInsufficiencyResponse.js";
 
-export {
-  createAIInsufficiencyResponse,
-} from "./AIInsufficiencyResponse.js";
+export { createAIInsufficiencyResponse } from "./AIInsufficiencyResponse.js";
 
 export type {
   GroundedAnswerValidationIssue,
@@ -14,9 +12,7 @@ export type {
   GroundedAnswerValidationResult,
 } from "./AnswerValidation.js";
 
-export {
-  validateGroundedAnswer,
-} from "./AnswerValidation.js";
+export { validateGroundedAnswer } from "./AnswerValidation.js";
 
 export type {
   Citation,
@@ -26,9 +22,7 @@ export type {
   ValidateCitationsInput,
 } from "./Citation.js";
 
-export {
-  validateCitations,
-} from "./Citation.js";
+export { validateCitations } from "./Citation.js";
 
 export type {
   CreateGroundedContextEnvelopeInput,
@@ -52,9 +46,7 @@ export type {
   TutorGatewayResponse,
 } from "./GroundedAnswer.js";
 
-export {
-  createAIRefusalResponse,
-} from "./GroundedAnswer.js";
+export { createAIRefusalResponse } from "./GroundedAnswer.js";
 
 export type {
   CreateScopedSearchInputFromTutorQueryInput,
@@ -70,24 +62,24 @@ export type {
   CreateTutorGatewayInput,
   TutorGatewayDefaults,
   TutorGatewayPort,
+  TutorGatewayStreamEvent,
 } from "./TutorGateway.js";
 
-export type {
-  TutorGatewayErrorCode,
-} from "./TutorGatewayError.js";
 
-export {
-  createTutorGateway,
-} from "./TutorGateway.js";
+export type { TutorGatewayErrorCode } from "./TutorGatewayError.js";
 
-export {
-  TutorGatewayError,
-} from "./TutorGatewayError.js";
+export { createTutorGateway } from "./TutorGateway.js";
+
+export { TutorGatewayError } from "./TutorGatewayError.js";
 
 export type {
+  CreateTutorHybridRetrievalSearchInput,
   CreateTutorRetrievalSearchInput,
+  RetrievalSearchPort,
 } from "./TutorRetrievalSearch.js";
 
+
 export {
+  createTutorHybridRetrievalSearch,
   createTutorRetrievalSearch,
 } from "./TutorRetrievalSearch.js";

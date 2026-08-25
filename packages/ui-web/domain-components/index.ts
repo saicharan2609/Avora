@@ -9,3 +9,12 @@ export type {
   StructureTreeNodeContract,
 } from "./StructureTree.contract.js";
 export type { MasteryMeterContract } from "./MasteryMeter.contract.js";
+export type {
+  TutorStreamClientState,
+  TutorStreamClientStatus,
+  TutorStreamConsumerOptions,
+} from "./TutorStreamConsumer.contract.js";
+export {
+  consumeTutorReadableStream,
+  tutorStreamClientStatuses,
+} from "./TutorStreamConsumer.contract.js";

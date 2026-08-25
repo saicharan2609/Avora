@@ -34,5 +34,21 @@ export function createGoogleGenAITutorAnswerClient(
         text: response.text,
       };
     },
+    generateContentStream: async (
+      request: GeminiTutorAnswerGenerateContentInput,
+    ) => {
+      const responseStream = await genAI.models.generateContentStream({
+        model: request.model,
+        contents: request.userContentText,
+        config: {
+          systemInstruction: request.systemInstructionText,
+          temperature: request.temperature,
+          maxOutputTokens: request.maxOutputTokens,
+          responseMimeType: request.responseMimeType,
+        },
+      });
+
+      return responseStream;
+    },
   };
 }

@@ -42,3 +42,18 @@ export {
   tutorApiRetrievalInsufficiencySchema,
   tutorApiScopeSchema,
 } from "./TutorApi.contract.js";
+
+export type {
+  TutorStreamDonePayload,
+  TutorStreamEvent,
+  TutorStreamEventName,
+  TutorStreamTokenPayload,
+} from "./TutorStream.contract.js";
+
+export {
+  formatTutorSseEvent,
+  parseTutorSseEvent,
+  tutorStreamDonePayloadSchema,
+  tutorStreamEventNames,
+  tutorStreamTokenPayloadSchema,
+} from "./TutorStream.contract.js";

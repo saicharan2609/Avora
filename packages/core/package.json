@@ -23,7 +23,9 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "lint:arch": "eslint ."
+    "lint:arch": "eslint .",
+    "test:contract": "pnpm run build && node dist/contracts/tutor/__tests__/TutorStream.contract.js"
+
   },
   "dependencies": {
     "zod": "4.4.3"

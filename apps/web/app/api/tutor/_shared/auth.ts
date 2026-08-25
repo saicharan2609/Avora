@@ -15,7 +15,9 @@ export type AuthenticatedTutorApiStudent = Readonly<{
 export type WebTutorApiEnvironment = Readonly<{
   supabaseUrl: string;
   supabaseAnonKey: string;
+  geminiApiKey?: string | undefined;
 }>;
+
 
 export class WebTutorAuthenticationError extends Error {
   public constructor(message: string) {
@@ -24,11 +26,15 @@ export class WebTutorAuthenticationError extends Error {
   }
 }
 
-export async function resolveAuthenticatedTutorApiStudent(input: Readonly<{
-  request: NextRequest;
-  environment: WebTutorApiEnvironment;
-}>): Promise<AuthenticatedTutorApiStudent> {
-  const accessToken = input.request.cookies.get(avoraWebAccessTokenCookieName)?.value;
+export async function resolveAuthenticatedTutorApiStudent(
+  input: Readonly<{
+    request: NextRequest;
+    environment: WebTutorApiEnvironment;
+  }>,
+): Promise<AuthenticatedTutorApiStudent> {
+  const accessToken = input.request.cookies.get(
+    avoraWebAccessTokenCookieName,
+  )?.value;
 
   if (accessToken === undefined || accessToken.length === 0) {
     throw new WebTutorAuthenticationError("Missing authenticated web session");
@@ -50,7 +56,9 @@ export async function resolveAuthenticatedTutorApiStudent(input: Readonly<{
   }
 
   if (data === null || data.student_id.length === 0) {
-    throw new WebTutorAuthenticationError("Authenticated session has no student row");
+    throw new WebTutorAuthenticationError(
+      "Authenticated session has no student row",
+    );
   }
 
   return {

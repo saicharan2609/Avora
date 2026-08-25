@@ -34,8 +34,21 @@ export type TutorAnswerInvocationResult = Readonly<{
   candidate: TutorAnswerCandidate;
 }>;
 
+export type TutorAnswerStreamEvent =
+  | Readonly<{
+      type: "token";
+      token: string;
+    }>
+  | Readonly<{
+      type: "completed";
+      candidate: TutorAnswerCandidate;
+    }>;
+
 export type TutorAnswerInvocationPort = Readonly<{
   invokeTutorAnswer: (
     input: TutorAnswerInvocationInput,
   ) => Promise<TutorAnswerInvocationResult>;
+  streamTutorAnswer?: (
+    input: TutorAnswerInvocationInput,
+  ) => AsyncIterable<TutorAnswerStreamEvent>;
 }>;

@@ -4,8 +4,10 @@ export type {
   TutorAnswerInvocationPort,
   TutorAnswerInvocationResult,
   TutorAnswerQualityTier,
+  TutorAnswerStreamEvent,
   TutorAnswerTask,
 } from "./TutorAnswerInvocationPort.js";
+
 
 export {
   tutorAnswerQualityTiers,

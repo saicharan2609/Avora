@@ -1,17 +1,13 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+
 
 import {
   askTutorRequestBodySchema,
   askTutorResponseBodySchema,
 } from "@avora/core/contracts/tutor";
-import type {
-  IsoDateTimeString,
-} from "@avora/core/time";
+import type { IsoDateTimeString } from "@avora/core/time";
 
-import {
-  resolveAuthenticatedTutorApiStudent,
-} from "../_shared/auth";
+import { resolveAuthenticatedTutorApiStudent } from "../_shared/auth";
 import {
   createWebTutorApiComposition,
   readWebTutorApiEnvironment,
@@ -29,8 +25,12 @@ import {
   mapAskTutorRequestToTutorQuery,
   serializeTutorGatewayResponse,
 } from "../_shared/mapper";
+import {
+  createTutorSseResponse,
+  createTutorSseStream,
+} from "../_shared/stream";
 
-export async function POST(request: NextRequest): Promise<NextResponse> {
+export async function POST(request: NextRequest): Promise<Response> {
   const environment = readWebTutorApiEnvironment();
 
   try {
@@ -58,6 +58,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       studentId: authenticatedStudent.studentId,
       createdAt: new Date().toISOString() as IsoDateTimeString,
     });
+
+    const wantsStream =
+      request.headers.get("accept")?.includes("text/event-stream") === true ||
+      request.nextUrl?.searchParams?.get("stream") === "true";
+
+    if (wantsStream) {
+      const stream = createTutorSseStream({
+        tutorGateway: composition.tutorGateway,
+        tutorQuery,
+      });
+
+      return createTutorSseResponse(stream);
+    }
 
     const gatewayResponse =
       await composition.tutorGateway.answerTutorQuery(tutorQuery);

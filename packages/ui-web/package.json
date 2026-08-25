@@ -12,7 +12,8 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "lint:arch": "eslint ."
+    "lint:arch": "eslint .",
+    "test:unit": "pnpm run build && node dist/domain-components/__tests__/TutorStreamConsumer.unit.js"
   },
   "dependencies": {
     "@avora/core": "workspace:*",

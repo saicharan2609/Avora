@@ -768,6 +768,168 @@ async function runEmitsCostTelemetryOnSuccessfulInvocationCase(): Promise<void> 
   );
 }
 
+async function runRealIncrementalStreamingCase(): Promise<void> {
+  const caseId = "gemini-tutor-answer-adapter-real-incremental-streaming";
+
+  const chunks = [
+    '{\n  "answerText": "Mitosis ',
+    'proceeds through ',
+    'four phases.",\n  "citations": [',
+    `{"chunkId": "${knownChunkId}", "quote": "Mitosis proceeds"}\n  ]\n}`,
+  ];
+
+  const adapter = createGeminiTutorAnswerAdapter({
+    client: createFakeStreamingClient(chunks, 5),
+    invocationGateState: authorizedInvocationGateState,
+    taskBudgets: authorizedTaskBudgets,
+  });
+
+  const stream = adapter.streamTutorAnswer!(createInvocationInput());
+  const receivedTokens: string[] = [];
+  let candidateReceived = false;
+
+  for await (const event of stream) {
+    if (event.type === "token") {
+      receivedTokens.push(event.token);
+      assert(
+        !candidateReceived,
+        caseId,
+        "token event received after candidate completion",
+      );
+    } else if (event.type === "completed") {
+      candidateReceived = true;
+      assert(
+        event.candidate.citations.length === 1,
+        caseId,
+        "citations not attached to completed candidate",
+      );
+    }
+  }
+
+  assert(receivedTokens.length > 0, caseId, "expected multiple token events");
+  assert(
+    receivedTokens.join("") === "Mitosis proceeds through four phases.",
+    caseId,
+    "accumulated streaming tokens mismatch",
+  );
+  assert(candidateReceived, caseId, "completed candidate was not emitted");
+}
+
+async function runTtftPreCompletionDeliveryCase(): Promise<void> {
+  const caseId = "gemini-tutor-answer-adapter-ttft-pre-completion-delivery";
+
+  const chunks = [
+    '{\n  "answerText": "First chunk ',
+    "second chunk ",
+    'third chunk.",\n  "citations": []\n}',
+  ];
+
+
+  const adapter = createGeminiTutorAnswerAdapter({
+    client: createFakeStreamingClient(chunks, 20),
+    invocationGateState: authorizedInvocationGateState,
+    taskBudgets: authorizedTaskBudgets,
+  });
+
+  const startTime = Date.now();
+  let firstTokenTime = 0;
+  let completionTime = 0;
+
+  const stream = adapter.streamTutorAnswer!(createInvocationInput());
+
+  for await (const event of stream) {
+    if (event.type === "token" && firstTokenTime === 0) {
+      firstTokenTime = Date.now();
+    } else if (event.type === "completed") {
+      completionTime = Date.now();
+    }
+  }
+
+  assert(firstTokenTime > 0, caseId, "no first token recorded");
+  assert(completionTime > 0, caseId, "no completion time recorded");
+  assert(
+    firstTokenTime < completionTime,
+    caseId,
+    `first token (${firstTokenTime - startTime} duration) must be delivered strictly before completion (${completionTime - startTime} duration)`,
+  );
+  assert(
+    firstTokenTime - startTime < 1500,
+    caseId,
+    `first token (${firstTokenTime - startTime} duration) must be delivered within the sub-1500 milliseconds latency budget`,
+  );
+
+
+}
+
+async function runStreamingCitationValidationFailureCase(): Promise<void> {
+  const caseId =
+    "tutor-gateway-streaming-citation-validation-failure-produces-refusal";
+
+  const chunks = [
+    '{\n  "answerText": "Ungrounded answer.",\n  "citations": [',
+    `{"chunkId": "${unknownChunkId}", "quote": "not in evidence"}\n  ]\n}`,
+  ];
+
+  const gateway = createTutorGateway({
+    retrievalSearch: {
+      search: async () => createSufficientScopedSearchResult(),
+    },
+    tutorAnswerInvocation: createGeminiTutorAnswerAdapter({
+      client: createFakeStreamingClient(chunks, 2),
+      invocationGateState: authorizedInvocationGateState,
+      taskBudgets: authorizedTaskBudgets,
+    }),
+    defaults: {
+      maxChunks: 4,
+      minChunkCount: 1,
+      qualityTier: "standard",
+    },
+  });
+
+  const stream = gateway.streamTutorQuery(createFakeQuery());
+  let finalStatus: string | null = null;
+  const tokens: string[] = [];
+
+  for await (const event of stream) {
+    if (event.type === "token") {
+      tokens.push(event.token);
+    } else if (event.type === "final") {
+      finalStatus = event.response.status;
+      assert(
+        event.response.status === "refused",
+        caseId,
+        "citation failure must result in refusal terminal state",
+      );
+    }
+  }
+
+  assert(
+    finalStatus === "refused",
+    caseId,
+    "expected terminal refused response",
+  );
+}
+
+function createFakeStreamingClient(
+  chunks: readonly string[],
+  delayMs = 5,
+): GeminiTutorAnswerClient {
+  return {
+    generateContent: async () => ({ text: chunks.join("") }),
+    generateContentStream: async () => {
+      async function* generate() {
+        for (const chunk of chunks) {
+          if (delayMs > 0) {
+            await new Promise((resolve) => setTimeout(resolve, delayMs));
+          }
+          yield { text: chunk };
+        }
+      }
+      return generate();
+    },
+  };
+}
+
 async function main(): Promise<void> {
   await runResolvesCitationFromTrustedEnvelopeCase();
   await runSelectsRoutingConfigByQualityTierCase();
@@ -786,6 +948,9 @@ async function main(): Promise<void> {
   await runFailsClosedWhenTaskBudgetsMissingCase();
   await runFailsClosedWhenBudgetCeilingExceededCase();
   await runEmitsCostTelemetryOnSuccessfulInvocationCase();
+  await runRealIncrementalStreamingCase();
+  await runTtftPreCompletionDeliveryCase();
+  await runStreamingCitationValidationFailureCase();
 }
 
 await main();

@@ -18,8 +18,11 @@ export {
   validateCitations,
   validateGroundedAnswer,
   createTutorGateway,
+  createTutorHybridRetrievalSearch,
+  createTutorRetrievalSearch,
   TutorGatewayError,
 } from "./tutor/index.js";
+
 export {
   tutorAnswerQualityTiers,
   tutorAnswerTask,
