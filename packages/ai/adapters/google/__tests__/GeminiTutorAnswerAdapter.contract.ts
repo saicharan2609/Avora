@@ -1,11 +1,5 @@
-import type {
-  MessageId,
-  ResourceId,
-  StudentId,
-} from "@avora/core/identity";
-import type {
-  IsoDateTimeString,
-} from "@avora/core/time";
+import type { MessageId, ResourceId, StudentId } from "@avora/core/identity";
+import type { IsoDateTimeString } from "@avora/core/time";
 import type {
   DbRetrievalChunkContentKind,
   DbRetrievalChunkId,
@@ -25,20 +19,14 @@ import type {
   GroundedContextEnvelope,
   TutorQuery,
 } from "../../../gateway/tutor/index.js";
-import type {
-  TutorAnswerInvocationInput,
-} from "../../../gateway/invocation/index.js";
-import {
-  resolveTutorAnswerRoutingConfig,
-} from "../../../gateway/routing/TutorAnswerRoutingPolicy.js";
+import type { TutorAnswerInvocationInput } from "../../../gateway/invocation/index.js";
+import { resolveTutorAnswerRoutingConfig } from "../../../gateway/routing/TutorAnswerRoutingPolicy.js";
 import type {
   AiProviderInvocationGateState,
   TutorAnswerTaskBudgets,
 } from "../../../gateway/budget-gate/index.js";
 
-import {
-  createGeminiTutorAnswerAdapter,
-} from "../GeminiTutorAnswerAdapter.js";
+import { createGeminiTutorAnswerAdapter } from "../GeminiTutorAnswerAdapter.js";
 import type {
   GeminiTutorAnswerClient,
   GeminiTutorAnswerGenerateContentInput,
@@ -121,7 +109,8 @@ function createFakeEnvelope(): GroundedContextEnvelope {
       {
         chunkId: knownChunkId,
         resourceId: knownResourceId,
-        extractionDocumentId: "extraction-doc-0001" as DbRetrievalExtractionDocumentId,
+        extractionDocumentId:
+          "extraction-doc-0001" as DbRetrievalExtractionDocumentId,
         sourceBlockIds: [],
         locator: knownLocator,
         contentKind: "paragraph" as DbRetrievalChunkContentKind,
@@ -148,7 +137,8 @@ function createFullChunkRecord(): DbRetrievalChunkRecord {
     chunkId: knownChunkId,
     studentId: "student-0001" as StudentId,
     resourceId: knownResourceId,
-    extractionDocumentId: "extraction-doc-0001" as DbRetrievalExtractionDocumentId,
+    extractionDocumentId:
+      "extraction-doc-0001" as DbRetrievalExtractionDocumentId,
     sourceBlockIds: [],
     scope: {
       termId: "term-0001",
@@ -237,16 +227,19 @@ function createInvocationInput(
 }
 
 async function runResolvesCitationFromTrustedEnvelopeCase(): Promise<void> {
-  const caseId = "gemini-tutor-answer-adapter-resolves-citation-from-trusted-envelope";
+  const caseId =
+    "gemini-tutor-answer-adapter-resolves-citation-from-trusted-envelope";
 
   const adapter = createGeminiTutorAnswerAdapter({
     client: createFakeClient(async () => ({
       text: JSON.stringify({
-        answerText: "Mitosis proceeds through prophase, metaphase, anaphase, and telophase.",
+        answerText:
+          "Mitosis proceeds through prophase, metaphase, anaphase, and telophase.",
         citations: [
           {
             chunkId: knownChunkId,
-            quote: "Mitosis proceeds through prophase, metaphase, anaphase, and telophase.",
+            quote:
+              "Mitosis proceeds through prophase, metaphase, anaphase, and telophase.",
           },
         ],
       }),
@@ -281,7 +274,8 @@ async function runResolvesCitationFromTrustedEnvelopeCase(): Promise<void> {
 }
 
 async function runSelectsRoutingConfigByQualityTierCase(): Promise<void> {
-  const caseId = "gemini-tutor-answer-adapter-selects-routing-config-by-quality-tier";
+  const caseId =
+    "gemini-tutor-answer-adapter-selects-routing-config-by-quality-tier";
 
   const observedRequests: GeminiTutorAnswerGenerateContentInput[] = [];
 
@@ -300,8 +294,12 @@ async function runSelectsRoutingConfigByQualityTierCase(): Promise<void> {
     taskBudgets: authorizedTaskBudgets,
   });
 
-  await adapter.invokeTutorAnswer(createInvocationInput({ qualityTier: "standard" }));
-  await adapter.invokeTutorAnswer(createInvocationInput({ qualityTier: "high" }));
+  await adapter.invokeTutorAnswer(
+    createInvocationInput({ qualityTier: "standard" }),
+  );
+  await adapter.invokeTutorAnswer(
+    createInvocationInput({ qualityTier: "high" }),
+  );
 
   assert(observedRequests.length === 2, caseId, "expected two provider calls");
   assert(
@@ -317,14 +315,17 @@ async function runSelectsRoutingConfigByQualityTierCase(): Promise<void> {
     "high quality tier did not route to the approved high model configuration",
   );
   assert(
-    observedRequests.every((request) => request.responseMimeType === "application/json"),
+    observedRequests.every(
+      (request) => request.responseMimeType === "application/json",
+    ),
     caseId,
     "provider requests did not request JSON output",
   );
 }
 
 async function runNeverSendsResourceIdOrLocatorToProviderCase(): Promise<void> {
-  const caseId = "gemini-tutor-answer-adapter-never-sends-resource-id-or-locator";
+  const caseId =
+    "gemini-tutor-answer-adapter-never-sends-resource-id-or-locator";
 
   let capturedUserContentText: string | undefined;
 
@@ -345,9 +346,15 @@ async function runNeverSendsResourceIdOrLocatorToProviderCase(): Promise<void> {
 
   await adapter.invokeTutorAnswer(createInvocationInput());
 
-  assert(capturedUserContentText !== undefined, caseId, "provider was never called");
+  assert(
+    capturedUserContentText !== undefined,
+    caseId,
+    "provider was never called",
+  );
 
-  const dataPayload = JSON.parse(capturedUserContentText as string) as Readonly<{
+  const dataPayload = JSON.parse(
+    capturedUserContentText as string,
+  ) as Readonly<{
     evidence: readonly Record<string, unknown>[];
   }>;
 
@@ -357,7 +364,9 @@ async function runNeverSendsResourceIdOrLocatorToProviderCase(): Promise<void> {
     "sealed evidence did not contain the expected single chunk",
   );
   assert(
-    Object.keys(dataPayload.evidence[0] ?? {}).sort().join(",") === "chunkId,text",
+    Object.keys(dataPayload.evidence[0] ?? {})
+      .sort()
+      .join(",") === "chunkId,text",
     caseId,
     "sealed evidence item exposed fields beyond chunkId and text to the provider",
   );
@@ -382,7 +391,8 @@ async function runRejectsMalformedJsonResponseCase(): Promise<void> {
 }
 
 async function runRejectsOutputContractViolationCase(): Promise<void> {
-  const caseId = "gemini-tutor-answer-adapter-rejects-output-contract-violation";
+  const caseId =
+    "gemini-tutor-answer-adapter-rejects-output-contract-violation";
 
   const adapter = createGeminiTutorAnswerAdapter({
     client: createFakeClient(async () => ({
@@ -525,15 +535,18 @@ async function runProviderFailureProducesSafeRefusalCase(): Promise<void> {
 }
 
 async function runValidCitationStillProducesSuccessfulAnswerCase(): Promise<void> {
-  const caseId = "tutor-gateway-valid-citation-still-produces-successful-answer";
+  const caseId =
+    "tutor-gateway-valid-citation-still-produces-successful-answer";
 
   const gateway = createGatewayWithClient(async () => ({
     text: JSON.stringify({
-      answerText: "Mitosis proceeds through prophase, metaphase, anaphase, and telophase.",
+      answerText:
+        "Mitosis proceeds through prophase, metaphase, anaphase, and telophase.",
       citations: [
         {
           chunkId: knownChunkId,
-          quote: "Mitosis proceeds through prophase, metaphase, anaphase, and telophase.",
+          quote:
+            "Mitosis proceeds through prophase, metaphase, anaphase, and telophase.",
         },
       ],
     }),
@@ -593,7 +606,8 @@ async function runNoToolsRemainStructurallyImpossibleCase(): Promise<void> {
 }
 
 async function runFailsClosedWhenInvocationGateStateMissingCase(): Promise<void> {
-  const caseId = "gemini-tutor-answer-adapter-fails-closed-when-invocation-gate-state-missing";
+  const caseId =
+    "gemini-tutor-answer-adapter-fails-closed-when-invocation-gate-state-missing";
 
   const adapter = createGeminiTutorAnswerAdapter({
     client: createNeverCalledClient(caseId),
@@ -609,7 +623,8 @@ async function runFailsClosedWhenInvocationGateStateMissingCase(): Promise<void>
 }
 
 async function runFailsClosedWhenInvocationGateDisabledCase(): Promise<void> {
-  const caseId = "gemini-tutor-answer-adapter-fails-closed-when-invocation-gate-disabled";
+  const caseId =
+    "gemini-tutor-answer-adapter-fails-closed-when-invocation-gate-disabled";
 
   const adapter = createGeminiTutorAnswerAdapter({
     client: createNeverCalledClient(caseId),
@@ -625,7 +640,8 @@ async function runFailsClosedWhenInvocationGateDisabledCase(): Promise<void> {
 }
 
 async function runFailsClosedWhenTaskBudgetsMissingCase(): Promise<void> {
-  const caseId = "gemini-tutor-answer-adapter-fails-closed-when-task-budgets-missing";
+  const caseId =
+    "gemini-tutor-answer-adapter-fails-closed-when-task-budgets-missing";
 
   const adapter = createGeminiTutorAnswerAdapter({
     client: createNeverCalledClient(caseId),
@@ -641,7 +657,8 @@ async function runFailsClosedWhenTaskBudgetsMissingCase(): Promise<void> {
 }
 
 async function runFailsClosedWhenBudgetCeilingExceededCase(): Promise<void> {
-  const caseId = "gemini-tutor-answer-adapter-fails-closed-when-budget-ceiling-exceeded";
+  const caseId =
+    "gemini-tutor-answer-adapter-fails-closed-when-budget-ceiling-exceeded";
 
   const adapter = createGeminiTutorAnswerAdapter({
     client: createNeverCalledClient(caseId),
@@ -673,6 +690,84 @@ async function assertRejects(
   throw new GeminiTutorAnswerAdapterContractFailure(caseId, reason);
 }
 
+async function runEmitsCostTelemetryOnSuccessfulInvocationCase(): Promise<void> {
+  const caseId =
+    "gemini-tutor-answer-adapter-emits-cost-telemetry-on-successful-invocation";
+
+  const emittedTelemetry: unknown[] = [];
+
+  const adapter = createGeminiTutorAnswerAdapter({
+    client: createFakeClient(async () => ({
+      text: JSON.stringify({
+        answerText:
+          "Mitosis proceeds through prophase, metaphase, anaphase, and telophase.",
+        citations: [
+          {
+            chunkId: knownChunkId,
+            quote:
+              "Mitosis proceeds through prophase, metaphase, anaphase, and telophase.",
+          },
+        ],
+      }),
+    })),
+    invocationGateState: authorizedInvocationGateState,
+    taskBudgets: authorizedTaskBudgets,
+    telemetrySink: (telemetry) => {
+      emittedTelemetry.push(telemetry);
+    },
+  });
+
+  await adapter.invokeTutorAnswer(createInvocationInput());
+
+  assert(
+    emittedTelemetry.length === 1,
+    caseId,
+    "expected exactly one telemetry record emitted",
+  );
+
+  const record = emittedTelemetry[0] as {
+    version: string;
+    task: string;
+    model: string;
+    qualityTier: string;
+    latencyMs: number;
+    estimatedInputTokens: number;
+    estimatedOutputTokens: number;
+  };
+
+  assert(
+    record.version === "ai-cost-telemetry.v1",
+    caseId,
+    "telemetry version mismatch",
+  );
+  assert(record.task === "tutor.answer", caseId, "telemetry task mismatch");
+  assert(
+    record.model === "gemini-3.6-flash",
+    caseId,
+    "telemetry model mismatch",
+  );
+  assert(
+    record.qualityTier === "standard",
+    caseId,
+    "telemetry qualityTier mismatch",
+  );
+  assert(
+    record.latencyMs >= 0,
+    caseId,
+    "telemetry latencyMs must be non-negative",
+  );
+  assert(
+    record.estimatedInputTokens > 0,
+    caseId,
+    "telemetry estimatedInputTokens must be positive",
+  );
+  assert(
+    record.estimatedOutputTokens > 0,
+    caseId,
+    "telemetry estimatedOutputTokens must be positive",
+  );
+}
+
 async function main(): Promise<void> {
   await runResolvesCitationFromTrustedEnvelopeCase();
   await runSelectsRoutingConfigByQualityTierCase();
@@ -690,6 +785,7 @@ async function main(): Promise<void> {
   await runFailsClosedWhenInvocationGateDisabledCase();
   await runFailsClosedWhenTaskBudgetsMissingCase();
   await runFailsClosedWhenBudgetCeilingExceededCase();
+  await runEmitsCostTelemetryOnSuccessfulInvocationCase();
 }
 
 await main();

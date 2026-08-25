@@ -1,13 +1,7 @@
 import { randomUUID } from "node:crypto";
 
-import type {
-  CitationId,
-  MessageId,
-} from "@avora/core/identity";
-import type {
-  ClockContract,
-  IsoDateTimeString,
-} from "@avora/core/time";
+import type { CitationId, MessageId } from "@avora/core/identity";
+import type { ClockContract, IsoDateTimeString } from "@avora/core/time";
 import {
   authorizeAiProviderInvocation,
   authorizeTutorAnswerBudget,
@@ -16,44 +10,28 @@ import type {
   AiProviderInvocationGateState,
   TutorAnswerTaskBudgets,
 } from "../../gateway/budget-gate/index.js";
-import {
-  assembleTutorSixPartContext,
-} from "../../gateway/context/index.js";
-import {
-  resolveTutorCitations,
-} from "../../gateway/citations/index.js";
-import {
-  sealTutorModelInput,
-} from "../../gateway/envelope/index.js";
+import { assembleTutorSixPartContext } from "../../gateway/context/index.js";
+import { resolveTutorCitations } from "../../gateway/citations/index.js";
+import { sealTutorModelInput } from "../../gateway/envelope/index.js";
 import type {
   TutorAnswerInvocationInput,
   TutorAnswerInvocationPort,
   TutorAnswerInvocationResult,
 } from "../../gateway/invocation/index.js";
-import {
-  validateTutorAnswerRawOutput,
-} from "../../gateway/validation/index.js";
-import {
-  resolveTutorAnswerRoutingConfig,
-} from "../../gateway/routing/TutorAnswerRoutingPolicy.js";
-import {
-  createTutorSystemPolicy,
-} from "../../prompts/tutor/TutorSystemPolicy.js";
-import type {
-  TutorSystemPolicy,
-} from "../../prompts/tutor/TutorSystemPolicy.js";
+import { validateTutorAnswerRawOutput } from "../../gateway/validation/index.js";
+import { resolveTutorAnswerRoutingConfig } from "../../gateway/routing/TutorAnswerRoutingPolicy.js";
+import type { AiTelemetrySink } from "../../gateway/telemetry/index.js";
+import { createTutorSystemPolicy } from "../../prompts/tutor/TutorSystemPolicy.js";
+import type { TutorSystemPolicy } from "../../prompts/tutor/TutorSystemPolicy.js";
 
-import {
-  GeminiTutorAnswerAdapterError,
-} from "./GeminiTutorAnswerAdapter.errors.js";
-import type {
-  GeminiTutorAnswerClient,
-} from "./GeminiTutorAnswerClient.js";
+import { GeminiTutorAnswerAdapterError } from "./GeminiTutorAnswerAdapter.errors.js";
+import type { GeminiTutorAnswerClient } from "./GeminiTutorAnswerClient.js";
 
 export type CreateGeminiTutorAnswerAdapterInput = Readonly<{
   client: GeminiTutorAnswerClient;
   invocationGateState: AiProviderInvocationGateState | undefined;
   taskBudgets: TutorAnswerTaskBudgets | undefined;
+  telemetrySink?: AiTelemetrySink;
   systemPolicy?: TutorSystemPolicy;
   clock?: ClockContract;
   createAnswerMessageId?: () => MessageId;
@@ -73,6 +51,7 @@ export function createGeminiTutorAnswerAdapter(
     invokeTutorAnswer: async (
       invocation: TutorAnswerInvocationInput,
     ): Promise<TutorAnswerInvocationResult> => {
+      const startTimeMs = Date.now();
       const invocationAuthorization = authorizeAiProviderInvocation({
         state: input.invocationGateState,
       });
@@ -170,6 +149,27 @@ export function createGeminiTutorAnswerAdapter(
           "gemini_tutor_answer_adapter_citation_resolution_failed",
           "Gemini tutor answer provider cited evidence outside the supplied grounded context envelope.",
         );
+      }
+
+      if (input.telemetrySink !== undefined) {
+        const latencyMs = Math.max(0, Date.now() - startTimeMs);
+        const estimatedInputTokens =
+          Math.ceil(sealedInput.systemInstructionText.length / 4) +
+          Math.ceil(JSON.stringify(sealedInput.dataPayload).length / 4);
+        const estimatedOutputTokens = Math.ceil(
+          outputValidation.value.answerText.length / 4,
+        );
+
+        await input.telemetrySink({
+          version: "ai-cost-telemetry.v1",
+          task: "tutor.answer",
+          model: routingConfig.model,
+          qualityTier: invocation.qualityTier,
+          latencyMs,
+          estimatedInputTokens,
+          estimatedOutputTokens,
+          timestamp: clock.now(),
+        });
       }
 
       return {

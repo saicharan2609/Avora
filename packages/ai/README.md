@@ -89,6 +89,7 @@ Provider SDKs are permitted only under `adapters/`.
 The `gateway/envelope/` path is the only AI package location that may construct model input.
 
 Stage 4 Group 5 does not implement routing policy, prompts, provider SDKs, model calls, gateway behavior, budget logic, context assembly, envelopes, invocation, validation, citation resolution, telemetry, business logic, database schema, Supabase logic, APIs, authentication, UI code, or tests.
+
 ## Stage 11 Group 4 — Embedding adapter seam
 
 Stage 11 Group 4 adds the provider-neutral embedding port used by resource indexing.
@@ -102,6 +103,7 @@ Public surface:
 The port accepts chunk text and returns embedding vectors. It does not embed through a concrete provider in this group.
 
 Provider SDKs, provider keys, model names, routing policy, vector search, tutor orchestration, web APIs, mobile APIs, evals, and e2e flows are intentionally out of scope.
+
 ## Stage 11 Group 6 — AI Gateway tutor contracts
 
 Stage 11 Group 6 establishes grounded tutor contracts inside the AI Gateway.
@@ -119,6 +121,7 @@ Public surface:
 The contracts define the typed boundary for grounded tutor answers. The context envelope carries the exact chunk ids supplied to the model-facing path, and citation validation checks citations against that supplied chunk set.
 
 This group does not implement provider invocation, prompt files, routing policy, tutor orchestration, retrieval execution, vector search, web APIs, mobile APIs, evals, or e2e flows.
+
 ## Stage 11 Group 7 — Tutor orchestration adapter
 
 Stage 11 Group 7 adds the AI Gateway tutor orchestration adapter.
@@ -231,9 +234,27 @@ orchestration, web APIs, mobile APIs, evals, or e2e flows.
 Requirement trace: AD-18, AD-19, AD-30, ENG-165, ENG-168, ENG-171, ENG-238, NN-04, NN-06, NN-07,
 SEC-290, SEC-322.
 
+## Stage 12 Group 4 — AI Gateway Tutor Answer Invocation
+
+Stage 12 Group 4 establishes the complete 10-stage AI Gateway execution pipeline and wires the concrete Gemini tutor answer adapter (`packages/ai/adapters/google/GeminiTutorAnswerAdapter.ts`).
+
+1. **Task Declaration (`tutor.answer`)** — declares `tutorAnswerTask` with `standard` and `high` quality tiers.
+2. **Budget & Invocation Gate (`gateway/budget-gate/`)** — verifies provider invocation is authorized (`authorizeAiProviderInvocation`) and output token limits are within the student's task budget ceiling (`authorizeTutorAnswerBudget`).
+3. **Context Assembly (`gateway/context/`)** — constructs `TutorSixPartContext` combining system policy, task contract, academic frame, personalization, evidence, and interaction history.
+4. **Untrusted-Content Envelope (`gateway/envelope/`)** — constructs `SealedTutorModelInput`, redacting internal database IDs and locators before sending text to the model.
+5. **Model Routing (`gateway/routing/`)** — protected declarative policy mapping quality tiers to approved model configurations (`gemini-3.6-flash` / `gemini-3.1-pro-preview`).
+6. **Provider Invocation (`adapters/google/`)** — calls Gemini provider SDK via `GeminiTutorAnswerClient.generateContent`.
+7. **Output Contract Validation (`gateway/validation/`)** — validates raw JSON output matches `TutorAnswerRawOutput` schema (`answerText` and `citations`).
+8. **Machine Citation Verification (`gateway/citations/`)** — maps citations strictly to chunk IDs present in the trusted context envelope, attaching locators and resource IDs.
+9. **Provenance Stamping (`gateway/tutor/`)** — produces `GroundedAnswer` with timestamps, message IDs, and verified citations.
+10. **Cost & Quality Telemetry (`gateway/telemetry/`)** — records execution latency, model, quality tier, and token estimates via `AiCostTelemetry` / `AiTelemetrySink`.
+
+Requirement trace: AIR-001, AIR-002, AIR-003, AIR-006, ENG-210, ENG-211, ENG-212, ENG-216, ENG-217, ENG-219, ENG-221, ENG-224, ENG-226, ENG-229, ENG-230, ENG-231, NN-02, NN-03, NN-07, NN-11, SEC-280, SEC-301, SEC-312.
+
 ## Pre-Stage-12 dependency approval — `@google/genai` (ENG-366 / ENG-404)
 
 Owner decision (2026-08-23): Approved `@google/genai@2.18.0` as the Gemini provider SDK for the server/worker-side AI adapter implementation.
+
 - Server/worker-side runtime only (never bundled into web or mobile client code).
 - Maintained strictly behind `TutorAnswerInvocationPort` / `EmbeddingPort` in `packages/ai/adapters/google/`.
 - No feature module touches the SDK directly (ENG-210, AD-12).
