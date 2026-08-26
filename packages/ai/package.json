@@ -15,6 +15,7 @@
     "./gateway/invocation": "./dist/gateway/invocation/index.js",
     "./gateway/validation": "./gateway/validation/index.ts",
     "./gateway/tutor": "./dist/gateway/tutor/index.js",
+    "./gateway/summary": "./dist/gateway/summary/index.js",
     "./gateway/citations": "./gateway/citations/index.ts",
     "./gateway/telemetry": "./gateway/telemetry/index.ts",
     "./ports": "./ports/index.ts",
@@ -33,7 +34,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:arch": "eslint .",
-    "test:contract": "pnpm run build && node dist/adapters/google/__tests__/GeminiEmbeddingAdapter.contract.js && node dist/adapters/google/__tests__/GeminiTutorAnswerAdapter.contract.js && node dist/adapters/google/__tests__/StreamingJsonAnswerExtractor.unit.js && node dist/embeddings/__tests__/ContentAddressedEmbeddingPort.contract.js"
+    "test:contract": "pnpm run build && node dist/adapters/google/__tests__/GeminiEmbeddingAdapter.contract.js && node dist/adapters/google/__tests__/GeminiTutorAnswerAdapter.contract.js && node dist/adapters/google/__tests__/StreamingJsonAnswerExtractor.unit.js && node dist/embeddings/__tests__/ContentAddressedEmbeddingPort.contract.js && node dist/adapters/google/__tests__/GeminiSummaryAdapter.contract.js"
 
   },
   "dependencies": {

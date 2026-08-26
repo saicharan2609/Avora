@@ -130,3 +130,15 @@ This group does not add a claim loop, queue infrastructure, database schema, RLS
 ## Pre-Stage-12 readiness exception — bootstrap and lifecycle logging
 
 Owner decision (2026-08-23): Process startup and shutdown lifecycle logging in `src/main.ts` and `src/runtime/shutdown.ts` is an explicitly approved bootstrap/lifecycle console logging exception while `LoggerContract` implementation is pending. No-console remains strictly enforced across all domain, service, and handler logic.
+
+## Stage 12 Group 7 — Resource summary generation worker handler
+
+Stage 12 Group 7 adds the worker-plane resource summary generation handler (`FR-070`).
+
+New worker-local module:
+
+- `src/resource-summary/`
+
+The handler consumes a claimed `resource_summary_jobs` row, generates a summary via `SummaryGatewayPort` (`@avora/ai`), and persists it through `ResourceSummariesRepository` (`@avora/db/repositories/resource-summaries`). See `src/resource-summary/README.md` for the full data flow and idempotency notes.
+
+**This group does not modify `src/runtime/**`, `src/main.ts`, the claim loop, checkpoint/shutdown infrastructure, or `createWorkerRuntime.ts`.** `createResourceSummaryWorkerHandler`, `createResourceSummaryJobHandlerAdapter`, and `createResourceSummaryWorker` are complete and independently testable but are left uncomposed — composition-root wiring and claim-loop activation for every worker handler, this one included, is explicitly owned by Stage 12 Group 13, mirroring the same boundary already documented for the tutor answer adapter in the "Phase E" section of `packages/ai/README.md`.

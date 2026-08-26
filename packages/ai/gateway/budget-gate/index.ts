@@ -24,3 +24,17 @@ export {
   authorizeTutorAnswerBudget,
   tutorAnswerBudgetGateVersion,
 } from "./TutorAnswerBudgetGate.js";
+
+export type {
+  AuthorizeSummaryGenerationBudgetInput,
+  SummaryGenerationBudgetAuthorizationFailureCode,
+  SummaryGenerationBudgetAuthorizationResult,
+  SummaryGenerationBudgetGateVersion,
+  SummaryGenerationTaskBudget,
+  SummaryGenerationTaskBudgets,
+} from "./SummaryGenerationBudgetGate.js";
+
+export {
+  authorizeSummaryGenerationBudget,
+  summaryGenerationBudgetGateVersion,
+} from "./SummaryGenerationBudgetGate.js";

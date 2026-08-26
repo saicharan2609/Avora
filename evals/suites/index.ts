@@ -62,6 +62,21 @@ export {
 } from "./tutor-grounding.gate.js";
 
 export type {
+  SummaryGroundingEvalCase,
+  SummaryGroundingEvalCaseKind,
+  SummaryGroundingExpectedOutcome,
+} from "./summary-grounding.fixture.js";
+
+export {
+  summaryGroundingEvalCases,
+} from "./summary-grounding.fixture.js";
+
+export {
+  SummaryGroundingGateFailure,
+  runSummaryGroundingGate,
+} from "./summary-grounding.gate.js";
+
+export type {
   ResourceClassificationExpectedOutcome,
   ResourceClassificationQualityCase,
 } from "./resource-classification-quality.fixture.js";

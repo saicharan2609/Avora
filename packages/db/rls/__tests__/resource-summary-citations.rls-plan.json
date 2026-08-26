@@ -1,0 +1,65 @@
+{
+  "id": "stage-12-group-7-resource-summary-citations-rls-plan",
+  "owner": "@avora/data",
+  "stage": "Stage 12 Group 7",
+  "title": "Resource summary citations RLS plan",
+  "description": "Covers student-scoped RLS expectations for machine-resolved resource summary citations (NN-11).",
+  "tables": [
+    "public.resource_summary_citations"
+  ],
+  "cases": [
+    {
+      "name": "student can select own resource summary citations",
+      "table": "public.resource_summary_citations",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot select another student's resource summary citations",
+      "table": "public.resource_summary_citations",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot insert own resource summary citation",
+      "table": "public.resource_summary_citations",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot update own resource summary citation",
+      "table": "public.resource_summary_citations",
+      "role": "authenticated",
+      "operation": "update",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot delete own resource summary citation",
+      "table": "public.resource_summary_citations",
+      "role": "authenticated",
+      "operation": "delete",
+      "scope": "own",
+      "expectation": "denied"
+    }
+  ],
+  "ownership_notes": [
+    "resource summary citations are system-written derived artifacts, not student input",
+    "each citation is a foreign key to public.chunks (student_id, chunk_id), never a free-text locator (NN-11, ENG-168)",
+    "each citation also references public.resources (student_id, resource_id); citation locality (chunk belongs to the same resource) is enforced at the AI Gateway citation-resolution layer and the summary-grounding eval gate, not by a database constraint",
+    "authenticated students have select-only access",
+    "worker mutation relies on service-role bypass",
+    "no authenticated insert, update, or delete policy is expected"
+  ],
+  "index_notes": [
+    "student_id is indexed directly",
+    "resource_summary_id is indexed for per-summary citation retrieval",
+    "chunk_id is indexed for citation resolution lookups"
+  ]
+}

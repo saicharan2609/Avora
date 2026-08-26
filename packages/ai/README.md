@@ -259,3 +259,39 @@ Owner decision (2026-08-23): Approved `@google/genai@2.18.0` as the Gemini provi
 - Maintained strictly behind `TutorAnswerInvocationPort` / `EmbeddingPort` in `packages/ai/adapters/google/`.
 - No feature module touches the SDK directly (ENG-210, AD-12).
 - License: Apache-2.0 (allowlisted per ENG-369).
+
+## Stage 12 Group 7 — AI Gateway Resource Summary Generation
+
+Stage 12 Group 7 adds a second, fully parallel AI Gateway task pipeline for `summary.generate` (`FR-070`), mirroring the Stage 12 Group 4 tutor pipeline structurally rather than generalising it into a shared task-registry abstraction — no such abstraction exists in this package, and none is introduced here (`ENG-392`).
+
+Public surface:
+
+- `@avora/ai/gateway/summary` — `SummaryQuery`, `GroundedSummaryContextEnvelope`, `GeneratedSummary`, `SummaryBody`, `SummaryHeading`, `SummaryCitation`, `SummaryGatewayResponse`, `validateGeneratedSummary`, `createSummaryGateway`
+- `@avora/ai/gateway/invocation` — `summaryGenerationTask` (`"summary.generate"`), `summaryQualityTiers` (`["standard"]`, a single mid-tier per `architecture.md` section 20 — unlike `tutorAnswerQualityTiers`'s `standard`/`high` pair), `SummaryInvocationPort`
+- `@avora/ai/adapters/google` — `createGeminiSummaryAdapter`, `createGoogleGenAISummaryClient`
+
+The pipeline stages mirror Stage 12 Group 4's list exactly, with two structural differences: evidence is every ready chunk of the query's own resource (not a scoped/ranked retrieval search result — a summary is grounded in the whole resource), and there is no streaming path (no time-to-first-token requirement exists for automatic summaries):
+
+```text
+SummaryQuery
+→ RetrievalChunkRepository.listRetrievalChunksByResource (status: "ready", injected into SummaryGateway)
+→ createGroundedSummaryContextEnvelope
+→ assembleSummarySixPartContext        (gateway/context)
+→ sealSummaryModelInput                (gateway/envelope)
+→ resolveSummaryRoutingConfig          (gateway/routing, protected)
+→ GeminiSummaryClient.generateContent  (adapters/google)
+→ validateSummaryRawOutput             (gateway/validation)
+→ resolveSummaryCitations              (gateway/citations — resourceId/locator resolved only
+                                                              from the trusted envelope, and
+                                                              only ever from this one resource's
+                                                              chunks, never from the model)
+→ SummaryInvocationResult
+```
+
+### Task/job naming correction
+
+`MASTER-ROADMAP.md`'s Stage 12 Group 7 entry originally named the job/task `resource.summary`. That conflicted with `architecture.md` section 24.1's job taxonomy, which names it `summary.generate` — `architecture.md` is higher authority (`AGENTS.md` section 2). `summary.generate` is used throughout this implementation; the roadmap wording has been corrected in `MASTER-ROADMAP.md` section 14. `gateway/telemetry/index.ts`'s pre-existing `AiTaskIdentifier` union (added in an earlier group anticipating this task) has been corrected from `"resource.summary"` to `"summary.generate"` for the same reason, and its `AiCostTelemetry.qualityTier` field widened from `TutorAnswerQualityTier` to `TutorAnswerQualityTier | SummaryQualityTier` so a summary telemetry record type-checks against the same shared sink tutor telemetry already uses.
+
+Requirement trace: FR-070, AIR-001, AIR-002, AIR-003, AIR-006, ENG-165, ENG-166, ENG-168, ENG-210, ENG-211, ENG-212, ENG-216, ENG-217, ENG-219, ENG-221, ENG-224, ENG-226, ENG-229, ENG-230, ENG-231, ENG-252, NN-02, NN-03, NN-06, NN-07, NN-11, SEC-280, SEC-301, SEC-312.
+
+This group does not implement the worker handler that composes `SummaryGateway` with concrete dependencies (see `apps/worker/src/resource-summary/`), database persistence (see `@avora/db/repositories/resource-summaries`), a summary read API, or a rendered summary UI — Stage 12 Group 7's UI deliverable is a typed domain-component prop contract in `packages/ui-web`/`packages/ui-mobile`, matching every other domain component in this repository today (none has a concrete React/React Native implementation yet).

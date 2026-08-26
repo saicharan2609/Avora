@@ -53,3 +53,28 @@ export {
 export {
   createGoogleGenAITutorAnswerClient,
 } from "./createGoogleGenAITutorAnswerClient.js";
+
+export type {
+  GeminiSummaryClient,
+  GeminiSummaryGenerateContentInput,
+  GeminiSummaryGenerateContentResult,
+} from "./GeminiSummaryClient.js";
+export type {
+  GeminiSummaryAdapterErrorCode,
+} from "./GeminiSummaryAdapter.errors.js";
+export type {
+  CreateGeminiSummaryAdapterInput,
+} from "./GeminiSummaryAdapter.js";
+export type {
+  CreateGoogleGenAISummaryClientInput,
+} from "./createGoogleGenAISummaryClient.js";
+
+export {
+  GeminiSummaryAdapterError,
+} from "./GeminiSummaryAdapter.errors.js";
+export {
+  createGeminiSummaryAdapter,
+} from "./GeminiSummaryAdapter.js";
+export {
+  createGoogleGenAISummaryClient,
+} from "./createGoogleGenAISummaryClient.js";

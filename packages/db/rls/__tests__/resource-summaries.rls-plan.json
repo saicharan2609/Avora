@@ -1,0 +1,65 @@
+{
+  "id": "stage-12-group-7-resource-summaries-rls-plan",
+  "owner": "@avora/data",
+  "stage": "Stage 12 Group 7",
+  "title": "Resource summaries RLS plan",
+  "description": "Covers student-scoped RLS expectations for automatically generated resource summaries (FR-070).",
+  "tables": [
+    "public.resource_summaries"
+  ],
+  "cases": [
+    {
+      "name": "student can select own resource summaries",
+      "table": "public.resource_summaries",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "own",
+      "expectation": "allowed"
+    },
+    {
+      "name": "student cannot select another student's resource summaries",
+      "table": "public.resource_summaries",
+      "role": "authenticated",
+      "operation": "select",
+      "scope": "cross_student",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot insert own resource summary",
+      "table": "public.resource_summaries",
+      "role": "authenticated",
+      "operation": "insert",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot update own resource summary",
+      "table": "public.resource_summaries",
+      "role": "authenticated",
+      "operation": "update",
+      "scope": "own",
+      "expectation": "denied"
+    },
+    {
+      "name": "student cannot delete own resource summary",
+      "table": "public.resource_summaries",
+      "role": "authenticated",
+      "operation": "delete",
+      "scope": "own",
+      "expectation": "denied"
+    }
+  ],
+  "ownership_notes": [
+    "resource summaries are system-written derived artifacts (FR-070), not student input",
+    "resource summaries reference public.resources through same-student composite ownership",
+    "a superseding prompt_version or summary_strategy_version inserts a new row rather than overwriting (NN-06, ENG-165)",
+    "authenticated students have select-only access",
+    "worker mutation relies on service-role bypass",
+    "no authenticated insert, update, or delete policy is expected"
+  ],
+  "index_notes": [
+    "student_id is indexed directly and appears first in composite indexes",
+    "resource_id is indexed for per-resource summary retrieval",
+    "resource_summaries_student_resource_version_uniq enforces one row per (student, resource, prompt_version, summary_strategy_version)"
+  ]
+}

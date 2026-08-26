@@ -19,7 +19,9 @@
     "./repositories/resource-classification-jobs": "./dist/repositories/resource-classification-jobs/index.js",
     "./repositories/resource-upload-ticket-jobs": "./dist/repositories/resource-upload-ticket-jobs/index.js",
     "./repositories/chunk-embeddings": "./dist/repositories/chunk-embeddings/index.js",
-    "./repositories/embedding-cache": "./dist/repositories/embedding-cache/index.js"
+    "./repositories/embedding-cache": "./dist/repositories/embedding-cache/index.js",
+    "./repositories/resource-summary-jobs": "./dist/repositories/resource-summary-jobs/index.js",
+    "./repositories/resource-summaries": "./dist/repositories/resource-summaries/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -27,6 +29,7 @@
     "lint": "eslint .",
     "lint:arch": "eslint .",
     "test:rls": "node rls/harness/run-rls-plans.mjs",
+    "test:deletion-cascade": "node deletion-cascade/verify-resource-summary-deletion-cascade.mjs",
     "test:unit": "pnpm run build && node dist/repositories/chunk-embeddings/__tests__/mapper.unit.js && node dist/repositories/embedding-cache/__tests__/mapper.unit.js"
   },
   "dependencies": {

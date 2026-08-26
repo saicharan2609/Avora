@@ -13,7 +13,8 @@
     "lint:arch": "eslint .",
     "eval:ai": "pnpm run build && node dist/suites/run-ai-eval-gates.js",
     "eval:extraction": "pnpm run build && node dist/suites/run-resource-extraction-quality-gates.js",
-    "eval:classification": "pnpm run build && node dist/suites/run-resource-classification-quality-gates.js"
+    "eval:classification": "pnpm run build && node dist/suites/run-resource-classification-quality-gates.js",
+    "eval:summary": "pnpm run build && node dist/suites/run-summary-grounding-gates.js"
   },
   "dependencies": {
     "@avora/ai": "workspace:*",

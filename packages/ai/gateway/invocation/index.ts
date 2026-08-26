@@ -13,3 +13,17 @@ export {
   tutorAnswerQualityTiers,
   tutorAnswerTask,
 } from "./TutorAnswerInvocationPort.js";
+
+export type {
+  SummaryCandidate,
+  SummaryGenerationTask,
+  SummaryInvocationInput,
+  SummaryInvocationPort,
+  SummaryInvocationResult,
+  SummaryQualityTier,
+} from "./SummaryInvocationPort.js";
+
+export {
+  summaryGenerationTask,
+  summaryQualityTiers,
+} from "./SummaryInvocationPort.js";

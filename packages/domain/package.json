@@ -26,7 +26,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:arch": "eslint .",
-    "test:unit": "pnpm run build && node dist/resources/__tests__/ResourceClassificationService.unit.js"
+    "test:unit": "pnpm run build && node dist/resources/__tests__/ResourceClassificationService.unit.js && node dist/notes/__tests__/ResourceSummaryGenerationService.unit.js"
   },
   "dependencies": {
     "@avora/core": "workspace:*",

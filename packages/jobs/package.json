@@ -12,6 +12,7 @@
     "./resource-extraction": "./dist/resource-extraction/index.js",
     "./resource-chunking": "./dist/resource-chunking/index.js",
     "./resource-classification": "./dist/resource-classification/index.js",
+    "./resource-summary": "./dist/resource-summary/index.js",
     "./heartbeat": "./dist/heartbeat/index.js",
     "./priorities": "./dist/priorities/index.js",
     "./dead-letter": "./dist/dead-letter/index.js"

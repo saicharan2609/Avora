@@ -73,3 +73,25 @@ Run:
 
 ```text
 pnpm --filter @avora/evals eval:extraction
+```
+
+## Stage 12 Group 7 — Summary grounding eval suite
+
+Stage 12 Group 7 adds a deterministic summary grounding gate for `summary.generate` (`FR-070`), mirroring `tutor-grounding.gate.ts`'s structure: a `SummaryGateway` is constructed with a deterministic (fake) `SummaryInvocationPort` returning a fixed synthetic candidate per case, and the gate asserts the resulting `SummaryGatewayResponse`.
+
+The suite covers:
+
+- groundedness — every summary point is lexically supported by the supplied resource evidence;
+- unsupported-claim rejection — a summary point not present in the supplied evidence fails groundedness;
+- coverage — a summary citing only one of several supplied chunks fails; citing more than one passes;
+- coherence/structure — a summary with an empty heading title fails `validateGeneratedSummary`'s structural check;
+- citation validity — citations resolve only to chunk ids present in the grounded summary context envelope;
+- citation locality — a citation to a chunk belonging to a different resource is structurally indistinguishable from an unknown chunk id, because the envelope is built exclusively from the query's own resource's chunks;
+- fail-closed behavior — a resource with zero ready chunks returns `insufficient_evidence` without invoking the provider, and an empty case list fails the gate closed.
+
+The summary grounding suite evaluates synthetic, `@avora/ai`-shaped fixtures only. It does not call AI providers, storage, Supabase, databases, worker code, web APIs, mobile APIs, or external services.
+
+Run:
+
+```text
+pnpm --filter @avora/evals eval:summary

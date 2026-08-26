@@ -5,6 +5,7 @@ export type * from "./invocation/index.js";
 export type * from "./validation/index.js";
 export type * from "./citations/index.js";
 export type * from "./tutor/index.js";
+export type * from "./summary/index.js";
 export type * from "./telemetry/index.js";
 
 export {
@@ -26,4 +27,18 @@ export {
 export {
   tutorAnswerQualityTiers,
   tutorAnswerTask,
+  summaryGenerationTask,
+  summaryQualityTiers,
 } from "./invocation/index.js";
+
+export {
+  createGroundedSummaryContextEnvelope,
+  createSummaryGateway,
+  createSummaryInsufficiencyResponse,
+  createSummaryRefusalResponse,
+  groundedSummaryContextEnvelopeVersion,
+  summaryEnvelopeContainsChunkId,
+  validateGeneratedSummary,
+  validateSummaryCitations,
+  SummaryGatewayError,
+} from "./summary/index.js";

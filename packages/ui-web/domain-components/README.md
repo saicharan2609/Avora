@@ -19,6 +19,7 @@ Domain components know Avora product concepts and are enforcement points for cro
 - ENG-297
 - ENG-298
 - FR-039
+- FR-070
 - FR-125
 - FR-143
 - AIR-002

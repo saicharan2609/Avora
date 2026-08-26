@@ -1,18 +1,18 @@
 import type { IsoDateTimeString } from "@avora/core/time";
-import type { TutorAnswerQualityTier } from "../invocation/index.js";
+import type { SummaryQualityTier, TutorAnswerQualityTier } from "../invocation/index.js";
 
 export const aiCostTelemetryVersion = "ai-cost-telemetry.v1" as const;
 
 export type AiCostTelemetryVersion = typeof aiCostTelemetryVersion;
 
 export type AiTaskIdentifier =
-  "tutor.answer" | "resource.summary" | "resource.classification";
+  "tutor.answer" | "summary.generate" | "resource.classification";
 
 export type AiCostTelemetry = Readonly<{
   version: AiCostTelemetryVersion;
   task: AiTaskIdentifier;
   model: string;
-  qualityTier: TutorAnswerQualityTier;
+  qualityTier: TutorAnswerQualityTier | SummaryQualityTier;
   latencyMs: number;
   estimatedInputTokens: number;
   estimatedOutputTokens: number;

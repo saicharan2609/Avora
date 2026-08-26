@@ -1663,6 +1663,193 @@ export type Database = {
         };
         Relationships: [];
       };
+      resource_summaries: {
+        Row: {
+          body: Json;
+          created_at: string;
+          model_version: string;
+          prompt_version: string;
+          provenance: string;
+          resource_id: string;
+          resource_summary_id: string;
+          student_id: string;
+          summary_strategy_version: string;
+        };
+        Insert: {
+          body: Json;
+          created_at?: string;
+          model_version: string;
+          prompt_version: string;
+          provenance?: string;
+          resource_id: string;
+          resource_summary_id?: string;
+          student_id: string;
+          summary_strategy_version: string;
+        };
+        Update: {
+          body?: Json;
+          created_at?: string;
+          model_version?: string;
+          prompt_version?: string;
+          provenance?: string;
+          resource_id?: string;
+          resource_summary_id?: string;
+          student_id?: string;
+          summary_strategy_version?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "resource_summaries_resource_id_fkey";
+            columns: ["resource_id"];
+            isOneToOne: false;
+            referencedRelation: "resources";
+            referencedColumns: ["resource_id"];
+          },
+          {
+            foreignKeyName: "resource_summaries_student_id_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["student_id"];
+          },
+        ];
+      };
+      resource_summary_citations: {
+        Row: {
+          chunk_id: string;
+          created_at: string;
+          quote: string;
+          resource_id: string;
+          resource_summary_citation_id: string;
+          resource_summary_id: string;
+          student_id: string;
+        };
+        Insert: {
+          chunk_id: string;
+          created_at?: string;
+          quote: string;
+          resource_id: string;
+          resource_summary_citation_id?: string;
+          resource_summary_id: string;
+          student_id: string;
+        };
+        Update: {
+          chunk_id?: string;
+          created_at?: string;
+          quote?: string;
+          resource_id?: string;
+          resource_summary_citation_id?: string;
+          resource_summary_id?: string;
+          student_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "resource_summary_citations_resource_summary_id_fkey";
+            columns: ["resource_summary_id"];
+            isOneToOne: false;
+            referencedRelation: "resource_summaries";
+            referencedColumns: ["resource_summary_id"];
+          },
+          {
+            foreignKeyName: "resource_summary_citations_resource_fkey";
+            columns: ["student_id", "resource_id"];
+            isOneToOne: false;
+            referencedRelation: "resources";
+            referencedColumns: ["student_id", "resource_id"];
+          },
+          {
+            foreignKeyName: "resource_summary_citations_chunk_fkey";
+            columns: ["student_id", "chunk_id"];
+            isOneToOne: false;
+            referencedRelation: "chunks";
+            referencedColumns: ["student_id", "chunk_id"];
+          },
+        ];
+      };
+      resource_summary_jobs: {
+        Row: {
+          attempt_count: number;
+          available_at: string;
+          completed_at: string | null;
+          created_at: string;
+          enqueued_at: string;
+          failed_at: string | null;
+          heartbeat_at: string | null;
+          job_id: string;
+          job_name: "summary.generate.requested";
+          last_error: string | null;
+          locked_at: string | null;
+          locked_by: string | null;
+          payload: Json;
+          priority: Database["public"]["Enums"]["resource_summary_job_priority"];
+          reason: Database["public"]["Enums"]["resource_summary_job_reason"];
+          resource_id: string;
+          started_at: string | null;
+          status: Database["public"]["Enums"]["resource_summary_job_status"];
+          student_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          attempt_count?: number;
+          available_at?: string;
+          completed_at?: string | null;
+          created_at?: string;
+          enqueued_at?: string;
+          failed_at?: string | null;
+          heartbeat_at?: string | null;
+          job_id?: string;
+          job_name: "summary.generate.requested";
+          last_error?: string | null;
+          locked_at?: string | null;
+          locked_by?: string | null;
+          payload: Json;
+          priority: Database["public"]["Enums"]["resource_summary_job_priority"];
+          reason: Database["public"]["Enums"]["resource_summary_job_reason"];
+          resource_id: string;
+          started_at?: string | null;
+          status?: Database["public"]["Enums"]["resource_summary_job_status"];
+          student_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          attempt_count?: number;
+          available_at?: string;
+          completed_at?: string | null;
+          created_at?: string;
+          enqueued_at?: string;
+          failed_at?: string | null;
+          heartbeat_at?: string | null;
+          job_id?: string;
+          job_name?: "summary.generate.requested";
+          last_error?: string | null;
+          locked_at?: string | null;
+          locked_by?: string | null;
+          payload?: Json;
+          priority?: Database["public"]["Enums"]["resource_summary_job_priority"];
+          reason?: Database["public"]["Enums"]["resource_summary_job_reason"];
+          resource_id?: string;
+          started_at?: string | null;
+          status?: Database["public"]["Enums"]["resource_summary_job_status"];
+          student_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "resource_summary_jobs_resource_id_fkey";
+            columns: ["resource_id"];
+            isOneToOne: false;
+            referencedRelation: "resources";
+            referencedColumns: ["resource_id"];
+          },
+          {
+            foreignKeyName: "resource_summary_jobs_student_id_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["student_id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -1757,6 +1944,17 @@ export type Database = {
         | "resource_ingestion_validated"
         | "placement_reclassification_requested";
       resource_classification_job_status:
+        | "queued"
+        | "claimed"
+        | "running"
+        | "succeeded"
+        | "failed"
+        | "dead_lettered"
+        | "cancelled";
+
+      resource_summary_job_priority: "interactive" | "normal" | "backfill";
+      resource_summary_job_reason: "resource_indexed";
+      resource_summary_job_status:
         | "queued"
         | "claimed"
         | "running"

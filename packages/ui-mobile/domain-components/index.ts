@@ -5,6 +5,11 @@ export type { ProcessingStateContract } from "./ProcessingState.contract.js";
 export type { ConfidenceIndicatorContract } from "./ConfidenceIndicator.contract.js";
 export type { ResourceCardContract } from "./ResourceCard.contract.js";
 export type {
+  ResourceSummaryCardCitationContract,
+  ResourceSummaryCardContract,
+  ResourceSummaryCardHeadingContract,
+} from "./ResourceSummaryCard.contract.js";
+export type {
   StructureTreeContract,
   StructureTreeNodeContract,
 } from "./StructureTree.contract.js";
