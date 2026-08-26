@@ -6,7 +6,8 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "lint:arch": "eslint ."
+    "lint:arch": "eslint .",
+    "test:unit": "pnpm run build && node dist/src/resource-classification/__tests__/handler.unit.js"
   },
   "dependencies": {
     "@avora/adapters": "workspace:*",

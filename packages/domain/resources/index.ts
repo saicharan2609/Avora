@@ -13,6 +13,7 @@ export {
   createResourceExtractionService,
   ResourcePlacementServiceError,
   createResourcePlacementService,
+  createResourceClassificationService,
 } from "./services/index.js";
 
 export {
@@ -39,6 +40,7 @@ export {
   extractionProvenanceSources,
   placementCandidateProvenances,
   resourcePlacementStatuses,
+  classificationContentSignalKinds,
 } from "./contracts/index.js";
 
 export {

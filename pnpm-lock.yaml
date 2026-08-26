@@ -171,6 +171,12 @@ importers:
       '@avora/ai':
         specifier: workspace:*
         version: link:../packages/ai
+      '@avora/core':
+        specifier: workspace:*
+        version: link:../packages/core
+      '@avora/domain':
+        specifier: workspace:*
+        version: link:../packages/domain
     devDependencies:
       '@avora/config':
         specifier: workspace:*

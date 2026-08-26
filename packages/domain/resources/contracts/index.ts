@@ -76,3 +76,14 @@ export {
   placementCandidateProvenances,
   resourcePlacementStatuses,
 } from "./placement/index.js";
+export type {
+  ClassificationContentSignal,
+  ClassificationContentSignalKind,
+  ClassificationCorrectionSignal,
+  ClassificationSimilaritySignal,
+  ClassifyResourceInput,
+} from "./classification/index.js";
+
+export {
+  classificationContentSignalKinds,
+} from "./classification/index.js";

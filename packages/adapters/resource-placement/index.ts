@@ -15,6 +15,7 @@ import type {
   GetResourcePlacementByResourceInput,
   ListPlacementCandidatesByResourceInput,
   ListPlacementCorrectionsByResourceInput,
+  ListPlacementCorrectionsByStudentInput,
   ListResourcePlacementsByAcademicUnitInput,
   PlacementCandidate,
   PlacementCandidateId,
@@ -26,6 +27,7 @@ import type {
   ResourcePlacementId,
   ResourcePlacementRepositoryPort,
   ResourcePlacementTarget,
+  SavePlacementCandidateInput,
   SaveResourcePlacementInput,
 } from "@avora/domain/resources";
 import type {
@@ -143,6 +145,23 @@ export function createResourcePlacementRepositoryPortAdapter(
       return candidates.map(mapDbCandidateToDomain);
     },
 
+    savePlacementCandidate: async (
+      candidateInput: SavePlacementCandidateInput,
+    ): Promise<PlacementCandidate> => {
+      const saved = await input.repository.upsertPlacementCandidate({
+        candidateId: candidateInput.candidate.candidateId as unknown as DbPlacementCandidateId,
+        studentId: candidateInput.candidate.studentId,
+        resourceId: candidateInput.candidate.resourceId,
+        target: mapDomainTargetToDb(candidateInput.candidate.target),
+        confidence: candidateInput.candidate.confidence,
+        provenance: candidateInput.candidate.provenance,
+        reason: candidateInput.candidate.reason,
+        createdAt: candidateInput.candidate.createdAt,
+      });
+
+      return mapDbCandidateToDomain(saved);
+    },
+
     recordCorrection: async (
       correctionInput: RecordPlacementCorrectionInput,
     ): Promise<PlacementCorrection> => {
@@ -168,6 +187,16 @@ export function createResourcePlacementRepositoryPortAdapter(
       const corrections = await input.repository.listPlacementCorrectionsByResource({
         studentId: lookup.studentId,
         resourceId: lookup.resourceId,
+      });
+
+      return corrections.map(mapDbCorrectionToDomain);
+    },
+
+    listCorrectionsByStudent: async (
+      lookup: ListPlacementCorrectionsByStudentInput,
+    ): Promise<readonly PlacementCorrection[]> => {
+      const corrections = await input.repository.listPlacementCorrectionsByStudent({
+        studentId: lookup.studentId,
       });
 
       return corrections.map(mapDbCorrectionToDomain);

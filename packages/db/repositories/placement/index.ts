@@ -19,6 +19,7 @@ export type {
   GetResourcePlacementByIdInput,
   GetResourcePlacementByResourceInput,
   ListPlacementCorrectionsByResourceInput,
+  ListPlacementCorrectionsByStudentInput,
   ResourcePlacementRepository,
   UpsertResourcePlacementInput,
 } from "./contracts.js";

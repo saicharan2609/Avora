@@ -18,6 +18,14 @@ export type SaveResourcePlacementInput = Readonly<{
   placementReason: string | null;
 }>;
 
+export type SavePlacementCandidateInput = Readonly<{
+  candidate: PlacementCandidate;
+}>;
+
+export type ListPlacementCorrectionsByStudentInput = Readonly<{
+  studentId: StudentId;
+}>;
+
 export type GetResourcePlacementByResourceInput = Readonly<{
   studentId: StudentId;
   resourceId: ResourceId;
@@ -73,11 +81,17 @@ export type ResourcePlacementRepositoryPort = Readonly<{
   listPlacementCandidatesByResource: (
     input: ListPlacementCandidatesByResourceInput,
   ) => Promise<readonly PlacementCandidate[]>;
+  savePlacementCandidate: (
+    input: SavePlacementCandidateInput,
+  ) => Promise<PlacementCandidate>;
   recordCorrection: (
     input: RecordPlacementCorrectionInput,
   ) => Promise<PlacementCorrection>;
   listCorrectionsByResource: (
     input: ListPlacementCorrectionsByResourceInput,
+  ) => Promise<readonly PlacementCorrection[]>;
+  listCorrectionsByStudent: (
+    input: ListPlacementCorrectionsByStudentInput,
   ) => Promise<readonly PlacementCorrection[]>;
     listResourcePlacementsByAcademicUnit: (
     input: ListResourcePlacementsByAcademicUnitInput,

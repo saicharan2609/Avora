@@ -450,6 +450,90 @@ export type Database = {
           },
         ];
       };
+      resource_classification_jobs: {
+        Row: {
+          attempt_count: number;
+          available_at: string;
+          completed_at: string | null;
+          created_at: string;
+          enqueued_at: string;
+          failed_at: string | null;
+          heartbeat_at: string | null;
+          job_id: string;
+          job_name: "resource.classification.requested";
+          last_error: string | null;
+          locked_at: string | null;
+          locked_by: string | null;
+          payload: Json;
+          priority: Database["public"]["Enums"]["resource_classification_job_priority"];
+          reason: Database["public"]["Enums"]["resource_classification_job_reason"];
+          resource_id: string;
+          started_at: string | null;
+          status: Database["public"]["Enums"]["resource_classification_job_status"];
+          student_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          attempt_count?: number;
+          available_at?: string;
+          completed_at?: string | null;
+          created_at?: string;
+          enqueued_at?: string;
+          failed_at?: string | null;
+          heartbeat_at?: string | null;
+          job_id?: string;
+          job_name: "resource.classification.requested";
+          last_error?: string | null;
+          locked_at?: string | null;
+          locked_by?: string | null;
+          payload: Json;
+          priority: Database["public"]["Enums"]["resource_classification_job_priority"];
+          reason: Database["public"]["Enums"]["resource_classification_job_reason"];
+          resource_id: string;
+          started_at?: string | null;
+          status?: Database["public"]["Enums"]["resource_classification_job_status"];
+          student_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          attempt_count?: number;
+          available_at?: string;
+          completed_at?: string | null;
+          created_at?: string;
+          enqueued_at?: string;
+          failed_at?: string | null;
+          heartbeat_at?: string | null;
+          job_id?: string;
+          job_name?: "resource.classification.requested";
+          last_error?: string | null;
+          locked_at?: string | null;
+          locked_by?: string | null;
+          payload?: Json;
+          priority?: Database["public"]["Enums"]["resource_classification_job_priority"];
+          reason?: Database["public"]["Enums"]["resource_classification_job_reason"];
+          resource_id?: string;
+          started_at?: string | null;
+          status?: Database["public"]["Enums"]["resource_classification_job_status"];
+          student_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "resource_classification_jobs_resource_id_fkey";
+            columns: ["resource_id"];
+            isOneToOne: false;
+            referencedRelation: "resources";
+            referencedColumns: ["resource_id"];
+          },
+          {
+            foreignKeyName: "resource_classification_jobs_student_id_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["student_id"];
+          },
+        ];
+      };
       chunks: {
         Row: {
           chunk_id: string;
@@ -1660,6 +1744,19 @@ export type Database = {
         | "manual_reindex_requested"
         | "embedding_strategy_backfill";
       resource_indexing_job_status:
+        | "queued"
+        | "claimed"
+        | "running"
+        | "succeeded"
+        | "failed"
+        | "dead_lettered"
+        | "cancelled";
+
+      resource_classification_job_priority: "interactive" | "normal" | "backfill";
+      resource_classification_job_reason:
+        | "resource_ingestion_validated"
+        | "placement_reclassification_requested";
+      resource_classification_job_status:
         | "queued"
         | "claimed"
         | "running"

@@ -60,3 +60,23 @@ export {
   TutorGroundingGateFailure,
   runTutorGroundingGate,
 } from "./tutor-grounding.gate.js";
+
+export type {
+  ResourceClassificationExpectedOutcome,
+  ResourceClassificationQualityCase,
+} from "./resource-classification-quality.fixture.js";
+
+export {
+  resourceClassificationQualityCases,
+} from "./resource-classification-quality.fixture.js";
+
+export type {
+  ResourceClassificationQualityCaseOutcome,
+  ResourceClassificationQualityGateResult,
+} from "./resource-classification-quality.gate.js";
+
+export {
+  ResourceClassificationQualityGateFailure,
+  resourceClassificationAccuracyGateThreshold,
+  runResourceClassificationQualityGate,
+} from "./resource-classification-quality.gate.js";

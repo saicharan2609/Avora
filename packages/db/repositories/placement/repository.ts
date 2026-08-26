@@ -9,6 +9,7 @@ import type {
   GetResourcePlacementByResourceInput,
   ListPlacementCandidatesByResourceInput,
   ListPlacementCorrectionsByResourceInput,
+  ListPlacementCorrectionsByStudentInput,
   ListResourcePlacementsByAcademicUnitInput,
   ResourcePlacementRepository,
   UpsertPlacementCandidateInput,
@@ -204,6 +205,26 @@ export function createResourcePlacementRepository(
         .select(placementCorrectionSelectColumns)
         .eq("student_id", lookup.studentId)
         .eq("resource_id", lookup.resourceId)
+        .order("corrected_at", { ascending: false })
+        .order("correction_id", { ascending: true });
+
+      if (error !== null) {
+        throw new ResourcePlacementRepositoryError(
+          "resource_placement_repository_read_failed",
+          error.message,
+        );
+      }
+
+      return data.map(mapPlacementCorrectionRow);
+    },
+
+    listPlacementCorrectionsByStudent: async (
+      lookup: ListPlacementCorrectionsByStudentInput,
+    ): Promise<readonly DbPlacementCorrectionRecord[]> => {
+      const { data, error } = await input.client
+        .from("resource_placement_corrections")
+        .select(placementCorrectionSelectColumns)
+        .eq("student_id", lookup.studentId)
         .order("corrected_at", { ascending: false })
         .order("correction_id", { ascending: true });
 

@@ -30,11 +30,15 @@ Stage 7 Group 10 establishes the resource ingestion validation service. The serv
 - FR-035
 - FR-036
 - FR-037
+- FR-038
 - FR-039
 - FR-042
+- AD-22
+- ENG-029
 - NFR-004
 - NFR-006
 - NFR-034
+- NN-01
 - NN-04
 - NN-05
 - NN-10
@@ -193,3 +197,47 @@ resource
 → placement policy
 → accepted or tentative placement
 → possible student correction
+```
+
+## Stage 12 Group 6 — Resource auto-classification
+
+Stage 12 Group 6 adds the deterministic classification service that generates the
+`PlacementCandidate` consumed by Completion Group A's existing `PlacementPolicy` and
+`ResourcePlacementService`.
+
+New public contracts:
+
+- `ClassifyResourceInput`
+- `ClassificationContentSignal`
+- `ClassificationCorrectionSignal`
+
+New service:
+
+- `ResourceClassificationService`
+- `createResourceClassificationService`
+
+The service matches trusted extracted content signals (headings) and resource
+metadata (filename) against the student's own academic structure tree, using
+token-overlap scoring only. It never assumes a hierarchy level or a fixed
+label (`NN-01`, `ENG-029`): structure units are matched purely on their
+student-authored `title`, never on `unitKind`. A resource's own prior
+same-student placement corrections contribute a small, capped, deterministic
+boost (`AD-22`) — never the sole evidence for a candidate. Zero matching
+evidence produces zero candidates; this service never fabricates a
+placement (Group 6 explicit non-goal).
+
+This addition also extends `ResourcePlacementRepositoryPort` /
+`ResourcePlacementService` with `savePlacementCandidate` (persist a
+server-generated candidate independently of a placement decision, matching
+the existing `resource_placement_candidates` migration's documented
+"persist before acceptance" design) and `listPlacementCorrectionsByStudent`
+(read a student's own correction history across resources, needed for the
+`AD-22` prior). Both extend existing DB-repository capability
+(`upsertPlacementCandidate` already existed unused by the domain port) or
+mirror an existing per-resource method with the resource filter removed.
+
+This group does not implement AI/provider calls, embeddings-based similarity,
+worker execution, database schema, API routes, or UI. Those live in
+`apps/worker/src/resource-classification/`, the new
+`resource_classification_jobs` persistence, and the existing (unmodified)
+placement API routes respectively.

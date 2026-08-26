@@ -40,12 +40,24 @@ export type {
   ResourcePlacementService,
     AcceptPlacementCandidateInput,
   ListPlacementCandidatesForResourceInput,
+  ListPlacementCorrectionsForStudentInput,
   ListResourcePlacementsForAcademicUnitInput,
   ResourcePlacementServiceDependencies,
   ResourcePlacementServiceErrorCode,
+  SavePlacementCandidateForResourceInput,
 } from "./ResourcePlacementService.js";
 
 export {
   ResourcePlacementServiceError,
   createResourcePlacementService,
 } from "./ResourcePlacementService.js";
+
+export type {
+  ClassifyResourceResult,
+  ResourceClassificationService,
+  ResourceClassificationServiceDependencies,
+} from "./ResourceClassificationService.js";
+
+export {
+  createResourceClassificationService,
+} from "./ResourceClassificationService.js";

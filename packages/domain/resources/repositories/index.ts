@@ -9,11 +9,13 @@ export type {
   GetResourcePlacementByIdInput,
   GetResourcePlacementByResourceInput,
   ListPlacementCorrectionsByResourceInput,
+  ListPlacementCorrectionsByStudentInput,
   RecordPlacementCorrectionInput,
   ReplaceResourcePlacementInput,
   GetPlacementCandidateByIdInput,
   ListPlacementCandidatesByResourceInput,
   ListResourcePlacementsByAcademicUnitInput,
   ResourcePlacementRepositoryPort,
+  SavePlacementCandidateInput,
   SaveResourcePlacementInput,
 } from "./ResourcePlacementRepositoryPort.js";

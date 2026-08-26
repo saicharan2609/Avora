@@ -16,9 +16,11 @@ import type {
   GetResourcePlacementByResourceInput,
   ListPlacementCandidatesByResourceInput,
   ListPlacementCorrectionsByResourceInput,
+  ListPlacementCorrectionsByStudentInput,
   ListResourcePlacementsByAcademicUnitInput,
   RecordPlacementCorrectionInput,
   ResourcePlacementRepositoryPort,
+  SavePlacementCandidateInput,
 } from "../repositories/index.js";
 import type {
   PlacementPolicy,
@@ -57,6 +59,11 @@ export type ListPlacementCandidatesForResourceInput =
 export type ListResourcePlacementsForAcademicUnitInput =
   ListResourcePlacementsByAcademicUnitInput;
 
+export type SavePlacementCandidateForResourceInput = SavePlacementCandidateInput;
+
+export type ListPlacementCorrectionsForStudentInput =
+  ListPlacementCorrectionsByStudentInput;
+
 export type ResourcePlacementPlacedResult = Readonly<{
   outcome: "placed";
   decision: "accepted" | "tentative";
@@ -85,6 +92,9 @@ export type ResourcePlacementService = Readonly<{
   listPlacementCandidatesByResource: (
     input: ListPlacementCandidatesForResourceInput,
   ) => Promise<readonly PlacementCandidate[]>;
+  savePlacementCandidate: (
+    input: SavePlacementCandidateForResourceInput,
+  ) => Promise<PlacementCandidate>;
   acceptPlacementCandidate: (
     input: AcceptPlacementCandidateInput,
   ) => Promise<PlaceResourceCandidateResult>;
@@ -99,6 +109,9 @@ export type ResourcePlacementService = Readonly<{
   ) => Promise<PlacementCorrection>;
   listPlacementCorrectionsByResource: (
     input: ListPlacementCorrectionsByResourceInput,
+  ) => Promise<readonly PlacementCorrection[]>;
+  listPlacementCorrectionsByStudent: (
+    input: ListPlacementCorrectionsForStudentInput,
   ) => Promise<readonly PlacementCorrection[]>;
   listResourcePlacementsByAcademicUnit: (
     input: ListResourcePlacementsForAcademicUnitInput,
@@ -142,6 +155,11 @@ export function createResourcePlacementService(
     ): Promise<readonly PlacementCandidate[]> =>
       dependencies.repository.listPlacementCandidatesByResource(input),
 
+    savePlacementCandidate: async (
+      input: SavePlacementCandidateForResourceInput,
+    ): Promise<PlacementCandidate> =>
+      dependencies.repository.savePlacementCandidate(input),
+
     acceptPlacementCandidate: async (
       input: AcceptPlacementCandidateInput,
     ): Promise<PlaceResourceCandidateResult> => {
@@ -182,6 +200,11 @@ export function createResourcePlacementService(
       input: ListPlacementCorrectionsByResourceInput,
     ): Promise<readonly PlacementCorrection[]> =>
       dependencies.repository.listCorrectionsByResource(input),
+
+    listPlacementCorrectionsByStudent: async (
+      input: ListPlacementCorrectionsForStudentInput,
+    ): Promise<readonly PlacementCorrection[]> =>
+      dependencies.repository.listCorrectionsByStudent(input),
 
     listResourcePlacementsByAcademicUnit: async (
       input: ListResourcePlacementsForAcademicUnitInput,

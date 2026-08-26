@@ -5,6 +5,9 @@ import {
 import {
   createGeminiEmbeddingPort,
   createGoogleGenAIEmbeddingClient,
+  geminiEmbeddingModelId,
+  geminiEmbeddingOutputDimensions,
+  geminiEmbeddingStrategyVersion,
 } from "@avora/ai/adapters/google";
 import {
   createContentAddressedEmbeddingPort,
@@ -15,6 +18,7 @@ import { createResourceIngestionJobsRepository } from "@avora/db/repositories/jo
 import { createResourceExtractionJobsRepository } from "@avora/db/repositories/resource-extraction-jobs";
 import { createResourceChunkingJobsRepository } from "@avora/db/repositories/resource-chunking-jobs";
 import { createResourceIndexingJobsRepository } from "@avora/db/repositories/resource-indexing-jobs";
+import { createResourceClassificationJobsRepository } from "@avora/db/repositories/resource-classification-jobs";
 import { createResourceUploadTicketJobsRepository } from "@avora/db/repositories/resource-upload-ticket-jobs";
 import { createResourceExtractionRepository } from "@avora/db/repositories/extraction";
 import type { ResourceExtractionRepository } from "@avora/db/repositories/extraction";
@@ -23,15 +27,22 @@ import { createChunkEmbeddingsRepository } from "@avora/db/repositories/chunk-em
 import { createEmbeddingCacheRepository } from "@avora/db/repositories/embedding-cache";
 import type { DbEmbeddingCacheStrategyVersion } from "@avora/db/repositories/embedding-cache";
 import { createResourcesRepository } from "@avora/db/repositories/resources";
+import { createAcademicGraphRepository } from "@avora/db/repositories/academic";
+import { createResourcePlacementRepository } from "@avora/db/repositories/placement";
+import { createResourcePlacementRepositoryPortAdapter } from "@avora/adapters/resource-placement";
 import {
   createResourceIngestionValidationService,
   createResourceExtractionService,
+  createResourcePlacementService,
+  createResourceClassificationService,
 } from "@avora/domain/resources";
 import {
   createCompositeResourceExtractionAdapter,
   createPdfExtractionAdapter,
 } from "@avora/adapters/extraction";
 import { createResourceChunker } from "@avora/retrieval/chunking";
+import { createHybridRetrievalSearch } from "@avora/retrieval/search";
+import type { RetrievalSearchPort } from "@avora/retrieval/search";
 
 import type {
   ResourceChunkerExtractedContentBlock,
@@ -67,6 +78,12 @@ import {
   createResourceUploadTicketWorker,
   type ResourceUploadTicketWorker,
 } from "../resource-upload-ticket/index.js";
+import {
+  createResourceClassificationJobHandlerAdapter,
+  createResourceClassificationWorker,
+  createResourceClassificationWorkerHandler,
+  type ResourceClassificationWorker,
+} from "../resource-classification/index.js";
 
 export type WorkerRuntimeEnvironment = Readonly<{
   supabaseUrl: string;
@@ -80,6 +97,7 @@ export type WorkerRuntime = Readonly<{
   resourceExtractionWorker: ResourceExtractionWorker;
   resourceChunkingWorker: ResourceChunkingWorker;
   resourceIndexingWorker: ResourceIndexingWorker;
+  resourceClassificationWorker: ResourceClassificationWorker;
   resourceUploadTicketWorker: ResourceUploadTicketWorker;
 }>;
 
@@ -125,10 +143,27 @@ export function createWorkerRuntime(
     client: database.client,
   });
 
+  const resourceClassificationJobsRepository =
+    createResourceClassificationJobsRepository({
+      client: database.client,
+    });
+
   const resourceUploadTicketJobsRepository =
     createResourceUploadTicketJobsRepository({
       client: database.client,
     });
+
+  const academicGraphRepository = createAcademicGraphRepository({
+    client: database.client,
+  });
+
+  const resourcePlacementService = createResourcePlacementService({
+    repository: createResourcePlacementRepositoryPortAdapter({
+      repository: createResourcePlacementRepository({
+        client: database.client,
+      }),
+    }),
+  });
 
   const extractionRepository = createResourceExtractionRepository({
     client: database.client,
@@ -212,6 +247,27 @@ export function createWorkerRuntime(
     }),
   });
 
+  const classificationWorkerHandler = createResourceClassificationWorkerHandler({
+    resourcesRepository,
+    retrievalChunkRepository,
+    academicGraphRepository,
+    placementService: resourcePlacementService,
+    // architecture.md 19.4: "extracted content similarity to existing
+    // subject corpora" — the strongest classification signal once a
+    // workspace has material. Composed the same way as the tutor gateway's
+    // hybrid retrieval search (apps/web/app/api/tutor/_shared/composition.ts):
+    // a query-only Gemini embedding call, never the content-addressed
+    // document-chunk cache (that cache is keyed for indexed chunk text, not
+    // one-off queries). The classification service itself stays pure and
+    // provider-free (NN-02); this composition root is the only place a
+    // provider call is wired in.
+    retrievalSearch: createClassificationRetrievalSearch({
+      geminiApiKey: environment.geminiApiKey,
+      retrievalChunkRepository,
+    }),
+    classificationService: createResourceClassificationService(),
+  });
+
   return {
     resourceIngestionWorker: createResourceIngestionWorker({
       repository: resourceIngestionJobsRepository,
@@ -241,12 +297,58 @@ export function createWorkerRuntime(
       }),
       workerId: environment.workerId,
     }),
+    resourceClassificationWorker: createResourceClassificationWorker({
+      repository: resourceClassificationJobsRepository,
+      handler: createResourceClassificationJobHandlerAdapter({
+        classificationWorkerHandler,
+      }),
+      workerId: environment.workerId,
+    }),
     resourceUploadTicketWorker: createResourceUploadTicketWorker({
       repository: resourceUploadTicketJobsRepository,
       blobStore: uploadBlobStore,
       workerId: environment.workerId,
     }),
   };
+}
+
+type CreateClassificationRetrievalSearchInput = Readonly<{
+  geminiApiKey: string;
+  retrievalChunkRepository: ReturnType<typeof createRetrievalChunkRepository>;
+}>;
+
+// Mirrors apps/web/app/api/tutor/_shared/composition.ts's
+// createProductionHybridRetrievalSearch exactly: a dedicated, query-only
+// Gemini embedding call (never the indexed-chunk content-addressed cache),
+// wrapped by the existing, unmodified @avora/retrieval HybridRetrievalSearch
+// implementation, which itself pre-filters by student_id at the SQL layer
+// (ENG-171, supabase/migrations/20260825090000_hybrid_retrieval_search.sql).
+function createClassificationRetrievalSearch(
+  input: CreateClassificationRetrievalSearchInput,
+): RetrievalSearchPort {
+  const embeddingClient = createGoogleGenAIEmbeddingClient({
+    apiKey: input.geminiApiKey,
+  });
+
+  return createHybridRetrievalSearch({
+    retrievalChunkRepository: input.retrievalChunkRepository,
+    embeddingStrategyVersion: geminiEmbeddingStrategyVersion,
+    embedQueryText: async ({ queryText }) => {
+      const result = await embeddingClient.embedContent({
+        model: geminiEmbeddingModelId,
+        contents: [queryText],
+        outputDimensionality: geminiEmbeddingOutputDimensions,
+      });
+
+      const embedding = result.embeddings[0]?.values;
+
+      if (embedding === undefined || embedding.length !== geminiEmbeddingOutputDimensions) {
+        throw new Error("Failed to generate a classification similarity query embedding.");
+      }
+
+      return embedding;
+    },
+  });
 }
 
 type CreateResourceChunkingExtractionRepositoryAdapterInput = Readonly<{

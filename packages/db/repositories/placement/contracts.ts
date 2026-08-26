@@ -143,6 +143,9 @@ export type ListPlacementCorrectionsByResourceInput = Readonly<{
   studentId: StudentId;
   resourceId: ResourceId;
 }>;
+export type ListPlacementCorrectionsByStudentInput = Readonly<{
+  studentId: StudentId;
+}>;
 export type ListResourcePlacementsByAcademicUnitInput = Readonly<{
   studentId: StudentId;
   target: Readonly<{
@@ -175,6 +178,9 @@ export type ResourcePlacementRepository = Readonly<{
   ) => Promise<DbPlacementCorrectionRecord>;
   listPlacementCorrectionsByResource: (
     input: ListPlacementCorrectionsByResourceInput,
+  ) => Promise<readonly DbPlacementCorrectionRecord[]>;
+  listPlacementCorrectionsByStudent: (
+    input: ListPlacementCorrectionsByStudentInput,
   ) => Promise<readonly DbPlacementCorrectionRecord[]>;
     listResourcePlacementsByAcademicUnit: (
     input: ListResourcePlacementsByAcademicUnitInput,
