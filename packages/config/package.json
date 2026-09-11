@@ -16,6 +16,7 @@
     "./eslint/architecture": "./eslint/architecture.js",
     "./prettier": "./prettier/index.js",
     "./env/client": "./env/client.env.ts",
+    "./env/mobile": "./env/mobile.env.ts",
     "./env/server": "./env/server.env.ts",
     "./env/worker": "./env/worker.env.ts",
     "./env/schema-contract": "./env/schema.contract.ts"

@@ -34,8 +34,14 @@ export type RequireStepUpInput = Readonly<{
   reason: StepUpReason;
 }>;
 
+export type VerifyEmailOtpInput = Readonly<{
+  email: string;
+  token: string;
+}>;
+
 export type AuthPort = Readonly<{
   startEmailMagicLink: (input: StartEmailMagicLinkInput) => Promise<AuthStartResult | null>;
+  verifyEmailOtp: (input: VerifyEmailOtpInput) => Promise<AuthSession>;
   startOAuth: (input: StartOAuthInput) => Promise<AuthStartResult>;
   exchangeCodeForSession: (input: ExchangeCodeForSessionInput) => Promise<AuthSession>;
   refreshSession: (input: RefreshSessionInput) => Promise<AuthSession>;

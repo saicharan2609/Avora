@@ -21,6 +21,8 @@ export type AcademicTermRecord = Readonly<{
   studentId: StudentId;
   label: string;
   institutionName: string | null;
+  programmeName: string | null;
+  branchName: string | null;
   startsOn: AcademicDateString | null;
   endsOn: AcademicDateString | null;
   lifecycleState: AcademicTermLifecycleState;
@@ -32,6 +34,8 @@ export type CreateAcademicTermInput = Readonly<{
   studentId: StudentId;
   label: string;
   institutionName: string | null;
+  programmeName: string | null;
+  branchName: string | null;
   startsOn: AcademicDateString | null;
   endsOn: AcademicDateString | null;
 }>;

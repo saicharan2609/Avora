@@ -14,6 +14,15 @@ export default [
       "import/ignore": ["^react-native($|/)"]
     },
 
+    languageOptions: {
+      globals: {
+        // Injected by the React Native/Metro bundler at build time and
+        // compiled out of production bundles entirely — not a Node or DOM
+        // global ESLint's base env config would otherwise know about.
+        __DEV__: "readonly"
+      }
+    },
+
     plugins: {
       "react-native": reactNative
     },

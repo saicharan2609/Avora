@@ -16,9 +16,23 @@
   },
   "dependencies": {
     "@avora/core": "workspace:*",
-    "@avora/design-tokens": "workspace:*"
+    "@avora/design-tokens": "workspace:*",
+    "react-native-safe-area-context": "5.7.0"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-svg": "*",
+    "lucide-react-native": "*",
+    "expo-blur": "*"
   },
   "devDependencies": {
-    "@avora/config": "workspace:*"
+    "@avora/config": "workspace:*",
+    "@types/react": "19.2.17",
+    "react": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-svg": "15.15.4",
+    "lucide-react-native": "1.34.0",
+    "expo-blur": "~57.0.2"
   }
 }

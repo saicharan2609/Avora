@@ -38,6 +38,8 @@ export function createAcademicApiComposition(
           studentId: term.studentId,
           label: term.label,
           institutionName: term.institutionName,
+          programmeName: term.programmeName,
+          branchName: term.branchName,
           startsOn: mapDomainAcademicDateToDb(term.startsOn),
           endsOn: mapDomainAcademicDateToDb(term.endsOn),
         }),

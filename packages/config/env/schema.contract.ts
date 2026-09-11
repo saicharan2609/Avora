@@ -26,11 +26,25 @@ export const environmentVariableContracts = [
     description: "Client-public Supabase project URL."
   },
   {
+    name: "NEXT_PUBLIC_SUPABASE_URL",
+    tier: "worker",
+    owner: "@avora/platform",
+    required: true,
+    description: "Supabase project URL, read worker-side to construct the service-role client. Not a secret; reuses the client-tier variable name rather than introducing a second name for the same value. Worker tier."
+  },
+  {
     name: "NEXT_PUBLIC_SUPABASE_ANON_KEY",
     tier: "client",
     owner: "@avora/security",
     required: true,
     description: "Client-public Supabase anonymous key."
+  },
+  {
+    name: "EXPO_PUBLIC_AVORA_API_BASE_URL",
+    tier: "client",
+    owner: "@avora/mobile",
+    required: true,
+    description: "Base URL of the Avora web API used by the mobile client."
   },
   {
     name: "SUPABASE_SERVICE_ROLE_KEY",
@@ -73,5 +87,12 @@ export const environmentVariableContracts = [
     owner: "@avora/ai",
     required: true,
     description: "Google Gemini provider API key for AI Gateway model access. Worker tier only."
+  },
+  {
+    name: "AVORA_WORKER_ID",
+    tier: "worker",
+    owner: "@avora/platform",
+    required: false,
+    description: "Optional worker instance identifier used for job claim/lease attribution. Defaults to a process-derived value when unset."
   }
 ] as const satisfies readonly EnvironmentVariableContract[];

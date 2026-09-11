@@ -36,6 +36,8 @@ export type DbAcademicTermRecord = Readonly<{
   studentId: StudentId;
   label: string;
   institutionName: string | null;
+  programmeName: string | null;
+  branchName: string | null;
   startsOn: DbAcademicDateString | null;
   endsOn: DbAcademicDateString | null;
   lifecycleState: DbAcademicTermLifecycleState;
@@ -93,6 +95,8 @@ export type CreateAcademicTermInput = Readonly<{
   studentId: StudentId;
   label: string;
   institutionName: string | null;
+  programmeName: string | null;
+  branchName: string | null;
   startsOn: DbAcademicDateString | null;
   endsOn: DbAcademicDateString | null;
 }>;

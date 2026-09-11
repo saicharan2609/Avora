@@ -22,7 +22,7 @@ export type StudentDatabaseClientOptions = SupabaseProjectConnection &
 
 export type ServiceRoleDatabaseClientOptions = SupabaseServiceRoleConnection;
 
-export type DatabaseClientRole = "student" | "service";
+export type DatabaseClientRole = "student" | "service" | "anonymous";
 
 export type RoleScopedDatabaseClient<Role extends DatabaseClientRole> = Readonly<{
   role: Role;
@@ -44,6 +44,21 @@ export function createStudentDatabaseClient(
         headers: {
           Authorization: `Bearer ${options.accessToken}`,
         },
+      },
+    }),
+  };
+}
+
+export function createAnonymousDatabaseClient(
+  options: SupabaseProjectConnection,
+): RoleScopedDatabaseClient<"anonymous"> {
+  return {
+    role: "anonymous",
+    client: createClient<Database>(options.supabaseUrl, options.supabaseAnonKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
       },
     }),
   };

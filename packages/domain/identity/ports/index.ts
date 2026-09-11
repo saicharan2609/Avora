@@ -7,4 +7,5 @@ export type {
   RevokeSessionInput,
   StartEmailMagicLinkInput,
   StartOAuthInput,
+  VerifyEmailOtpInput,
 } from "./AuthPort.js";

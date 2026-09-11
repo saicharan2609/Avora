@@ -1,1 +1,1 @@
-export * from "@avora/config/env/client";
+export * from "@avora/config/env/mobile";

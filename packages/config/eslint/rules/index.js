@@ -239,6 +239,50 @@ function isDeclaredWorkspacePackageExport(fs, filename) {
   });
 }
 
+// A bare substring match on "supabase" also fires on Avora's own
+// same-directory composition files (for example a relative import of
+// "./supabase-auth", a local wrapper module, not a vendor package) — the
+// exact false-positive class no-vendor-outside-adapters already avoids for
+// "google" via provider === "google" string literals. The supabase check is
+// therefore restricted to specifiers actually shaped like the npm package
+// (bare or scoped, never relative/absolute), not any path merely containing
+// the word.
+function isSupabasePackageSpecifier(specifier) {
+  return (
+    !specifier.startsWith(".") &&
+    !specifier.startsWith("/") &&
+    /^(@supabase\/|supabase(\/|$))/i.test(specifier)
+  );
+}
+
+function isOtherEnforcedVendorSpecifier(specifier) {
+  return /\b(openai|anthropic|google|stripe|resend|sentry|posthog)\b/i.test(
+    specifier
+  );
+}
+
+// ENG-018's actual concern is importing a vendor SDK package directly
+// outside an adapter directory — not the mere textual presence of a
+// vendor's name. A specifier that itself resolves into an adapters/ path
+// (Avora's own sanctioned `@avora/ai/adapters/google` subpath imported from
+// a composition root, for example) is exempt for every vendor, including
+// supabase; packages/db's own authorization is scoped to supabase only —
+// see the call site in no-vendor-outside-adapters.
+function isDisallowedVendorImportSpecifier(
+  specifier,
+  isAuthorizedSupabaseDataAccessPath
+) {
+  if (specifier.includes("/adapters/")) {
+    return false;
+  }
+
+  if (isSupabasePackageSpecifier(specifier)) {
+    return !isAuthorizedSupabaseDataAccessPath;
+  }
+
+  return isOtherEnforcedVendorSpecifier(specifier);
+}
+
 const rules = {
   "no-fixed-hierarchy": createTextRule(
     "No fixed academic hierarchy identifiers",
@@ -261,26 +305,27 @@ const rules = {
         return false;
       }
 
-      // ENG-018's actual concern is importing a vendor SDK package directly
-      // outside an adapter directory — not the mere textual presence of a
-      // vendor's name. A bare-word match also fires on legitimate,
-      // unrelated uses (an OAuth provider identifier string such as
-      // `provider === "google"`, or importing Avora's own sanctioned
-      // `@avora/ai/adapters/google` subpath from a composition root), so
-      // only an import/require module specifier is checked, and only when
-      // that specifier does not itself resolve into an adapters/ path.
+      // packages/db is the repository's other authorized Supabase-touching
+      // layer (REPOSITORY.md's dependency matrix lists @avora/db as an
+      // allowed dependency for apps/web/apps/worker specifically for
+      // Supabase data access) even though it sits outside any /adapters/
+      // path. This exemption is scoped to the supabase vendor check only
+      // (isDisallowedVendorImportSpecifier below) — a packages/db file
+      // importing openai/stripe/etc. directly would still be exactly the
+      // violation this rule exists to catch.
+      const isAuthorizedSupabaseDataAccessPath =
+        normalizedFilename.includes("packages/db/");
+
       const importSpecifierPattern =
         /\b(?:from|require)\s*\(?\s*["']([^"']+)["']/g;
       let match;
 
       while ((match = importSpecifierPattern.exec(sourceText)) !== null) {
-        const specifier = match[1];
-
         if (
-          /\b(openai|anthropic|google|stripe|resend|sentry|posthog)\b/i.test(
-            specifier
-          ) &&
-          !specifier.includes("/adapters/")
+          isDisallowedVendorImportSpecifier(
+            match[1],
+            isAuthorizedSupabaseDataAccessPath
+          )
         ) {
           return true;
         }
@@ -385,11 +430,22 @@ const rules = {
 
   "no-hardcoded-design-value": createTextRule(
     "No hardcoded design values",
-    (sourceText, filename) =>
-      designLiteralPattern.test(sourceText) &&
-      !filename
-        .replaceAll("\\", "/")
-        .includes("packages/design-tokens/tier-1/"),
+    (sourceText, filename) => {
+      const normalizedFilename = filename.replaceAll("\\", "/");
+
+      // A third-party brand mark's colors (e.g. Google's "G") are fixed by
+      // that brand, not by Avora's theme, and never should become an Avora
+      // token — the same reasoning as the design-tokens exclusion below,
+      // narrowly scoped to the one dedicated file each such glyph lives in.
+      if (normalizedFilename.endsWith("src/auth/GoogleGlyph.tsx")) {
+        return false;
+      }
+
+      return (
+        designLiteralPattern.test(sourceText) &&
+        !normalizedFilename.includes("packages/design-tokens/tier-1/")
+      );
+    },
     "Design values must come from tokens."
   ),
 
@@ -449,7 +505,13 @@ const rules = {
       // whether a timezone offset is permitted in an ISO timestamp — an
       // unrelated, coincidental use of the identifier "offset" that has
       // nothing to do with row-skipping pagination (ENG-118).
-      !/\.datetime\(\s*\{\s*offset\s*:/.test(sourceText),
+      !/\.datetime\(\s*\{\s*offset\s*:/.test(sourceText) &&
+      // `<Stop offset={...} />` is react-native-svg's gradient-stop
+      // position prop (0–1 along the gradient vector) — an unrelated,
+      // coincidental use of the identifier "offset" that has nothing to do
+      // with row-skipping pagination, same class of false positive as the
+      // Zod exclusion above.
+      !/<Stop\s[^>]*\boffset\s*=/.test(sourceText),
     "Pagination must be cursor-based."
   ),
 

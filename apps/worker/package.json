@@ -7,7 +7,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:arch": "eslint .",
-    "test:unit": "pnpm run build && node dist/src/resource-classification/__tests__/handler.unit.js && node dist/src/resource-summary/__tests__/handler.unit.js"
+    "test:unit": "pnpm run build && node dist/src/resource-classification/__tests__/handler.unit.js && node dist/src/resource-summary/__tests__/handler.unit.js && node dist/src/runtime/__tests__/claim-loop.unit.js"
   },
   "dependencies": {
     "@avora/adapters": "workspace:*",

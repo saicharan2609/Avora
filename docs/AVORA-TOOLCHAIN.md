@@ -93,7 +93,8 @@ Every candidate tool has been assigned exactly one classification based on repos
 | **Lucide Icons** | Frontend | `ADOPT` | Lightweight, tree-shakeable icon set matching clean design tokens. |
 | **Supabase (PostgreSQL)**| Backend | `ADOPT` | Core database with `pgvector`, `ltree`, Row Level Security, and JSONB (`AD-01`, `AD-08`). |
 | **Supabase Auth** | Backend | `ADOPT` | Native auth engine integrated with Postgres RLS via `auth.uid()` (`AD-09`, `SEC-040`). |
-| **Supabase Storage** | Backend | `ADOPT` | S3-compatible blob storage for quarantine and original academic files (`AD-26`). |
+| **Supabase Storage** | Backend | `ADOPT (current)` | S3-compatible blob storage for quarantine and original academic files (`SEC-180`). Current production implementation behind `BlobStorePort`; superseded as the *target* vendor by Cloudflare R2 per `AD-42` — migration not yet started, this adapter is not modified or removed. |
+| **Cloudflare R2** | Backend | `ADOPT (target — not yet implemented)` | Target object/file storage vendor behind the existing `BlobStorePort`, decided per `AD-42` (`docs/adr/AD-42-cloudflare-r2-object-storage.md`). Requires a new adapter, security review (`SEC-211`), and a verified migration before production use. |
 | **Clerk** | Backend | `REJECT` | Redundant with Supabase Auth; breaks single-session RLS context in Postgres. |
 | **Pinecone** | Backend | `REJECT` | Redundant with `pgvector`; fragments deletion cascade and tenant RLS boundary (`SEC-007`). |
 | **Upstash (Redis/QStash)**| Backend | `REJECT` | Redundant with PostgreSQL durable job queues (`public.*_jobs` tables). |
@@ -104,7 +105,7 @@ Every candidate tool has been assigned exactly one classification based on repos
 | **Jules** | Development | `EVALUATE` | Google Cloud asynchronous background coding agent; candidate for automated PRs. |
 | **Opal** | Development | `REJECT` | No-code toy app builder from Google Labs; incompatible with strict monorepo architecture. |
 | **Vercel** | Infrastructure | `ADOPT` | Zero-configuration Next.js edge and web deployment platform (`apps/web`, `AD-01`). |
-| **Cloudflare** | Infrastructure | `ADOPT` | Edge DNS, CDN caching for static assets, DDoS mitigation, and WAF (`SEC-380`). |
+| **Cloudflare** | Infrastructure | `ADOPT` | Edge DNS, CDN caching for static assets, DDoS mitigation, and WAF (`SEC-380`). Distinct from Cloudflare R2 (object storage, listed separately above) — this row is the edge/CDN/WAF/DNS role only, unchanged by `AD-42`. |
 | **GoDaddy** | Infrastructure | `REJECT` | Legacy registrar; domain registration should be managed via Cloudflare Registrar or Namecheap. |
 | **Sentry** | Observability | `ADOPT` | Application error monitoring and crash reporting with strict content filtering (`NN-09`). |
 | **Better Stack** | Observability | `OPTIONAL` | Uptime monitoring, external synthetic heartbeat checks, and public status page. |
@@ -370,6 +371,7 @@ graph TD
 | **Supabase** | 2 free projects, 500 MB database, 1 GB storage, 50k MAU | Pro Plan ($25/month) when DB > 500 MB | Strict table indexing (`student_id`), storage quarantine purging (`SEC-180`). |
 | **Vercel** | Hobby tier (non-commercial only) | Pro Plan ($20/seat/month) for commercial beta | Bandwidth alerts and serverless execution timeout limits (15s). |
 | **Cloudflare** | Free DNS, CDN, SSL, DDoS protection | Pro ($20/mo) if custom WAF rules needed | Cache headers on static derivatives and landing page assets (`SEC-213`). |
+| **Cloudflare R2** *(target, not yet in production — `AD-42`)* | Not yet provisioned | Not yet quantified | Pricing dimensions (storage, Class A/B operations, egress) to be verified against current published rates before adoption — see `docs/ARCHITECTURE-CHANGES.md` §11. No projection is asserted here. |
 | **PostHog** | 1,000,000 events/month free | Pay-as-you-go above 1M events | Strict schema allowlist; no chat token streaming events (`ENG-201`). |
 | **Sentry** | 5,000 errors/month free | Team Plan ($26/mo) if volume spikes | Error sampling in client; debug logs disabled in production (`ENG-259`). |
 | **Resend** | 3,000 emails/month (100/day) free | Pro ($20/mo) for 50k emails/mo | Single-use OTP rate limiting per device and IP (`SEC-042`). |
@@ -383,7 +385,7 @@ Avora enforces deep multi-layered security controls across all adopted tools:
 1. **Tenant Isolation:** Every query asserts `student_id = auth.uid()` in database RLS. Negative-authorization test suites run in CI (`SEC-080`).
 2. **Content Sanitization:** Extracted text is sanitized at chunk creation; active HTML, scripts, and macros are stripped before database persistence (`ENG-222`, `SEC-281`).
 3. **Zero Content in Logs (`NN-09`):** Loggers and error reporters reject content-bearing types at compile time (`ENG-256`, `SEC-355`).
-4. **Multi-Store Deletion Cascade:** Deleting a student account or resource triggers coordinated erasure across Postgres rows, Supabase storage files, and `pgvector` embeddings (`AD-38`, `SEC-007`, `SEC-471`).
+4. **Multi-Store Deletion Cascade:** Deleting a student account or resource triggers coordinated erasure across Postgres rows, object storage files (currently Supabase Storage; target Cloudflare R2 per `AD-42`), and `pgvector` embeddings (`AD-38`, `SEC-007`, `SEC-471`). The cascade's verification requirement (`SEC-472`) is unchanged by, and binding on, any future storage-vendor migration.
 
 ---
 
@@ -399,7 +401,7 @@ Avora enforces deep multi-layered security controls across all adopted tools:
 - **Runtime AI:** Google Gemini 2.5 Flash / Pro via `@google/genai` (Google AI Studio Pay-As-You-Go with $50 spend limit).
 - **Observability & Analytics:** Sentry (Errors), PostHog (Product analytics).
 - **Communication:** Resend (Email OTP).
-- **Testing:** Local Vitest/Node test runners, `test:rls` harness, `eval:ai` suite.
+- **Testing:** Local Node test scripts — TypeScript compiled by `tsc`, executed directly by Node with hand-rolled assertions; no test framework is installed — plus the separate `test:rls` harness and `eval:ai` suite.
 - **Distribution:** Direct download of `Avora-Beta-v0.apk` from the Avora web landing page.
 
 ---
@@ -508,7 +510,7 @@ Design Tokens       packages/design-tokens            DESIGN-SYSTEM.md §14
 Web UI Components   shadcn/ui + Tailwind CSS          packages/ui-web
 Database & Vectors  Supabase PostgreSQL + pgvector    AD-01, AD-19, AD-30
 Auth Engine         Supabase Auth (OAuth + OTP)       AD-09, SEC-040
-Object Storage      Supabase Storage (Quarantine/Org) AD-26, SEC-180
+Object Storage      Supabase Storage (current); target: R2 (AD-42, pending) SEC-180
 Worker Plane        Container Worker (apps/worker)    AD-08, ENG-191
 Runtime AI Provider Google Gemini via @google/genai   AD-14, SEC-250
 AI Gateway          packages/ai/gateway/              architecture.md §14.2
@@ -519,3 +521,7 @@ Development AI      Antigravity (Lead) + Claude Code  AGENTS.md
 Distribution (V0/V1)Direct APK Web Download (No Play) PRD.md §27
 ================================================================================
 ```
+
+**Notes on this summary, added with `AD-42`:**
+- **Object Storage** reflects a decided *target* change (Cloudflare R2), not a completed one. Supabase Storage is what is actually deployed for V0/V1 and remains so until a future adapter, migration, and verification are complete. See `docs/adr/AD-42-cloudflare-r2-object-storage.md`.
+- **Web Client & API (Vercel)** deployment for the production build is intentionally deferred until Stage 12 is fully complete and the application is production-ready. This summary names Vercel as the selected hosting target, not as a statement that deployment has occurred on any given date.

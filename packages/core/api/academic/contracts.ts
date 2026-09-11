@@ -51,6 +51,8 @@ export type AcademicApiTerm = Readonly<{
   termId: string;
   label: string;
   institutionName: string | null;
+  programmeName: string | null;
+  branchName: string | null;
   startsOn: string | null;
   endsOn: string | null;
   lifecycleState: AcademicApiTermLifecycleState;
@@ -116,6 +118,8 @@ export type AcademicApiSetupProgress = Readonly<{
 export type CreateAcademicTermRequest = Readonly<{
   label: string;
   institutionName: string | null;
+  programmeName: string | null;
+  branchName: string | null;
   startsOn: string | null;
   endsOn: string | null;
 }>;

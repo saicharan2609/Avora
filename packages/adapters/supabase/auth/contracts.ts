@@ -32,6 +32,11 @@ export type SupabaseStartEmailMagicLinkInput = SupabaseAuthRedirectTarget &
     email: string;
   }>;
 
+export type SupabaseVerifyEmailOtpInput = Readonly<{
+  email: string;
+  token: string;
+}>;
+
 export type SupabaseStartOAuthInput = SupabaseAuthRedirectTarget &
   Readonly<{
     method: Extract<SupabaseAuthMethod, "google_oauth" | "apple_sign_in">;
@@ -49,6 +54,7 @@ export type SupabaseAuthAdapter = Readonly<{
   startEmailMagicLink: (
     input: SupabaseStartEmailMagicLinkInput,
   ) => Promise<SupabaseAuthStartResult | null>;
+  verifyEmailOtp: (input: SupabaseVerifyEmailOtpInput) => Promise<SupabaseAuthSession>;
   startOAuth: (input: SupabaseStartOAuthInput) => Promise<SupabaseAuthStartResult>;
   exchangeCodeForSession: (
     input: SupabaseExchangeCodeForSessionInput,

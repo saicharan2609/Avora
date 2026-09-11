@@ -7,6 +7,7 @@ import type {
   SupabaseRefreshSessionInput,
   SupabaseStartEmailMagicLinkInput,
   SupabaseStartOAuthInput,
+  SupabaseVerifyEmailOtpInput,
 } from "./contracts.js";
 import { SupabaseAuthAdapterError } from "./errors.js";
 import { mapSupabaseAuthMethodToProvider } from "./provider.js";
@@ -45,6 +46,23 @@ export function createSupabaseAuthAdapter(connection: SupabaseAuthConnection): S
       }
 
       return null;
+    },
+
+    verifyEmailOtp: async (input: SupabaseVerifyEmailOtpInput) => {
+      const { data, error } = await client.auth.verifyOtp({
+        email: input.email,
+        token: input.token,
+        type: "email",
+      });
+
+      if (error !== null) {
+        throw new SupabaseAuthAdapterError(
+          "auth_verify_email_otp_failed",
+          "The code is invalid or has expired.",
+        );
+      }
+
+      return mapSupabaseSessionToAuthSession(data.session);
     },
 
     startOAuth: async (input: SupabaseStartOAuthInput) => {

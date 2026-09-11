@@ -34,6 +34,8 @@ export function parseCreateAcademicTermRequest(
   return {
     label: readRequiredString(value, "label"),
     institutionName: readNullableString(value, "institutionName"),
+    programmeName: readNullableString(value, "programmeName"),
+    branchName: readNullableString(value, "branchName"),
     startsOn: readNullableString(value, "startsOn"),
     endsOn: readNullableString(value, "endsOn"),
   };

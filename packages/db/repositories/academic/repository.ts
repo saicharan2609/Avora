@@ -30,7 +30,7 @@ export type CreateAcademicGraphRepositoryInput = Readonly<{
 }>;
 
 const academicTermSelectColumns =
-  "term_id,student_id,label,institution_name,starts_on,ends_on,lifecycle_state,created_at,updated_at" as const;
+  "term_id,student_id,label,institution_name,programme_name,branch_name,starts_on,ends_on,lifecycle_state,created_at,updated_at" as const;
 
 const subjectSelectColumns =
   "subject_id,student_id,term_id,display_name,subject_code,description,lifecycle_state,created_at,updated_at" as const;
@@ -51,6 +51,8 @@ export function createAcademicGraphRepository(
           student_id: term.studentId,
           label: term.label,
           institution_name: term.institutionName,
+          programme_name: term.programmeName,
+          branch_name: term.branchName,
           starts_on: term.startsOn,
           ends_on: term.endsOn,
           lifecycle_state: "planned",

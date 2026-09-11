@@ -14,6 +14,10 @@ type RouteContext = Readonly<{
   >;
 }>;
 
+function readMobileCallbackFlag(request: NextRequest): boolean {
+  return request.nextUrl.searchParams.get("platform") === "mobile";
+}
+
 function mapProviderToAuthMethod(provider: string): SupabaseStartOAuthInput["method"] | null {
   if (provider === "google") {
     return "google_oauth";
@@ -41,10 +45,17 @@ export async function GET(request: NextRequest, context: RouteContext): Promise<
     );
   }
 
+  const isMobileCallback = readMobileCallbackFlag(request);
+  const callbackUrl = new URL("/api/auth/callback", getRequestOrigin(request));
+
+  if (isMobileCallback) {
+    callbackUrl.searchParams.set("platform", "mobile");
+  }
+
   const auth = createWebSupabaseAuthAdapter();
   const startResult = await auth.startOAuth({
     method,
-    redirectTo: `${getRequestOrigin(request)}/api/auth/callback`,
+    redirectTo: callbackUrl.toString(),
   });
 
   return NextResponse.redirect(startResult.redirectUrl, {

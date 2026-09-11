@@ -353,7 +353,7 @@ Two properties of this lifecycle are binding:
 | API | Next.js Route Handlers with typed contracts (Zod-validated, tRPC-style or OpenAPI-generated) | Colocated with the web app, deployed on Vercel, edge-cacheable where safe. | Contract layer is transport-agnostic |
 | Database | Supabase PostgreSQL 15+ with `pgvector`, `pg_trgm`, `ltree`, `pgcrypto` | One store for relational graph, full-text, and vector search removes an entire class of consistency and deletion-completeness problems (NFR-042). | `RepositoryPort` per module |
 | Auth | Supabase Auth | OAuth for low-friction signup, email OTP/magic link for the email method (FR-001), self-service recovery (FR-003), JWT integrates natively with RLS. | `AuthPort` |
-| Object storage | Supabase Storage, S3-compatible, with resumable upload | Originals preserved unmodified (FR-035), RLS-integrated path authorisation, resumable protocol satisfies FR-037. | `BlobStorePort` |
+| Object storage | **Current:** Supabase Storage, S3-compatible, with resumable upload. **Target:** Cloudflare R2, adopted direction per `AD-42` — not yet implemented; Supabase Storage remains the active production implementation until a future adapter is built, security-reviewed, and migrated (`docs/adr/AD-42-cloudflare-r2-object-storage.md`). | Originals preserved unmodified (FR-035), RLS-integrated path authorisation, resumable protocol satisfies FR-037. Vendor selection does not change this rationale — it is satisfied by whichever adapter implements `BlobStorePort`. | `BlobStorePort` |
 | Realtime | Supabase Realtime | Job and artifact state push to clients without polling; central to non-blocking ingestion UX (FR-036). | `RealtimePort` |
 | Worker runtime | Container platform (Cloud Run / Fly.io / Railway), autoscaled, queue-driven | Required: serverless request handlers cannot host two-minute document processing within NFR-004 reliably. See AD-08. | Any OCI runtime |
 | Edge functions | Supabase Edge Functions | Short, data-adjacent work: webhook receipt, signed URL issuance, lightweight triggers. Not used for long jobs. | — |
@@ -718,7 +718,7 @@ sequenceDiagram
 | Refresh token | Long-lived, rotating, single-use, revoked on reuse detection | NFR-035 |
 | Token storage | iOS Keychain / Android Keystore on mobile; httpOnly secure cookies on web | Prevents JS-accessible token theft |
 | Session inventory | Student can view and revoke active sessions | NFR-035, PR-02 |
-| Step-up re-authentication | Required for: account deletion, data export, email change, subscription changes, bulk deletion, share creation of an entire structure unit | **FR-002** |
+| Step-up re-authentication | Required for: account deletion, data export, email change, subscription changes, bulk deletion, share creation of an entire structure unit. Underlying security primitive: MFA/factor-based authentication; V0 factor **TOTP**, using the already-installed Supabase MFA capability (**AD-43**, resolves `SOQ-03`; factor and policy boundaries per `AD-43`'s 2026-09-11 addendum). Avora-enforced proof validity: **5 minutes**, operation- and session-bound, distinct from Supabase's own MFA challenge TTL. Enrollment required before (not at) first step-up-gated attempt, not at ordinary login. Recovery mechanism and canonical audit substrate remain open (CISO/security); implementation not started | **FR-002** |
 | Continuous identity | The `students` row is the durable identity and persists across term changes, institution changes, and auth-method changes | **FR-006** |
 
 **AD-10 — Identity is decoupled from institution and term from day one.** FR-006 requires a single continuous identity across terms *and institution changes*. Therefore institution and programme live on an `enrolment` record with validity dates, not as columns on `students`. A student who transfers institutions keeps one identity, one Academic Graph, and full history — which is precisely the D-06 continuity moat.
@@ -779,6 +779,14 @@ Sharing (FR-130 to FR-134) is deliberately *not* modelled as an ACL on the resou
 ---
 
 ## 13. File Storage Architecture
+
+### 13.0 Storage vendor: current and target
+
+**Current production vendor: Supabase Storage.** Everything described in §13.1–§13.4 is implemented today against Supabase Storage and is the active, running architecture.
+
+**Target vendor: Cloudflare R2.** Per `AD-42` (`docs/adr/AD-42-cloudflare-r2-object-storage.md`), Cloudflare R2 is the decided direction for this responsibility, adopted by founder decision and recorded formally as an architecture decision. **This is a direction, not a completed migration** — no R2 adapter exists yet, no data has moved, and Supabase Storage is not deprecated by this statement. `AD-42` records the pending governance gates (security/processor review, CISO approval, second reviewer) that must clear before any adapter reaches production.
+
+Everything in §13.1–§13.4 below — bucket topology, upload flow, access/integrity/lifecycle rules, and upload security controls — is **vendor-neutral by design**: it describes the contract enforced by `BlobStorePort`, not a Supabase-specific mechanism. A future R2 adapter must satisfy every rule in this section identically; none of them are relaxed by a vendor change (see `AD-42`'s security invariants).
 
 ### 13.1 Bucket topology
 
@@ -2434,6 +2442,8 @@ Stated now so they are recognised early rather than discovered late:
 | AD-39 | Cost per student as a first-class runtime signal | **BM-03, NFR-072** | Low |
 | AD-40 | Derived data is a rebuild target, not a backup target | NFR-010, AD-06, AD-07 | Medium |
 | AD-41 | Dedicated structural-adaptivity regression suite | **D-01** | Very low |
+| AD-42 | Cloudflare R2 adopted as the target object/file storage vendor behind `BlobStorePort`; Supabase Storage remains the current implementation until migration is built, security-reviewed, and verified | FR-035, NFR-034, NFR-042, SEC-007 | Low — `BlobStorePort` makes the adapter swappable |
+| AD-43 | MFA/factor-based authentication is the security primitive underlying step-up re-authentication (resolves `SOQ-03`); V0 factor is TOTP, enrollment boundary and 5-minute Avora-enforced validity window decided (2026-09-11 addendum); operation and session binding remain Avora-enforced; recovery policy is not decided; `SOQ-02` remains separately open | ENG-185, SEC-052, SEC-470, FR-002 | Medium — primitive sits behind `AuthPort.requireStepUp`, not yet implemented |
 
 ---
 

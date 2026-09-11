@@ -18,6 +18,7 @@ export default function createExpoConfig({ config }: ConfigContext): ExpoConfig 
       ...config.android,
       package: "ai.avora.mobile"
     },
+    plugins: [...(config.plugins ?? []), "expo-router", "expo-secure-store"],
     extra: {
       ...config.extra
     }

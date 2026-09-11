@@ -66,3 +66,9 @@ export {
   EmbeddingCacheRepositoryError,
   createEmbeddingCacheRepository,
 } from "./embedding-cache/index.js";
+export type * from "./mobile-auth-handoffs/index.js";
+
+export {
+  MobileAuthHandoffsRepositoryError,
+  createMobileAuthHandoffsRepository,
+} from "./mobile-auth-handoffs/index.js";

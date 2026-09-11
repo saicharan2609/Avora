@@ -4,15 +4,19 @@ import {
 } from "@avora/adapters/supabase/storage";
 import {
   createGeminiEmbeddingPort,
+  createGeminiSummaryAdapter,
   createGoogleGenAIEmbeddingClient,
+  createGoogleGenAISummaryClient,
   geminiEmbeddingModelId,
   geminiEmbeddingOutputDimensions,
   geminiEmbeddingStrategyVersion,
 } from "@avora/ai/adapters/google";
+import { createSummaryGateway } from "@avora/ai";
 import {
   createContentAddressedEmbeddingPort,
 } from "@avora/ai/embeddings";
 import type { EmbeddingCacheEntry, EmbeddingCachePort } from "@avora/ai/embeddings";
+import { parseWorkerEnvironment } from "@avora/config/env/worker";
 import { createServiceRoleDatabaseClient } from "@avora/db/client";
 import { createResourceIngestionJobsRepository } from "@avora/db/repositories/jobs";
 import { createResourceExtractionJobsRepository } from "@avora/db/repositories/resource-extraction-jobs";
@@ -20,6 +24,8 @@ import { createResourceChunkingJobsRepository } from "@avora/db/repositories/res
 import { createResourceIndexingJobsRepository } from "@avora/db/repositories/resource-indexing-jobs";
 import { createResourceClassificationJobsRepository } from "@avora/db/repositories/resource-classification-jobs";
 import { createResourceUploadTicketJobsRepository } from "@avora/db/repositories/resource-upload-ticket-jobs";
+import { createResourceSummaryJobsRepository } from "@avora/db/repositories/resource-summary-jobs";
+import { createResourceSummariesRepository } from "@avora/db/repositories/resource-summaries";
 import { createResourceExtractionRepository } from "@avora/db/repositories/extraction";
 import type { ResourceExtractionRepository } from "@avora/db/repositories/extraction";
 import { createRetrievalChunkRepository } from "@avora/db/repositories/chunks";
@@ -84,6 +90,12 @@ import {
   createResourceClassificationWorkerHandler,
   type ResourceClassificationWorker,
 } from "../resource-classification/index.js";
+import {
+  createResourceSummaryJobHandlerAdapter,
+  createResourceSummaryWorker,
+  createResourceSummaryWorkerHandler,
+  type ResourceSummaryWorker,
+} from "../resource-summary/index.js";
 
 export type WorkerRuntimeEnvironment = Readonly<{
   supabaseUrl: string;
@@ -99,16 +111,22 @@ export type WorkerRuntime = Readonly<{
   resourceIndexingWorker: ResourceIndexingWorker;
   resourceClassificationWorker: ResourceClassificationWorker;
   resourceUploadTicketWorker: ResourceUploadTicketWorker;
+  resourceSummaryWorker: ResourceSummaryWorker;
 }>;
 
+// Validates the full worker-tier typed environment schema in one pass
+// (packages/config/env/worker.env.ts) rather than reading individual
+// process.env values ad hoc, so a missing worker-tier variable fails fast
+// at startup with a typed error instead of surfacing as an obscure runtime
+// failure deep inside composition (ENG-267, ENG-268).
 export function readWorkerRuntimeEnvironment(): WorkerRuntimeEnvironment {
+  const parsed = parseWorkerEnvironment(process.env);
+
   return {
-    supabaseUrl: readRequiredEnvironmentValue("SUPABASE_URL"),
-    supabaseServiceRoleKey: readRequiredEnvironmentValue(
-      "SUPABASE_SERVICE_ROLE_KEY",
-    ),
-    geminiApiKey: readRequiredEnvironmentValue("GEMINI_API_KEY"),
-    workerId: process.env["AVORA_WORKER_ID"] ?? `worker-${process.pid}`,
+    supabaseUrl: parsed.NEXT_PUBLIC_SUPABASE_URL,
+    supabaseServiceRoleKey: parsed.SUPABASE_SERVICE_ROLE_KEY,
+    geminiApiKey: parsed.GEMINI_API_KEY,
+    workerId: parsed.AVORA_WORKER_ID ?? `worker-${process.pid}`,
   };
 }
 
@@ -152,6 +170,14 @@ export function createWorkerRuntime(
     createResourceUploadTicketJobsRepository({
       client: database.client,
     });
+
+  const resourceSummaryJobsRepository = createResourceSummaryJobsRepository({
+    client: database.client,
+  });
+
+  const resourceSummariesRepository = createResourceSummariesRepository({
+    client: database.client,
+  });
 
   const academicGraphRepository = createAcademicGraphRepository({
     client: database.client,
@@ -268,6 +294,30 @@ export function createWorkerRuntime(
     classificationService: createResourceClassificationService(),
   });
 
+  const summaryWorkerHandler = createResourceSummaryWorkerHandler({
+    // Fails closed by design (AiProviderInvocationGate), mirroring the
+    // embedding port above: no worker-tier configuration surface for this
+    // gate exists yet, so it must not default to enabled.
+    summaryGateway: createSummaryGateway({
+      chunkRetrieval: retrievalChunkRepository,
+      summaryInvocation: createGeminiSummaryAdapter({
+        client: createGoogleGenAISummaryClient({
+          apiKey: environment.geminiApiKey,
+        }),
+        invocationGateState: undefined,
+        taskBudgets: undefined,
+      }),
+      defaults: {
+        minChunkCount: readPositiveIntegerEnvironmentValue(
+          "AVORA_WORKER_SUMMARY_MIN_CHUNK_COUNT",
+          1,
+        ),
+        qualityTier: "standard",
+      },
+    }),
+    resourceSummariesRepository,
+  });
+
   return {
     resourceIngestionWorker: createResourceIngestionWorker({
       repository: resourceIngestionJobsRepository,
@@ -307,6 +357,13 @@ export function createWorkerRuntime(
     resourceUploadTicketWorker: createResourceUploadTicketWorker({
       repository: resourceUploadTicketJobsRepository,
       blobStore: uploadBlobStore,
+      workerId: environment.workerId,
+    }),
+    resourceSummaryWorker: createResourceSummaryWorker({
+      repository: resourceSummaryJobsRepository,
+      handler: createResourceSummaryJobHandlerAdapter({
+        summaryWorkerHandler,
+      }),
       workerId: environment.workerId,
     }),
   };
@@ -454,11 +511,25 @@ function createEmbeddingCachePortAdapter(
   };
 }
 
-function readRequiredEnvironmentValue(name: string): string {
-  const value = process.env[name];
+// Mirrors apps/web/app/api/tutor/_shared/composition.ts's
+// readPositiveIntegerEnvironmentValue: a tunable default, not a worker-tier
+// secret, so it is read directly rather than added to the typed
+// packages/config/env schema (which is reserved for trust-tier-classified
+// variables such as credentials and endpoints).
+function readPositiveIntegerEnvironmentValue(
+  name: string,
+  fallback: number,
+): number {
+  const rawValue = process.env[name];
 
-  if (value === undefined || value.length === 0) {
-    throw new Error(`Missing required worker environment variable: ${name}`);
+  if (rawValue === undefined || rawValue.length === 0) {
+    return fallback;
+  }
+
+  const value = Number.parseInt(rawValue, 10);
+
+  if (!Number.isSafeInteger(value) || value <= 0) {
+    throw new Error(`Invalid worker environment variable: ${name}`);
   }
 
   return value;

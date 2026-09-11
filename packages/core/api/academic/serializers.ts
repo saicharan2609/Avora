@@ -18,6 +18,8 @@ export type SerializableAcademicTerm = Readonly<{
   termId: string;
   label: string;
   institutionName: string | null;
+  programmeName: string | null;
+  branchName: string | null;
   startsOn: string | null;
   endsOn: string | null;
   lifecycleState: AcademicApiTerm["lifecycleState"];
@@ -57,6 +59,8 @@ export function serializeAcademicTerm(
     termId: term.termId,
     label: term.label,
     institutionName: term.institutionName,
+    programmeName: term.programmeName,
+    branchName: term.branchName,
     startsOn: term.startsOn,
     endsOn: term.endsOn,
     lifecycleState: term.lifecycleState,

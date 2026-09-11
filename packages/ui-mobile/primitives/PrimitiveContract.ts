@@ -1,7 +1,7 @@
 import type { Tier2Tokens } from "@avora/design-tokens/tier-2";
 
-import type { PrimitiveIntent } from "./PrimitiveIntent.contract.js";
-import type { PrimitiveState } from "./PrimitiveState.contract.js";
+import type { PrimitiveIntent } from "./PrimitiveIntent.contract";
+import type { PrimitiveState } from "./PrimitiveState.contract";
 
 export type PrimitiveContract = Readonly<{
   state: PrimitiveState;

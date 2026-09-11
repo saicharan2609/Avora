@@ -21,6 +21,8 @@
       "termId": "00000000-0000-4000-8000-000000008101",
       "label": "Fall 2026",
       "institutionName": "Synthetic University",
+      "programmeName": "B.Tech Computer Science",
+      "branchName": "Computer Science and Engineering",
       "startsOn": "2026-08-15",
       "endsOn": "2026-12-20",
       "expectedLifecycleState": "planned"

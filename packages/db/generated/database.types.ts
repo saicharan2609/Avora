@@ -984,33 +984,39 @@ export type Database = {
       };
       academic_terms: {
         Row: {
+          branch_name: string | null;
           created_at: string;
           ends_on: string | null;
           institution_name: string | null;
           label: string;
           lifecycle_state: Database["public"]["Enums"]["academic_term_lifecycle_state"];
+          programme_name: string | null;
           starts_on: string | null;
           student_id: string;
           term_id: string;
           updated_at: string;
         };
         Insert: {
+          branch_name?: string | null;
           created_at?: string;
           ends_on?: string | null;
           institution_name?: string | null;
           label: string;
           lifecycle_state?: Database["public"]["Enums"]["academic_term_lifecycle_state"];
+          programme_name?: string | null;
           starts_on?: string | null;
           student_id: string;
           term_id?: string;
           updated_at?: string;
         };
         Update: {
+          branch_name?: string | null;
           created_at?: string;
           ends_on?: string | null;
           institution_name?: string | null;
           label?: string;
           lifecycle_state?: Database["public"]["Enums"]["academic_term_lifecycle_state"];
+          programme_name?: string | null;
           starts_on?: string | null;
           student_id?: string;
           term_id?: string;
@@ -1850,9 +1856,55 @@ export type Database = {
           },
         ];
       };
+      mobile_auth_handoffs: {
+        Row: {
+          access_token: string;
+          created_at: string;
+          expires_at: string;
+          handoff_id: string;
+          refresh_token: string;
+          student_id: string;
+        };
+        Insert: {
+          access_token: string;
+          created_at?: string;
+          expires_at: string;
+          handoff_id?: string;
+          refresh_token: string;
+          student_id: string;
+        };
+        Update: {
+          access_token?: string;
+          created_at?: string;
+          expires_at?: string;
+          handoff_id?: string;
+          refresh_token?: string;
+          student_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "mobile_auth_handoffs_student_id_fkey";
+            columns: ["student_id"];
+            isOneToOne: false;
+            referencedRelation: "students";
+            referencedColumns: ["student_id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
+      consume_mobile_auth_handoff: {
+        Args: {
+          handoff_code: string;
+        };
+        Returns: {
+          student_id: string;
+          access_token: string;
+          refresh_token: string;
+          expires_at: string;
+        }[];
+      };
       search_chunks_hybrid: {
         Args: {
           p_student_id: string;

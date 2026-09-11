@@ -27,6 +27,8 @@ export function mapAcademicTermRow(
     studentId: row.student_id as StudentId,
     label: row.label,
     institutionName: row.institution_name,
+    programmeName: row.programme_name,
+    branchName: row.branch_name,
     startsOn: row.starts_on as DbAcademicDateString | null,
     endsOn: row.ends_on as DbAcademicDateString | null,
     lifecycleState: row.lifecycle_state,
